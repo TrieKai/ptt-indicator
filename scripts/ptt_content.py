@@ -1,11 +1,11 @@
 """PTT 畢業文候選與內文讀取（Groq 分析與實驗共用）。
 
-候選 = 標題規則保留的畢業文原文（loss_rules.py）＋ 標題含畢業類關鍵字的 Re:／Fw: 回文。
+候選 = 標題規則保留的畢業文原文（loss_rules.py）＋ 標題含畢業類關鍵字的 Re:／Fw: 回文（回覆新聞、情報、公告的除外）。
 「作者自己寫的部分」= 拿掉作者／時間等標頭、引用原文的行（": " 開頭、※ 引述）、推文與簽名檔之後的內文。
 PTT 會擋雲端主機，讀內文要在一般網路的電腦上跑；呼叫端自己控制速度（每秒 1 篇）。
 """
 import os, re, json, glob, html, time, urllib.request, urllib.error
-from loss_rules import classify
+from loss_rules import classify, SKIP_CAT, CAT
 
 KEYS = ["畢業", "賠光", "歸零", "爆倉", "違約交割", "斷頭", "追繳"]
 REPLY = re.compile(r"(Re|RE|Fw|FW)\s*:")
@@ -41,7 +41,8 @@ def candidates(seen):
     for p in seen.values():
         t = p["title"]
         if REPLY.match(t):
-            if any(k in t for k in KEYS): out.append((p, "reply"))
+            # 回文：標題有關鍵字，而且不是回覆新聞、情報、公告（原文的這些分類本來就排除）
+            if any(k in t for k in KEYS) and CAT(REPLY.sub("", t, count=1).strip()) not in SKIP_CAT: out.append((p, "reply"))
         elif classify(t)[0]:
             out.append((p, "orig"))
     out.sort(key=lambda x: -x[0]["ts"])
