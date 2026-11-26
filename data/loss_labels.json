@@ -1,0 +1,120 @@
+{
+"M.1795402955.A.89B": {
+"amount": "賠了87000元",
+"confidence": 0.97,
+"counts": true,
+"evidence": "both",
+"hints": {
+"first": true,
+"hosts": [
+"i.mopix.cc"
+],
+"img": 1,
+"nums": [
+"賠了87000元",
+"賠了87000"
+],
+"own_len": 84,
+"short_links": 0
+},
+"id": "M.1795402955.A.89B",
+"kind": "orig",
+"labeled_at": "2026-11-26 23:34",
+"model": "openai/gpt-oss-120b",
+"own_loss": true,
+"prompt_version": "loss-v1",
+"reason": "作者自述買進後賠87000元",
+"side": "long",
+"status": "ok",
+"title": "[心得]  上週五畢業，但我不後悔",
+"tokens": 864,
+"ts": 1795402955
+},
+"M.1795406935.A.F35": {
+"amount": "",
+"confidence": 0.85,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 2,
+"nums": [],
+"own_len": 237,
+"short_links": 0
+},
+"id": "M.1795406935.A.F35",
+"kind": "reply",
+"labeled_at": "2026-11-26 23:34",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v1",
+"reason": "文中未提及作者本人虧損或出場情形",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得]  上週五畢業，但我不後悔",
+"tokens": 910,
+"ts": 1795406935
+},
+"M.1795437223.A.645": {
+"amount": "",
+"confidence": 0.9,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": false,
+"hosts": [
+"i.mopix.cc"
+],
+"img": 1,
+"nums": [],
+"own_len": 134,
+"short_links": 0
+},
+"id": "M.1795437223.A.645",
+"kind": "reply",
+"labeled_at": "2026-11-26 23:34",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v1",
+"reason": "未提及本人虧損，僅轉貼新聞與截圖",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [新聞] 台股殺盤融資斷頭潮來了！近3千戶收",
+"tokens": 832,
+"ts": 1795437223
+},
+"M.1795586984.A.D42": {
+"amount": "-22.5%",
+"confidence": 0.97,
+"counts": true,
+"evidence": "both",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [
+"-22.5%",
+"報酬率大概在 -22.5%"
+],
+"own_len": 375,
+"short_links": 0
+},
+"id": "M.1795586984.A.D42",
+"kind": "orig",
+"labeled_at": "2026-11-26 23:34",
+"model": "openai/gpt-oss-120b",
+"own_loss": true,
+"prompt_version": "loss-v1",
+"reason": "作者自述多單止損，虧損約 -22.5%",
+"side": "long",
+"status": "ok",
+"title": "[心得] 正二畢業",
+"tokens": 1043,
+"ts": 1795586984
+}
+}
