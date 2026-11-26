@@ -14,7 +14,7 @@ import sys, os, re, json, time, argparse, datetime as dt, urllib.request, urllib
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from ptt_content import load_posts, candidates, fetch, hints
 
-PROMPT_VERSION = "loss-v1"
+PROMPT_VERSION = "loss-v2"   # v2：把參考標記複核時的邊界規則寫進提示詞
 PREFER = ["qwen/qwen3.6-27b", "moonshotai/kimi-k2-instruct-0905", "openai/gpt-oss-120b", "llama-3.3-70b-versatile"]
 API = "https://api.groq.com/openai/v1"
 MAX_CHARS = 1800
@@ -22,7 +22,13 @@ TZ = dt.timezone(dt.timedelta(hours=8))
 
 SYSTEM = """你是資料標註員，幫忙判斷 PTT 股票版的文章。只根據提供的內容判斷，不要猜測，不確定就降低 confidence。
 「畢業文」在這裡的定義：作者本人做多（買進股票、ETF、期貨多單、權證或選擇權買方等）之後認賠出場，或帳戶出現重大虧損（例如斷頭、追繳、歸零、賠光、大幅虧損）。
-不算的情況：討論或提問、新聞或轉述別人的虧損、假設語氣（如果賠了…）、差點出事但沒有發生、已經賺回來、純心得檢討但沒說自己賠多少、放空賠錢（方向相反）。
+不算的情況：討論或提問、新聞或轉述別人的虧損、假設語氣（如果賠了…）、差點出事但沒有發生、純心得檢討但沒說自己賠多少、放空賠錢（方向相反）。
+另外這些也不算：
+- 已經賺回來，或作者說整體（加上其他交易、整年）仍然賺或打平，即使某一筆賠很多
+- 買進賣權（put）或任何看空的部位賠錢：視為放空（side 填 short）
+- 多年前的舊事順口一提（例如「我以前…賠過」），不是這次的虧損
+- 只是小額帳面虧損、還沒出場（例如負幾千元）
+- 回文只看回文者自己寫的內容；原文標題或引用裡的金額不能當作回文者的依據
 依據：內文附圖片連結（多半是對帳單或庫存截圖，視為 screenshot），或寫出具體的虧損金額或比例（視為 amount）。
 只輸出一個 JSON 物件，欄位如下：
 {"own_loss": true 或 false, "side": "long" 或 "short" 或 "unknown", "evidence": "screenshot" 或 "amount" 或 "both" 或 "none", "amount": "虧損金額或比例的原文，沒有就空字串", "confidence": 0 到 1 的數字, "reason": "30 字內的理由"}"""
