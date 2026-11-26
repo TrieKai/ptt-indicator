@@ -42,16 +42,25 @@ def key():
             if ln.startswith("GROQ_API_KEY="): return ln.split("=", 1)[1].strip()
     sys.exit("找不到 Groq 金鑰：請設定環境變數 GROQ_API_KEY，或寫在 ~/.config/ptt-indicator/groq.env")
 
-class RateLimited(Exception): pass
+class RateLimited(Exception):
+    def __init__(self, msg, wait):
+        super().__init__(msg); self.wait = wait
+
+LIMITS = {}   # 最近一次回應的額度資訊（x-ratelimit-*）
 
 def call(path, k, body=None):
     req = urllib.request.Request(API + path, data=json.dumps(body).encode() if body else None,
                                  headers={"Authorization": "Bearer " + k, "Content-Type": "application/json", "User-Agent": "ptt-indicator/1"})
     try:
-        return json.loads(urllib.request.urlopen(req, timeout=60).read().decode())
+        r = urllib.request.urlopen(req, timeout=90)
+        LIMITS.update({h: r.headers.get(h) for h in ("x-ratelimit-limit-requests", "x-ratelimit-remaining-requests", "x-ratelimit-limit-tokens", "x-ratelimit-remaining-tokens") if r.headers.get(h)})
+        return json.loads(r.read().decode())
     except urllib.error.HTTPError as e:
         msg = e.read().decode("utf-8", "replace")[:300]
-        if e.code == 429: raise RateLimited(msg)
+        if e.code == 429:
+            try: wait = float(e.headers.get("retry-after") or 60)
+            except ValueError: wait = 60
+            raise RateLimited(msg, wait)
         raise RuntimeError(f"Groq HTTP {e.code}: {msg}")
 
 def pick_model(k):
@@ -63,14 +72,23 @@ def pick_model(k):
     sys.exit("帳號裡沒有預設的模型，請用 GROQ_MODEL 指定（可用的模型：" + ", ".join(sorted(have)[:12]) + "…）")
 
 def judge(k, model, post, kind, own, h):
-    body = {"model": model, "temperature": 0, "max_tokens": 300, "messages": [{"role": "system", "content": SYSTEM}, {"role": "user", "content": user_msg(post, kind, own, h)}],
+    body = {"model": model, "temperature": 0, "max_tokens": 1024, "messages": [{"role": "system", "content": SYSTEM}, {"role": "user", "content": user_msg(post, kind, own, h)}],
             "response_format": {"type": "json_object"}}
-    try:
-        r = call("/chat/completions", k, body)
-    except RuntimeError as e:
-        if "response_format" not in str(e) and "json" not in str(e).lower(): raise
-        body.pop("response_format"); r = call("/chat/completions", k, body)   # 有些模型不支援 JSON 模式
-    txt = r["choices"][0]["message"]["content"]
+    if "gpt-oss" in model: body["reasoning_effort"] = "low"   # 推理模型：思考少一點，避免 token 用完卻沒有答案
+    def ask(b):
+        try:
+            return call("/chat/completions", k, b)
+        except RuntimeError as e:
+            low = str(e).lower()
+            if "reasoning_effort" in low and "reasoning_effort" in b:
+                b = dict(b); b.pop("reasoning_effort"); return ask(b)
+            if ("response_format" in low or "json" in low) and "response_format" in b:
+                b = dict(b); b.pop("response_format"); return ask(b)   # 有些模型不支援 JSON 模式
+            raise
+    r = ask(body)
+    txt = (r["choices"][0]["message"].get("content") or "").strip()
+    if not txt:   # 推理模型偶爾把 token 都花在思考上：放寬上限再問一次
+        r = ask(dict(body, max_tokens=2048)); txt = (r["choices"][0]["message"].get("content") or "").strip()
     m = re.search(r"\{.*\}", txt, re.S)
     out = json.loads(m.group(0) if m else txt)
     ev = out.get("evidence") if out.get("evidence") in ("screenshot", "amount", "both", "none") else "none"
@@ -96,6 +114,7 @@ def main():
     k = None if a.dry_run else key()
     model = "dry-run" if a.dry_run else pick_model(k)
     done = 0
+    shown = False
     for p, kind in todo[:a.max]:
         status, own = fetch(p["id"]); time.sleep(1)
         lab = {"id": p["id"], "ts": p["ts"], "title": p["title"], "kind": kind, "status": status, "model": model, "prompt_version": PROMPT_VERSION,
@@ -104,12 +123,23 @@ def main():
             h = hints(own, p["title"]); lab["hints"] = h
             if a.dry_run:
                 print("—" * 20, "\n", user_msg(p, kind, own, h)[:600]); continue
-            try:
-                lab.update(judge(k, model, p, kind, own, h))
-            except RateLimited as e:
-                print("Groq 額度用完，下一輪再繼續：", e, flush=True); break
-            except Exception as e:
-                print("判斷失敗，下一輪再試：", p["id"], type(e).__name__, str(e)[:160], flush=True); continue
+            res, stop = None, False
+            for attempt in range(4):
+                try:
+                    res = judge(k, model, p, kind, own, h); break
+                except RateLimited as e:
+                    if e.wait > 90 or attempt == 3:   # 每日額度用完（要等很久）：這一輪先停，下一輪再補
+                        print(f"Groq 額度用完（要等 {e.wait:.0f} 秒以上），下一輪再繼續", flush=True); stop = True; break
+                    print(f"每分鐘額度到了，等 {e.wait:.0f} 秒", flush=True); time.sleep(e.wait + 1)
+                except Exception as e:
+                    print("判斷失敗，下一輪再試：", p["id"], type(e).__name__, str(e)[:160], flush=True); break
+            if stop: break
+            if res is None: continue
+            lab.update(res)
+            if not shown and LIMITS:
+                shown = True
+                print(f"Groq 額度（{model}）：每天 {LIMITS.get('x-ratelimit-limit-requests', '?')} 次請求（今天還剩 {LIMITS.get('x-ratelimit-remaining-requests', '?')}）、"
+                      f"每分鐘 {LIMITS.get('x-ratelimit-limit-tokens', '?')} tokens", flush=True)
             lab["counts"] = bool(counts(lab))
         elif status.startswith(("http", "error")):
             print("讀不到文章，下一輪再試：", p["id"], status, flush=True); continue
