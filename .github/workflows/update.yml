@@ -33,7 +33,7 @@ jobs:
     timeout-minutes: 20
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url || steps.deployment_retry.outputs.page_url }}
     env:
       TZ: Asia/Taipei
       PTT_PAGES: '10'            # 每次往回抓幾頁 PTT 列表（每頁約 20 篇）
@@ -72,10 +72,26 @@ jobs:
 
       - uses: actions/configure-pages@v6
 
+      # 檔名帶上「第幾次執行」：在 GitHub 上手動重跑時，才不會跟上一次的檔案同名而部署失敗
       - uses: actions/upload-pages-artifact@v5
         with:
           path: site
+          name: github-pages-${{ github.run_attempt }}
           retention-days: 1
 
+      # GitHub 偶爾剛上傳完還查不到檔案（2026/11/26 實測：上傳完半秒就查，回報找不到），失敗就等 30 秒再試一次
       - id: deployment
         uses: actions/deploy-pages@v5
+        continue-on-error: true
+        with:
+          artifact_name: github-pages-${{ github.run_attempt }}
+
+      - name: 部署失敗，等 30 秒
+        if: steps.deployment.outcome == 'failure'
+        run: sleep 30
+
+      - id: deployment_retry
+        if: steps.deployment.outcome == 'failure'
+        uses: actions/deploy-pages@v5
+        with:
+          artifact_name: github-pages-${{ github.run_attempt }}
