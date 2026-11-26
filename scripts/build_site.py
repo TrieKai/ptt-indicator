@@ -18,8 +18,10 @@ load = lambda n: json.load(open(os.path.join(SRC, "data", f"{n}.json"), encoding
 status, summary, daily = load("status"), load("summary"), load("daily")
 CARD = {"status": status, "daily": daily[-1], "summary": [r for r in summary if r["signal"] == "thermo95" and r["index"] == "TAIEX"]}
 card_json = json.dumps(CARD, ensure_ascii=False, separators=(",", ":"))
-# 檔名跟著「資料＋畫法」變，社群網站的預覽快取才會換成新圖
-OG_NAME = "og/today-" + hashlib.sha1((card_json + open(os.path.join(SRC, "card.js"), encoding="utf-8").read()).encode()).hexdigest()[:10] + ".png"
+# 圖檔固定叫 og/today.png，網址後面加 ?v=（跟著「資料＋畫法」變）：社群網站的預覽快取會換新圖，
+# 以前分享出去的連結指向的檔案也一直存在，不會變成破圖
+OG_NAME = "og/today.png"
+OG_VER = hashlib.sha1((card_json + open(os.path.join(SRC, "card.js"), encoding="utf-8").read()).encode()).hexdigest()[:10]
 st = {r["signal"]: r for r in status}
 t = st["thermo"]["value"]
 level = "極度恐慌" if t >= 95 else "恐慌" if t >= 90 else "偏恐慌" if t >= 85 else "留意" if t >= 80 else "平常"
@@ -34,14 +36,14 @@ OG = f"""<meta property="og:type" content="website">
 <meta property="og:url" content="{e(SITE_URL)}">
 <meta property="og:title" content="{e(og_title)}">
 <meta property="og:description" content="{e(og_desc)}">
-<meta property="og:image" content="{e(SITE_URL + OG_NAME)}">
+<meta property="og:image" content="{e(SITE_URL + OG_NAME + "?v=" + OG_VER)}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="{e(og_title)}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{e(og_title)}">
 <meta name="twitter:description" content="{e(og_desc)}">
-<meta name="twitter:image" content="{e(SITE_URL + OG_NAME)}">
+<meta name="twitter:image" content="{e(SITE_URL + OG_NAME + "?v=" + OG_VER)}">
 """
 FONTS = """<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

@@ -74,6 +74,7 @@
   .lb-brand a { text-decoration: none; display: inline-flex; align-items: center; color: var(--ink); }
   .lb-nav { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
   .lb-nav::-webkit-scrollbar { display: none; }
+  .lb-nav.is-more { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent); }
   .lb-nav a { flex: none; padding: 6px 10px; border-radius: 4px; font-size: var(--fs-sm); font-weight: 500; color: var(--ink-2); text-decoration: none; transition: background-color 150ms ease-out, color 150ms ease-out; }
   .lb-nav a:hover { background: var(--panel-2); color: var(--ink); }
   .lb-nav a[aria-current="true"] { background: var(--ink); color: var(--panel); }
@@ -95,6 +96,7 @@
   .lb-scale li b { color: var(--ink-2); font-weight: 500; }
   .lb-scale li.is-now b { color: var(--ink); font-weight: 900; }
   .lb-ctx { margin: 0 0 8px; max-width: 46em; }
+  .lb-what { margin: -6px 0 14px; font-size: var(--fs-sm); color: var(--ink-2); max-width: 40em; }
   .lb-dual { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--rule); }
   .lb-dual .lamp { --ls: 20px; margin-top: 2px; }
   .lb-dual p { margin: 0; }
@@ -114,7 +116,7 @@
 
   .lb-fams { display: grid; gap: 0; align-content: start; }
   .lb-fam { display: grid; gap: 10px; padding: 16px 0; border-bottom: 1px solid var(--rule); }
-  .lb-fam:first-child { padding-top: 0; }
+  .lb-key + .lb-fam { padding-top: 12px; }
   .lb-fam-h { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
   .lb-fam-n { margin: 0 0 0 auto; font-size: 1rem; color: var(--ink-3); }
   .lb-fam-n b { font-size: 2rem; font-weight: 900; color: var(--ink); letter-spacing: -0.02em; }
@@ -123,9 +125,13 @@
   .lb-lamprow li[data-s="on"], .lb-lamprow li[data-s="recent"] { color: var(--ink); font-weight: 500; }
   .lb-lamprow .lamp { --ls: 26px; border-width: 3px; }
   .lb-fam .lb-cap { max-width: 52em; }
-  .lb-key { display: flex; flex-wrap: wrap; gap: 6px 18px; padding-top: 12px; font-size: var(--fs-cap); color: var(--ink-3); }
-  .lb-key span { display: inline-flex; align-items: center; gap: 6px; }
+  .lb-key { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; padding: 9px 12px; margin-bottom: 4px; background: var(--panel-2); border-radius: 3px; font-size: var(--fs-cap); color: var(--ink-2); }
+  .lb-key-h { font-weight: 700; color: var(--ink); }
+  .lb-key span { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
   .lb-key .lamp { --ls: 13px; }
+  .lb-key-br { flex-basis: 100%; height: 0; }
+  .lb-key em { font-style: normal; }
+  .lb-sm { display: none; }
   .lb-disclaim { padding-top: 12px; padding-bottom: 14px; }
   .lb-share { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding-top: 16px; }
   .lb-btn.lb-btn--primary { display: inline-flex; align-items: center; gap: 7px; background: var(--ink); color: var(--panel); border-color: var(--ink); font-weight: 700; padding: 5px 14px; }
@@ -167,6 +173,11 @@
   .lb-table th:first-child, .lb-table td:first-child { text-align: left; position: sticky; left: 0; background: var(--panel); z-index: 1; }
   .lb-table td.lb-l { text-align: left; white-space: normal; min-width: 16em; }
   .lb-table tr.lb-row--combo td { font-weight: 700; }
+  .lb-table tr.lb-grp-h th { position: static; text-align: center; color: var(--ink-2); font-weight: 500; border-bottom: 1px solid var(--rule); padding: 6px 9px 4px; }
+  .lb-table tr.lb-grp-h th:empty { border-bottom: 0; }
+  .lb-table th.lb-hl, .lb-table td.lb-hl { background: var(--panel-2); font-weight: 700; }
+  .lb-table th.lb-hl { color: var(--ink); }
+  .lb-colbtn { display: none; }
   .lb-table tr.lb-click { cursor: pointer; }
   .lb-table tr.lb-click:hover td, .lb-table tr.lb-click:focus-visible td { background: var(--panel-2); }
   .lb-table tr.lb-now td { background: var(--wash-blue); font-weight: 700; }
@@ -182,7 +193,7 @@
   .lb-matrix { border-collapse: collapse; width: 100%; font-size: var(--fs-sm); }
   .lb-matrix th, .lb-matrix td { padding: 0; height: 30px; border-bottom: 1px solid var(--rule-2); }
   .lb-matrix thead th { font-size: 0.75rem; font-weight: 500; color: var(--ink-3); border-bottom: 1px solid var(--rule-ink); height: 22px; vertical-align: bottom; padding-bottom: 4px; }
-  .lb-matrix thead tr:first-child th { border-bottom: 0; height: 18px; text-align: left; color: var(--ink-2); }
+  .lb-matrix thead tr:first-child th { border-bottom: 0; height: 18px; text-align: left; color: var(--ink-2); white-space: nowrap; }
   .lb-matrix .lb-d { width: 26px; min-width: 22px; text-align: center; }
   .lb-matrix td.lb-d .lamp { --ls: 13px; }
   .lb-matrix .lb-d.is-today { background: var(--panel-2); }
@@ -239,7 +250,8 @@
     .lb-reading { display: contents; }
     .lb-stamp-m { order: 0; }
     .lb-reading h2 { order: 1; }
-    .lb-reading-num { order: 2; margin-bottom: 10px; }
+    .lb-reading-num { order: 2; margin-bottom: 8px; }
+    .lb-what { order: 2; margin: 0 0 8px; font-size: var(--fs-cap); }
     .lb-scale { order: 3; margin-bottom: 10px; padding-top: 8px; }
     .lb-ctx { order: 4; font-size: var(--fs-sm); line-height: 1.55; margin-bottom: 4px; }
     .lb-fams { order: 5; margin-top: 8px; border-top: 1px solid var(--rule); }
@@ -249,11 +261,16 @@
     .lb-fam { padding: 10px 0; gap: 6px; }
     .lb-fam:first-child { padding-top: 10px; }
     .lb-fam-n b { font-size: 1.625rem; }
-    .lb-fam-cap { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; cursor: pointer; }
+    .lb-fam-cap { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; cursor: pointer; }
     .lb-fam-cap[aria-expanded="true"] { display: block; }
     .lb-scale .lamp { --ls: 16px; }
     .lb-scale li { gap: 2px; }
     .lb-reading-num b { font-size: 3.75rem; }
+    .lb-key { gap: 4px 10px; padding: 7px 10px; font-size: 0.75rem; }
+    .lb-key-h { display: none; }
+    .lb-lg { display: none; }
+    .lb-sm { display: inline; }
+    .lb-key .lamp { --ls: 11px; }
     .lb-reading-num small { font-size: 1rem; }
     .lb-scale li { font-size: 0.6875rem; }
     .lb-scale li span { white-space: nowrap; }
@@ -269,6 +286,8 @@
     .lb-matrix .lb-name { min-width: 7em; padding-right: 6px; }
     .lb-matrix .lb-name small { display: block; }
     .lb-matrix .lb-full { display: none; }
+    .lb-colbtn { display: inline-flex; justify-self: start; }
+    .lb-compact .lb-minor, .lb-compact tr.lb-grp-h { display: none; }
     .lb-matrix .lb-short, .lb-sm-only { display: inline; }
     .lb-table th:first-child, .lb-table td:first-child { white-space: normal; min-width: 7.5em; max-width: 9.5em; }
     .lb-top .lb-stamp { display: none; }
@@ -299,6 +318,7 @@
         <p class="lb-cap lb-stamp lb-stamp-m" data-draw="stamp" data-source="status">—</p>
         <h2>鄉民恐慌溫度</h2>
         <p class="lb-reading-num"><b class="lb-num" data-draw="thermo-val" data-source="status" data-field="value" data-where="signal=thermo">—</b><small>/ 100</small><span class="lb-chip lb-level" data-draw="thermo-chip" data-source="status">—</span></p>
+        <p class="lb-what"><span class="lb-lg">PTT 股票版創作文與畢業文的熱度；100 代表比過去一年每一天都恐慌。</span><span class="lb-sm">PTT 恐慌文的熱度；100＝比過去一年每天都恐慌</span></p>
         <ol class="lb-scale" data-draw="thermo-scale" data-source="status" aria-label="溫度等級"></ol>
         <p class="lb-ctx">2019 年以來溫度第一次衝到 95 以上共 <b class="lb-num" data-draw="t-n" data-source="summary" data-field="n" data-where="signal=thermo95&amp;index=TAIEX">—</b> 次。加權指數的真正低點落在亮燈前後 5 天內的比例是 <b class="lb-num" data-draw="t-low" data-source="summary" data-field="ext_within5" data-where="signal=thermo95&amp;index=TAIEX">—</b>，之後 20 日平均 <b class="lb-num" data-draw="t-ret" data-source="summary" data-field="ret20" data-where="signal=thermo95&amp;index=TAIEX">—</b>，平均還會再跌 <b class="lb-num" data-draw="t-dd" data-source="summary" data-field="further_mean" data-where="signal=thermo95&amp;index=TAIEX">—</b>。次數很少，請保守看待。</p>
         <p class="lb-cap">創作文 5 日 <span class="lb-num" data-draw="thermo-c5" data-source="status" data-field="c5" data-where="signal=thermo">—</span> 篇・畢業／虧損文 5 日 <span class="lb-num" data-draw="thermo-l5" data-source="status" data-field="l5" data-where="signal=thermo">—</span> 篇・<span data-draw="thermo-asof">—</span></p>
@@ -319,6 +339,16 @@
       </div>
 
       <div class="lb-fams">
+        <div class="lb-key" role="note" aria-label="燈號怎麼看">
+          <b class="lb-key-h">燈號怎麼看</b>
+          <span><i class="lamp lamp--bottom" data-s="on"></i><em class="lb-lg">實心＝今天亮燈</em><em class="lb-sm">今天亮</em></span>
+          <span><i class="lamp lamp--bottom" data-s="recent"></i><em class="lb-lg">圈中有點＝近 5 日亮過，算進分數</em><em class="lb-sm">5 日內亮過（計分）</em></span>
+          <span><i class="lamp" data-s="off"></i><em class="lb-lg">空心＝沒亮</em><em class="lb-sm">沒亮</em></span>
+          <span class="lb-key-br" aria-hidden="true"></span>
+          <span><i class="lamp lamp--bottom" data-s="on"></i>藍＝落底</span>
+          <span><i class="lamp lamp--top" data-s="on"></i>紅＝過熱</span>
+          <span><i class="lamp lamp--warn" data-s="on"></i>黃藍＝偏空</span>
+        </div>
         <div class="lb-fam">
           <div class="lb-fam-h"><h3>落底分數</h3><span class="lb-chip" data-draw="fam-chip" data-fam="bottom">—</span><p class="lb-fam-n"><b class="lb-num" data-draw="sc-score" data-source="status" data-field="value" data-where="signal=score">—</b> / 7</p></div>
           <ol class="lb-lamprow" data-draw="fam-lamps" data-fam="bottom" data-source="status daily" aria-label="落底訊號燈號"></ol>
@@ -333,14 +363,6 @@
           <div class="lb-fam-h"><h3>偏空警示</h3><span class="lb-chip" data-draw="fam-chip" data-fam="warn">—</span><p class="lb-fam-n"><b class="lb-num" data-draw="sc-wscore" data-source="status" data-field="value" data-where="signal=wscore">—</b> / 3</p></div>
           <ol class="lb-lamprow" data-draw="fam-lamps" data-fam="warn" data-source="status daily" aria-label="偏空警示燈號"></ol>
           <p class="lb-cap lb-fam-cap">淨空單極端 2019 年以來亮燈 <span class="lb-num" data-draw="w-n">—</span> 次，之後 20 日扣掉價格因素後超額 <span class="lb-num" data-draw="w-exc">—</span>。外資臺股期貨空單到極端時，歷史上之後通常繼續偏弱，所以不算進落底分數，單獨列為警示。</p>
-        </div>
-        <div class="lb-key" aria-label="燈號說明">
-          <span><i class="lamp lamp--bottom" data-s="on"></i>今天亮燈</span>
-          <span><i class="lamp lamp--bottom" data-s="recent"></i>近 5 日亮過（計入分數）</span>
-          <span><i class="lamp" data-s="off"></i>未亮</span>
-          <span><i class="lamp lamp--bottom" data-s="on"></i>藍燈＝落底</span>
-          <span><i class="lamp lamp--top" data-s="on"></i>紅燈＝過熱</span>
-          <span><i class="lamp lamp--warn" data-s="on"></i>黃藍燈＝偏空</span>
         </div>
         <div class="lb-share">
           <button type="button" class="lb-btn lb-btn--primary" id="lb-share-btn" aria-expanded="false" aria-controls="lb-share-panel">
@@ -404,7 +426,7 @@
           <thead><tr>
             <th data-field="name">等級</th><th data-field="n">次數</th><th data-field="ret20">後 20 日</th><th data-field="win20">上漲比例</th>
             <th data-field="excess20">20 日超額</th><th data-field="beat20">贏過配對</th><th data-field="ext_within5">低點在 ±5 天內</th>
-            <th data-field="further_mean">之後 20 日平均最大再跌</th><th data-field="ret60">後 60 日</th>
+            <th data-field="further_mean">之後 20 日平均最大再跌</th><th data-field="ret60" class="lb-minor">後 60 日</th>
           </tr></thead>
           <tbody data-draw="thermo-levels"></tbody>
         </table>
@@ -455,12 +477,12 @@
       </div>
       <p>「超額」是跟同一年、前 5 天漲跌幅最接近的 10 個交易日比較，扣掉單純跌深反彈的部分。「贏過配對」是事件中超額為正的比例。p 值是同年度隨機抽樣的平均報酬高於事件平均的機率，越小越不像運氣。</p>
       <div class="lb-tablewrap">
-        <table class="lb-table" data-source="summary" data-row-key="signal,index">
-          <thead><tr>
-            <th data-field="name">訊號</th><th data-field="n">事件數</th><th data-field="entry">進場</th>
-            <th data-field="ret5">後 5 日</th><th data-field="ret20">後 20 日</th><th data-field="ret60">後 60 日</th>
-            <th data-field="excess5">5 日超額</th><th data-field="excess20">20 日超額</th><th data-field="beat20">20 日贏過配對</th><th data-field="p20">20 日 p 值</th>
-            <th data-field="excess60">60 日超額</th><th data-field="beat60">60 日贏過配對</th><th data-field="p60">60 日 p 值</th>
+        <table class="lb-table" data-compact data-source="summary" data-row-key="signal,index">
+          <thead><tr class="lb-grp-h"><th colspan="3"></th><th colspan="3">亮燈後的報酬</th><th colspan="7">扣掉跌深反彈後的超額（跟同一年漲跌相近的日子比）</th></tr><tr>
+            <th data-field="name">訊號</th><th data-field="n">事件數</th><th data-field="entry" class="lb-minor">進場</th>
+            <th data-field="ret5" class="lb-minor">後 5 日</th><th data-field="ret20">後 20 日</th><th data-field="ret60" class="lb-minor">後 60 日</th>
+            <th data-field="excess5" class="lb-minor">5 日超額</th><th data-field="excess20" class="lb-hl">20 日超額</th><th data-field="beat20">20 日贏過配對</th><th data-field="p20">20 日 p 值</th>
+            <th data-field="excess60" class="lb-minor">60 日超額</th><th data-field="beat60" class="lb-minor">60 日贏過配對</th><th data-field="p60" class="lb-minor">60 日 p 值</th>
           </tr></thead>
           <tbody data-draw="sum-body" data-side="bottom"></tbody>
         </table>
@@ -485,12 +507,12 @@
       <h2>回測：過熱訊號亮燈後的報酬</h2>
       <p>過熱訊號要看的是之後會不會比較差。「跑輸配對」是事件中超額為負的比例，p 值是同年度隨機抽樣的平均報酬低於事件平均的機率，越小代表亮燈後確實偏弱。</p>
       <div class="lb-tablewrap">
-        <table class="lb-table" data-source="summary" data-row-key="signal,index">
-          <thead><tr>
-            <th data-field="name">訊號</th><th data-field="n">事件數</th><th data-field="entry">進場</th>
-            <th data-field="ret5">後 5 日</th><th data-field="ret20">後 20 日</th><th data-field="ret60">後 60 日</th>
-            <th data-field="excess5">5 日超額</th><th data-field="excess20">20 日超額</th><th data-field="beat20">20 日跑輸配對</th><th data-field="p20">20 日 p 值</th>
-            <th data-field="excess60">60 日超額</th><th data-field="beat60">60 日跑輸配對</th><th data-field="p60">60 日 p 值</th>
+        <table class="lb-table" data-compact data-source="summary" data-row-key="signal,index">
+          <thead><tr class="lb-grp-h"><th colspan="3"></th><th colspan="3">亮燈後的報酬</th><th colspan="7">扣掉跌深反彈後的超額（跟同一年漲跌相近的日子比）</th></tr><tr>
+            <th data-field="name">訊號</th><th data-field="n">事件數</th><th data-field="entry" class="lb-minor">進場</th>
+            <th data-field="ret5" class="lb-minor">後 5 日</th><th data-field="ret20">後 20 日</th><th data-field="ret60" class="lb-minor">後 60 日</th>
+            <th data-field="excess5" class="lb-minor">5 日超額</th><th data-field="excess20" class="lb-hl">20 日超額</th><th data-field="beat20">20 日跑輸配對</th><th data-field="p20">20 日 p 值</th>
+            <th data-field="excess60" class="lb-minor">60 日超額</th><th data-field="beat60" class="lb-minor">60 日跑輸配對</th><th data-field="p60" class="lb-minor">60 日 p 值</th>
           </tr></thead>
           <tbody data-draw="sum-body" data-side="top"></tbody>
         </table>
@@ -515,12 +537,12 @@
       <h2>回測：偏空警示亮燈後的報酬</h2>
       <p>這三個項目都是外資臺股期貨部位：淨空單口數、淨部位佔全市場未平倉的比例、5 日內淨部位的變化，各自低於過去 250 個交易日的第 5 百分位就亮燈。看的是之後會不會比較差，「跑輸配對」與 p 值的意思跟過熱訊號一樣。</p>
       <div class="lb-tablewrap">
-        <table class="lb-table" data-source="summary" data-row-key="signal,index">
-          <thead><tr>
-            <th data-field="name">項目</th><th data-field="n">事件數</th><th data-field="entry">進場</th>
-            <th data-field="ret5">後 5 日</th><th data-field="ret20">後 20 日</th><th data-field="ret60">後 60 日</th>
-            <th data-field="excess5">5 日超額</th><th data-field="excess20">20 日超額</th><th data-field="beat20">20 日跑輸配對</th><th data-field="p20">20 日 p 值</th>
-            <th data-field="excess60">60 日超額</th><th data-field="beat60">60 日跑輸配對</th><th data-field="p60">60 日 p 值</th>
+        <table class="lb-table" data-compact data-source="summary" data-row-key="signal,index">
+          <thead><tr class="lb-grp-h"><th colspan="3"></th><th colspan="3">亮燈後的報酬</th><th colspan="7">扣掉跌深反彈後的超額（跟同一年漲跌相近的日子比）</th></tr><tr>
+            <th data-field="name">項目</th><th data-field="n">事件數</th><th data-field="entry" class="lb-minor">進場</th>
+            <th data-field="ret5" class="lb-minor">後 5 日</th><th data-field="ret20">後 20 日</th><th data-field="ret60" class="lb-minor">後 60 日</th>
+            <th data-field="excess5" class="lb-minor">5 日超額</th><th data-field="excess20" class="lb-hl">20 日超額</th><th data-field="beat20">20 日跑輸配對</th><th data-field="p20">20 日 p 值</th>
+            <th data-field="excess60" class="lb-minor">60 日超額</th><th data-field="beat60" class="lb-minor">60 日跑輸配對</th><th data-field="p60" class="lb-minor">60 日 p 值</th>
           </tr></thead>
           <tbody data-draw="sum-body" data-side="warn"></tbody>
         </table>
@@ -721,6 +743,13 @@ document.querySelectorAll('#lb-strip').forEach((s) => s.addEventListener('change
 document.querySelectorAll('#lb-evsig').forEach((s) => s.addEventListener('change', () => { LB.evsig = s.value; dash.draw('ev-body'); }));
 document.querySelectorAll('#lb-psig').forEach((s) => s.addEventListener('change', () => { LB.psig = s.value; LB.pevent = null; dash.draw('pevent'); dash.draw('post-body'); }));
 
+// 頂部導覽：還有沒顯示的章節時右邊淡出
+(() => {
+  const nav = document.querySelector('.lb-nav'); if (!nav) return;
+  const upd = () => nav.classList.toggle('is-more', nav.scrollWidth - nav.clientWidth - nav.scrollLeft > 4);
+  nav.addEventListener('scroll', upd, { passive: true }); window.addEventListener('resize', upd); upd();
+})();
+
 // 頂部導覽：標出目前所在的章節
 (() => {
   const links = [...document.querySelectorAll('.lb-nav a')], map = new Map();
@@ -875,6 +904,7 @@ dash.draw('matrix', (el) => {
     } else run.th.colSpan += 1;
     const th = document.createElement('th'); th.className = 'lb-d' + old(i) + (i === last ? ' is-today' : ''); th.textContent = String(+dd(LB.parse(r.date))); th.scope = 'col'; r2.append(th);
   });
+  r1.querySelectorAll('th.lb-d').forEach((th) => { if (th.colSpan < 3) th.replaceChildren(); });   // 太窄的月份不標，免得擠成兩行
   [['今日值', ''], ['亮燈門檻', ' lb-hide-sm'], ['上次亮燈', ' lb-hide-sm']].forEach(([t, c]) => { const th = document.createElement('th'); th.className = 'lb-v' + c; th.rowSpan = 2; th.textContent = t; th.style.verticalAlign = 'bottom'; th.style.paddingBottom = '4px'; r1.append(th); });
   const body = el.createTBody(), cols = days.length + 4;
   const fear = (r) => (r.fear != null && r.fear >= 95 ? 1 : 0);
@@ -1109,6 +1139,13 @@ dash.draw('chart', (el) => {
 // 回測表、超額長條、極值距離
 const orderOf = (side) => (side === 'top' ? LB.TORDER : side === 'warn' ? LB.WORDER : LB.BORDER);
 const famOf = (side) => (side === 'top' ? 'top' : side === 'warn' ? 'warn' : 'bottom');
+const MINOR = new Set([2, 3, 5, 6, 10, 11, 12]);   // 手機預設收起的欄位：進場、後 5／60 日、5 日超額、60 日那一組
+document.querySelectorAll('table[data-compact]').forEach((t) => {
+  t.classList.add('lb-compact');
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'lb-btn lb-colbtn'; b.textContent = '顯示全部欄位'; b.setAttribute('aria-expanded', 'false');
+  b.addEventListener('click', () => { const on = t.classList.toggle('lb-compact'); b.textContent = on ? '顯示全部欄位' : '只看重點欄位'; b.setAttribute('aria-expanded', String(!on)); });
+  t.closest('.lb-tablewrap').before(b);
+});
 dash.draw('sum-body', (el) => {
   const s = dash.data('summary'); el.replaceChildren();
   if (s.status !== 'ok') { if (s.status === 'error') { const td = el.insertRow().insertCell(); td.colSpan = 13; td.className = 'lb-err'; td.textContent = '回測結果載入失敗。'; } return; }
@@ -1118,7 +1155,7 @@ dash.draw('sum-body', (el) => {
     [[r.name], [String(r.n)], [r.entry], [LB.pct(r.ret5), r.ret5], [LB.pct(r.ret20), r.ret20], [LB.pct(r.ret60), r.ret60],
       [LB.pct(r.excess5), r.excess5], [LB.pct(r.excess20), r.excess20], [LB.pct0(r.beat20)], [r.p20 == null ? '—' : r.p20.toFixed(3)],
       [LB.pct(r.excess60), r.excess60], [LB.pct0(r.beat60)], [r.p60 == null ? '—' : r.p60.toFixed(3)]]
-      .forEach(([t, v]) => { const td = tr.insertCell(); td.textContent = t; if (v !== undefined) td.className = LB.cls(v); });
+      .forEach(([t, v], j) => { const td = tr.insertCell(); td.textContent = t; if (v !== undefined) td.className = LB.cls(v); if (j === 7) td.classList.add('lb-hl'); if (MINOR.has(j)) td.classList.add('lb-minor'); });
   });
 });
 
