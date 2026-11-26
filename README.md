@@ -131,18 +131,19 @@ python3 -I scripts/build_dashboard_data.py data dashboard/data               # �
 - 事件數少（一般門檻 23 個、嚴格門檻 8 個），且測了多個門檻與期間，p 值僅供參考
 - 結果為歷史統計，不構成投資建議；使用前請自行查證
 
-## 畢業文內文判斷（電腦 C，Groq）
+## 畢業文內文判斷（Groq，跟抓 PTT 同一台電腦）
 
-標題符合畢業文規則的文章，再讀內文交給 Groq 判斷：是不是作者本人做多賠錢、有沒有依據（對帳單截圖或具體虧損金額）。
-結果存在 `data/loss_labels.json`，每篇只判斷一次。**目前只存結果、不影響分數**；跟人工標記比對準確率、重跑回測之後，才決定要不要改用它算分。
+畢業文只算〔心得〕分類，而且內文要有依據（對帳單截圖或具體虧損金額）。
+- 歷史文章：由 Claude 逐篇判斷並複核，存在 `data/loss_labels_ref.json`（裡面記著 cutoff）。
+- cutoff 之後的新文章：負責抓 PTT 的電腦在每輪抓完列表後，交給 Groq 判斷，結果存在 `data/loss_labels.json`，跟 `ptt_latest.json` 一起推上 GitHub。
+- `data/loss_overlap.json` 是 120 篇對照樣本，也交給 Groq 判斷，用來量 Groq 跟參考標記的一致率。
+- **目前只存結果、不影響分數**；一致率確認後才改用內文判斷算分。
 
-在電腦 C（個人 Mac、一般網路）執行一次就好：
+在負責抓 PTT 的 Mac 上設定 Groq 金鑰（用個人帳號在 console.groq.com 建立；只存在本機，不進 repo），之後的排程就會自動判斷：
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/TrieKai/ptt-indicator/main/scripts/setup_mac_analyzer.sh -o /tmp/setup_analyzer.sh && bash /tmp/setup_analyzer.sh
+mkdir -p ~/.config/ptt-indicator && chmod 700 ~/.config/ptt-indicator && read -rs "K?Groq API key: " && echo && printf 'GROQ_API_KEY=%s\n' "$K" > ~/.config/ptt-indicator/groq.env && chmod 600 ~/.config/ptt-indicator/groq.env && unset K && echo 已存好
 ```
 
-1. 第一次會印出一行公鑰：到 repo 的 Settings → Deploy keys 新增，**勾 Allow write access**，再執行一次。
-2. 接著會請你貼上 Groq API 金鑰（用個人帳號在 console.groq.com 建立；畫面不顯示，只存在 `~/.config/ptt-indicator/groq.env`，不進 repo）。
-3. 之後每 30 分鐘自動判斷新的候選並推上 GitHub；免費額度有每日上限，歷史文章會分幾天補完。記錄檔在 `~/ptt-indicator/logs/analyze.log`。
-
+每輪最多判斷 10 篇（`ANALYZE_MAX` 可調），新文章優先；Groq 免費額度用完或判斷失敗都不影響抓文章，下一輪再補。
+另一台電腦若也裝過 `setup_mac_analyzer.sh` 的排程，請停掉，避免兩台同時判斷：`launchctl bootout gui/$(id -u)/com.ptt-indicator.analyze`
