@@ -130,3 +130,19 @@ python3 -I scripts/build_dashboard_data.py data dashboard/data               # �
 - 站內搜尋只比對標題；`[創作]` 分類 2020 年才開始活躍，回測從 2020/4 起
 - 事件數少（一般門檻 23 個、嚴格門檻 8 個），且測了多個門檻與期間，p 值僅供參考
 - 結果為歷史統計，不構成投資建議；使用前請自行查證
+
+## 畢業文內文判斷（電腦 C，Groq）
+
+標題符合畢業文規則的文章，再讀內文交給 Groq 判斷：是不是作者本人做多賠錢、有沒有依據（對帳單截圖或具體虧損金額）。
+結果存在 `data/loss_labels.json`，每篇只判斷一次。**目前只存結果、不影響分數**；跟人工標記比對準確率、重跑回測之後，才決定要不要改用它算分。
+
+在電腦 C（個人 Mac、一般網路）執行一次就好：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/TrieKai/ptt-indicator/main/scripts/setup_mac_analyzer.sh -o /tmp/setup_analyzer.sh && bash /tmp/setup_analyzer.sh
+```
+
+1. 第一次會印出一行公鑰：到 repo 的 Settings → Deploy keys 新增，**勾 Allow write access**，再執行一次。
+2. 接著會請你貼上 Groq API 金鑰（用個人帳號在 console.groq.com 建立；畫面不顯示，只存在 `~/.config/ptt-indicator/groq.env`，不進 repo）。
+3. 之後每 30 分鐘自動判斷新的候選並推上 GitHub；免費額度有每日上限，歷史文章會分幾天補完。記錄檔在 `~/ptt-indicator/logs/analyze.log`。
+

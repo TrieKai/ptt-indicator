@@ -83,6 +83,9 @@ creative_posts = [p for p in orig if p["title"].startswith("[創作]")]
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from loss_rules import classify as loss_classify              # 只留下鄉民自己做多賠錢的文章（規則與排除原因見 loss_rules.py）
 loss_posts = [p for p in orig if loss_classify(p["title"])[0]]
+if os.environ.get("LOSS_IDS"):   # 實驗用：指定要算進畢業文的文章 id（例如只算內文有依據的），正式建置不會設定
+    _ids = set(json.load(open(os.environ["LOSS_IDS"], encoding="utf-8")))
+    loss_posts = [seen[i] for i in _ids if i in seen]
 hot_posts = [p for p in orig if cat(p["title"]) not in ("新聞", "情報", "公告")
              and any(k in p["title"] for k in GREED) and not any(k in p["title"] for k in ["斷頭", "賠光", "歸零", "追繳", "爆倉"])]
 cc, lc, hc = bucket(creative_posts), bucket(loss_posts), bucket(hot_posts)

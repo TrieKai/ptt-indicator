@@ -12,6 +12,8 @@ SRC, OUT = sys.argv[1], sys.argv[2]
 NAMES = ["daily", "events", "summary", "status", "posts"]
 page = open(os.path.join(SRC, "index.html"), encoding="utf-8").read()
 SITE_URL = os.environ.get("SITE_URL", "https://triekai.github.io/ptt-indicator/")
+# 瀏覽人數統計（GoatCounter，不用 cookie）：填上站台代號（<code>.goatcounter.com 的 code）才會啟用；空字串＝不統計
+GOATCOUNTER = os.environ.get("GOATCOUNTER", "")
 
 # ---------- 今日圖卡：連結預覽（og:image）----------
 load = lambda n: json.load(open(os.path.join(SRC, "data", f"{n}.json"), encoding="utf-8"))["rows"]
@@ -134,7 +136,11 @@ FOOT = """
 
 os.makedirs(os.path.join(OUT, "data"), exist_ok=True)
 with open(os.path.join(OUT, "index.html"), "w", encoding="utf-8") as f:
-    f.write(HEAD.replace("%NAMES%", str(NAMES)).replace("%OG%", OG).replace("%FONTS%", FONTS) + page + FOOT)
+    gc_head = (f'<script data-goatcounter="https://{GOATCOUNTER}.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>\n'
+               if GOATCOUNTER else "")
+    gc_note = "本站用 GoatCounter 統計瀏覽次數，不使用 cookie、不收集個人資料。<br>\n  " if GOATCOUNTER else ""
+    f.write(HEAD.replace("%NAMES%", str(NAMES)).replace("%OG%", OG).replace("%FONTS%", FONTS).replace("</head>", gc_head + "</head>")
+            + page + FOOT.replace("  資料來源：", "  " + gc_note + "資料來源：", 1))
 shutil.copyfile(os.path.join(SRC, "card.js"), os.path.join(OUT, "card.js"))
 open(os.path.join(OUT, "card.html"), "w", encoding="utf-8").write(CARD_HTML)
 os.makedirs(os.path.join(OUT, "og"), exist_ok=True)
