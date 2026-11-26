@@ -1,0 +1,1081 @@
+<meta name="dash-one-writer">
+<meta name="dash-form" content="dashboard">
+<style>
+  .lb { --lb-up: var(--color-bad); --lb-down: var(--color-ok); --lb-bot: var(--color-warn);
+        display: flex; flex-direction: column; gap: var(--cds-gap-xl); font-family: var(--font-anthropic-sans); color: var(--color-fg); }
+  .lb-head { display: flex; flex-direction: column; gap: var(--cds-gap-sm); }
+  .lb-title { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; text-wrap: balance; }
+  .lb-lede { margin: 0; max-width: 70ch; line-height: 1.6; }
+  .lb-num { font-variant-numeric: tabular-nums; }
+  .lb-cap { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); line-height: 1.5; }
+  .lb-sec { display: flex; flex-direction: column; gap: var(--cds-gap-md); min-width: 0; }
+  .lb-sec h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; }
+  .lb-sec h3 { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); margin: var(--cds-gap-sm) 0 0; }
+  .lb-sec > p { margin: 0; max-width: 74ch; line-height: 1.6; }
+  .lb-bar { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; }
+  .lb-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(165px, 1fr)); gap: var(--cds-gap-md); }
+  .lb-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); display: flex; flex-direction: column; gap: var(--cds-gap-xs); min-width: 0; }
+  .lb-card--score { border-width: 2px; }
+  .lb-card-name { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); letter-spacing: 0.02em; }
+  .lb-card-val { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; line-height: 1.2; overflow-wrap: anywhere; }
+  .lb-pill { align-self: flex-start; font-size: var(--cds-font-size-caption); padding: 1px 8px; border-radius: 999px; border: 1px solid var(--color-border-line); color: var(--color-fg-muted); }
+  .lb-pill--bot { border-color: var(--lb-bot); color: var(--lb-bot); font-weight: var(--cds-font-weight-medium); }
+  .lb-pill--top { font-weight: var(--cds-font-weight-medium); }
+  .lb-chart { position: relative; width: 100%; min-height: 380px; }
+  .lb-chart--short { min-height: 280px; }
+  .lb-chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .lb-chart text { font-size: var(--cds-font-size-caption); fill: var(--cds-text-secondary); font-family: var(--font-anthropic-sans); }
+  .lb-chart .lb-axis path, .lb-chart .lb-axis line { stroke: var(--cds-chart-axis); }
+  .lb-chart .lb-grid line { stroke: var(--cds-chart-grid); }
+  .lb-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); box-shadow: var(--cds-shadow-popover); border-radius: var(--cds-radius); padding: var(--cds-pad-sm) var(--cds-pad-md); font-size: var(--cds-font-size-caption); line-height: 1.5; max-width: 270px; z-index: 2; }
+  .lb-tip b { font-weight: var(--cds-font-weight-medium); }
+  .lb-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm) var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .lb-legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .lb-sw { width: 10px; height: 10px; border-radius: 50%; display: inline-block; box-sizing: border-box; }
+  .lb-sw--bot { background: var(--lb-bot); }
+  .lb-sw--bot-o { border: 2px solid var(--lb-bot); }
+  .lb-sw--top-o { border: 2px solid currentColor; }
+  .lb-tablewrap { overflow-x: auto; min-width: 0; }
+  .lb-table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; font-size: var(--cds-font-size-body); }
+  .lb-table th { text-align: right; font-weight: var(--cds-font-weight-medium); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); padding: 6px 10px; border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+  .lb-table td { text-align: right; padding: 6px 10px; border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+  .lb-table th:first-child, .lb-table td:first-child { text-align: left; }
+  .lb-table td.lb-l { text-align: left; white-space: normal; min-width: 16em; }
+  .lb-table tr.lb-row--combo td { font-weight: var(--cds-font-weight-medium); }
+  .lb-table tr.lb-click { cursor: pointer; }
+  .lb-table tr.lb-click:hover td, .lb-table tr.lb-click:focus-visible td { background: var(--color-panel); }
+  .lb-table tr.lb-sel td { background: var(--color-panel); }
+  .lb-table a { color: inherit; }
+  .lb-up { color: var(--lb-up); }
+  .lb-down { color: var(--lb-down); }
+  .lb-err { color: var(--color-bad); font-size: var(--cds-font-size-caption); }
+  .lb-notes summary { cursor: pointer; font-weight: var(--cds-font-weight-medium); }
+  .lb-notes ul { margin: var(--cds-gap-sm) 0 0; padding-left: 1.2em; line-height: 1.7; max-width: 82ch; }
+  .lb-thermo { display: flex; flex-wrap: wrap; gap: var(--cds-gap-lg); align-items: center; }
+  .lb-gauge { position: relative; flex: 0 1 320px; min-width: 240px; min-height: 180px; }
+  .lb-gauge svg { display: block; width: 100%; height: auto; }
+  .lb-gauge text { font-family: var(--font-anthropic-sans); fill: var(--cds-text-secondary); font-size: var(--cds-font-size-caption); }
+  .lb-gauge .lb-gauge-val { font-family: var(--font-anthropic-serif); fill: var(--color-fg); font-size: 2.6rem; }
+  .lb-thermo-side { flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: var(--cds-gap-sm); }
+  .lb-thermo-side p { margin: 0; line-height: 1.6; max-width: 60ch; }
+  .lb-pill--hot { font-weight: var(--cds-font-weight-medium); }
+  .lb-date { display: inline-flex; align-items: center; gap: 6px; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .lb-date input { font: inherit; color: var(--color-fg); background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: 4px 6px; }
+  .lb-btn { font: inherit; font-size: var(--cds-font-size-caption); color: var(--color-fg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: 5px 10px; cursor: pointer; }
+  .lb-btn:focus-visible, .lb-date input:focus-visible { outline: 2px solid var(--color-fg-muted); outline-offset: 1px; }
+  .lb-dual { gap: var(--cds-gap-sm); }
+  .lb-dual-text { margin: 0; line-height: 1.6; max-width: 80ch; }
+  #lb-ev-table td:nth-last-child(2) { white-space: normal; min-width: 16em; max-width: 26em; text-align: left; }
+  .lb-table tr.lb-now td { background: var(--color-panel); font-weight: var(--cds-font-weight-medium); }
+  @media print { .lb-bar select { display: none; } }
+</style>
+
+<div class="lb">
+  <header class="lb-head" id="lb-head">
+    <h1 class="lb-title">台股落底訊號回測</h1>
+    <p class="lb-lede">截至 <span class="lb-num" data-draw="asof" data-source="status" data-field="asof" data-where="signal=score">—</span>，鄉民恐慌溫度 <b class="lb-num" data-draw="sc-thermo" data-source="status" data-field="value" data-where="signal=thermo">—</b> / 100，落底分數 <b class="lb-num" data-draw="sc-score" data-source="status" data-field="value" data-where="signal=score">—</b> / 7，過熱分數 <b class="lb-num" data-draw="sc-gscore" data-source="status" data-field="value" data-where="signal=gscore">—</b> / 8，偏空警示 <b class="lb-num" data-draw="sc-wscore" data-source="status" data-field="value" data-where="signal=wscore">—</b> / 3。2019 年以來落底分數達到 4 以上 <span class="lb-num" data-draw="combo-n" data-source="summary" data-field="n" data-where="signal=combo4&amp;index=TAIEX">—</span> 次，之後 20 個交易日加權指數平均 <span class="lb-num" data-draw="combo-ret" data-source="summary" data-field="ret20" data-where="signal=combo4&amp;index=TAIEX">—</span>，扣掉跌深反彈後超額 <span class="lb-num" data-draw="combo-exc" data-source="summary" data-field="excess20" data-where="signal=combo4&amp;index=TAIEX">—</span>。</p>
+    <p class="lb-cap">紅色是漲、綠色是跌。回測期間 2019/1 起。PTT 訊號只看得到沒被刪的文章。歷史統計不代表未來，也不是投資建議。</p>
+  </header>
+
+  <section class="lb-sec" id="lb-thermo">
+    <h2>鄉民恐慌溫度計</h2>
+    <p>只用 PTT 恐慌面的文章（當天 09:00 到隔天 09:00 前發的算當天）：創作文、畢業／虧損文的 5 日篇數，各自跟過去 250 個交易日比，算出「比今天少的天數比例」，兩者平均換成 0–100。100 代表比過去一年任何一天都恐慌。溫度看的是「現在有多恐慌」，不保證接下來不會再跌。</p>
+    <div class="lb-thermo">
+      <div class="lb-gauge dash-skeleton" data-draw="gauge" data-source="status"></div>
+      <div class="lb-thermo-side">
+        <span class="lb-card-name">目前溫度</span>
+        <span class="lb-card-val"><span data-draw="thermo-val" data-source="status" data-field="value" data-where="signal=thermo">—</span> / 100</span>
+        <span class="lb-pill" data-draw="thermo-pill">—</span>
+        <span class="lb-cap" data-draw="thermo-asof">—</span>
+        <span class="lb-cap">創作文 5 日 <span class="lb-num" data-draw="thermo-c5" data-source="status" data-field="c5" data-where="signal=thermo">—</span> 篇・畢業／虧損文 5 日 <span class="lb-num" data-draw="thermo-l5" data-source="status" data-field="l5" data-where="signal=thermo">—</span> 篇</span>
+        <p>2019 年以來溫度第一次衝到 95 以上共 <b class="lb-num" data-draw="t-n" data-source="summary" data-field="n" data-where="signal=thermo95&amp;index=TAIEX">—</b> 次。加權指數的真正低點落在亮燈前後 5 天內的比例是 <b class="lb-num" data-draw="t-low" data-source="summary" data-field="ext_within5" data-where="signal=thermo95&amp;index=TAIEX">—</b>，之後 20 日平均 <b class="lb-num" data-draw="t-ret" data-source="summary" data-field="ret20" data-where="signal=thermo95&amp;index=TAIEX">—</b>，平均還會再跌 <b class="lb-num" data-draw="t-dd" data-source="summary" data-field="further_mean" data-where="signal=thermo95&amp;index=TAIEX">—</b>。次數很少，請保守看待。</p>
+      </div>
+    </div>
+    <div class="lb-card lb-dual" id="lb-dual">
+      <span class="lb-card-name">雙重確認：畢業文 5 日 ≥3 篇，同時創作文熱度 ≥90，且加權距 60 日高點跌 5% 以上</span>
+      <span class="lb-pill" data-draw="dual-pill">—</span>
+      <span class="lb-cap">畢業文 5 日 <span class="lb-num" data-draw="dual-l5" data-source="status" data-field="l5" data-where="signal=dual">—</span> 篇・創作文熱度 <span class="lb-num" data-draw="dual-ch" data-source="status" data-field="creative_heat" data-where="signal=dual">—</span>・加權距 60 日高點 <span class="lb-num" data-draw="dual-dd" data-source="status" data-field="dd60" data-where="signal=dual">—</span>・<span data-draw="dual-last">—</span></span>
+      <p class="lb-dual-text">創作文代表「大家正在恐慌」，畢業文代表「有人認賠出場」，兩個同時出現、而且大盤真的有跌，才是投降式賣壓。大盤條件用來排除單一個股事件，例如 2020/7/20 合一重挫，當時加權只比高點低 0.3%。2019 年以來共 <b class="lb-num" data-draw="d-n" data-source="summary" data-field="n" data-where="signal=dual&amp;index=TAIEX">—</b> 次，之後 20 日加權平均 <b class="lb-num" data-draw="d-ret" data-source="summary" data-field="ret20" data-where="signal=dual&amp;index=TAIEX">—</b>，扣掉跌深反彈後超額 <b class="lb-num" data-draw="d-exc" data-source="summary" data-field="excess20" data-where="signal=dual&amp;index=TAIEX">—</b>，低點落在亮燈前後 5 天內 <b class="lb-num" data-draw="d-low" data-source="summary" data-field="ext_within5" data-where="signal=dual&amp;index=TAIEX">—</b>。前後兩段（2019–2022、2023–2026）都成立，把門檻換成相鄰的數字也都成立；只有畢業文、沒有創作文恐慌時反而不準。次數只有個位數，請保守看待。</p>
+    </div>
+    <div class="lb-bar">
+      <select class="dash-select" id="lb-trange" aria-label="溫度期間">
+        <option value="1y">近 1 年</option>
+        <option value="3y">近 3 年</option>
+        <option value="all">2019 年至今</option>
+      </select>
+      <label class="lb-date">從 <input type="date" id="lb-tfrom"></label>
+      <label class="lb-date">到 <input type="date" id="lb-tto"></label>
+      <button type="button" class="lb-btn" id="lb-treset">重設範圍</button>
+    </div>
+    <div class="lb-chart dash-skeleton" data-draw="thermo-chart" data-source="daily events"></div>
+    <p class="lb-cap">上圖是加權指數，下圖是恐慌溫度；虛線是 90 與 95。紅點是溫度第一次衝到 95 以上的日子，黑色菱形是畢業文＋創作文同時亮燈的日子（都是 10 個交易日內不重複）。標記上方的文字是事件說明：有人工註記的重大事件用註記，其他的用當時標題裡最常出現的主題（例如「合一」）；指向標記可以看畢業文標題。灰點是人工註記的事件低點、但溫度沒有到 95 的時候（例如 2022/10，PTT 訊號沒抓到）。指向圖表可以看當天的篇數。按住滑鼠左右拖曳可以放大某一段，也可以輸入起訖日期，按「重設範圍」回到原本的期間。</p>
+    <h3>溫度分級與雙重確認：歷史上亮燈之後的表現</h3>
+    <div class="lb-bar">
+      <select class="dash-select" id="lb-tix" aria-label="分級回測指數">
+        <option value="TAIEX">加權指數</option>
+        <option value="TPEx">櫃買指數</option>
+      </select>
+    </div>
+    <div class="lb-tablewrap">
+      <table class="lb-table" id="lb-levels" data-source="summary" data-row-key="signal,index">
+        <thead><tr>
+          <th data-field="name">等級</th><th data-field="n">次數</th><th data-field="ret20">後 20 日</th><th data-field="win20">上漲比例</th>
+          <th data-field="excess20">20 日超額</th><th data-field="beat20">贏過配對</th><th data-field="ext_within5">低點在 ±5 天內</th>
+          <th data-field="further_mean">之後 20 日平均最大再跌</th><th data-field="ret60">後 60 日</th>
+        </tr></thead>
+        <tbody data-draw="thermo-levels"></tbody>
+      </table>
+    </div>
+    <p class="lb-cap">每一級都是溫度第一次衝到這個數字以上的日子（10 個交易日內不重複），隔天開盤進場。「超額」與「贏過配對」是跟同一年、前 5 天漲跌最接近的日子比，扣掉單純跌深反彈。級數越高越準、但次數越少；95 以上只有個位數，請保守看待。目前溫度所在的等級會標底色。</p>
+  </section>
+
+  <section class="lb-sec" id="lb-status">
+    <h2>目前各訊號</h2>
+    <h3>落底訊號</h3>
+    <div class="lb-cards">
+      <div class="lb-card lb-card--score">
+        <span class="lb-card-name">落底分數（近 5 日亮燈的訊號數）</span>
+        <span class="lb-card-val"><span data-draw="st-val" data-sig="score" data-source="status" data-field="value" data-where="signal=score">—</span> / 7</span>
+        <span class="lb-pill" data-draw="st-pill" data-sig="score">—</span>
+        <span class="lb-cap" data-draw="st-last" data-sig="score">—</span>
+      </div>
+      <div class="lb-card">
+        <span class="lb-card-name">美國 VIX（恐慌）</span>
+        <span class="lb-card-val" data-draw="st-val" data-sig="vix_high" data-source="status" data-field="value" data-where="signal=vix_high">—</span>
+        <span class="lb-cap">亮燈門檻 <span class="lb-num" data-draw="st-thr" data-sig="vix_high" data-source="status" data-field="threshold" data-where="signal=vix_high">—</span></span>
+        <span class="lb-pill" data-draw="st-pill" data-sig="vix_high">—</span>
+        <span class="lb-cap" data-draw="st-last" data-sig="vix_high">—</span>
+      </div>
+      <div class="lb-card">
+        <span class="lb-card-name">選擇權 P/C 成交量比</span>
+        <span class="lb-card-val" data-draw="st-val" data-sig="pc_high" data-source="status" data-field="value" data-where="signal=pc_high">—</span>
+        <span class="lb-cap">亮燈門檻 <span class="lb-num" data-draw="st-thr" data-sig="pc_high" data-source="status" data-field="threshold" data-where="signal=pc_high">—</span></span>
+        <span class="lb-pill" data-draw="st-pill" data-sig="pc_high">—</span>
+        <span class="lb-cap" data-draw="st-last" data-sig="pc_high">—</span>
+      </div>
+      <div class="lb-card">
+        <span class="lb-card-name">外資 5 日買賣超佔成交金額</span>
+        <span class="lb-card-val" data-draw="st-val" data-sig="foreign" data-source="status" data-field="value" data-where="signal=foreign">—</span>
+        <span class="lb-cap">亮燈門檻 <span class="lb-num" data-draw="st-thr" data-sig="foreign" data-source="status" data-field="threshold" data-where="signal=foreign">—</span></span>
+        <span class="lb-pill" data-draw="st-pill" data-sig="foreign">—</span>
+        <span class="lb-cap" data-draw="st-last" data-sig="foreign">—</span>
+      </div>
+      <div class="lb-card">
+        <span class="lb-card-name">融資張數 5 日變化</span>
+        <span class="lb-card-val" data-draw="st-val" data-sig="margin" data-source="status" data-field="value" data-where="signal=margin">—</span>
+        <span class="lb-cap">亮燈門檻 <span class="lb-num" data-draw="st-thr" data-sig="margin" data-source="status" data-field="threshold" data-where="signal=margin">—</span></span>
+        <span class="lb-pill" data-draw="st-pill" data-sig="margin">—</span>
+        <span class="lb-cap" data-draw="st-last" data-sig="margin">—</span>
+      </div>
+      <div class="lb-card">
+        <span class="lb-card-name">違約金額（相抵後）佔成交金額</span>
+        <span class="lb-card-val" data-draw="st-val" data-sig="default" data-source="status" data-field="value" data-where="signal=default">—</span>
+        <span class="lb-cap">亮燈門檻 <span class="lb-num" data-draw="st-thr" data-sig="default" data-source="status" data-field="threshold" data-where="signal=default">—</span></span>
+        <span class="lb-pill" data-draw="st-pill" data-sig="default">—</span>
+        <span class="lb-cap" data-draw="st-last" data-sig="default">—</span>
+      </div>
+      <div class="lb-card">
+        <span class="lb-card-name">PTT 畢業／虧損文</span>
+        <span class="lb-card-val" data-draw="st-val" data-sig="loss" data-source="status" data-field="value" data-where="signal=loss">—</span>
+        <span class="lb-cap">亮燈門檻 <span class="lb-num" data-draw="st-thr" data-sig="loss" data-source="status" data-field="threshold" data-where="signal=loss">—</span></span>
+        <span class="lb-pill" data-draw="st-pill" data-sig="loss">—</span>
+        <span class="lb-cap" data-draw="st-last" data-sig="loss">—</span>
+        <span class="lb-cap">本期從當天 09:00 起算，到下一個交易日 09:00 截止</span>
+      </div>
+      <div class="lb-card">
+        <span class="lb-card-name">PTT 創作文（當天）</span>
+        <span class="lb-card-val" data-draw="st-val" data-sig="creative" data-source="status" data-field="value" data-where="signal=creative">—</span>
+        <span class="lb-cap">亮燈門檻 <span class="lb-num" data-draw="st-thr" data-sig="creative" data-source="status" data-field="threshold" data-where="signal=creative">—</span></span>
+        <span class="lb-pill" data-draw="st-pill" data-sig="creative">—</span>
+        <span class="lb-cap" data-draw="st-last" data-sig="creative">—</span>
+        <span class="lb-cap">本期從當天 09:00 起算，到下一個交易日 09:00 截止</span>
+      </div>
+      <div class="lb-card">
+        <span class="lb-card-name">加權指數當天漲跌（對照）</span>
+        <span class="lb-card-val" data-draw="st-val" data-sig="bigdrop" data-source="status" data-field="value" data-where="signal=bigdrop">—</span>
+        <span class="lb-cap">亮燈門檻 <span class="lb-num" data-draw="st-thr" data-sig="bigdrop" data-source="status" data-field="threshold" data-where="signal=bigdrop">—</span></span>
+        <span class="lb-pill" data-draw="st-pill" data-sig="bigdrop">—</span>
+        <span class="lb-cap" data-draw="st-last" data-sig="bigdrop">—</span>
+      </div>
+    </div>
+    <h3>過熱訊號</h3>
+    <div class="lb-cards">
+      <div class="lb-card lb-card--score">
+        <span class="lb-card-name">過熱分數（近 5 日亮燈的訊號數）</span>
+        <span class="lb-card-val"><span data-draw="st-val" data-sig="gscore" data-source="status" data-field="value" data-where="signal=gscore">—</span> / 8</span>
+        <span class="lb-pill" data-draw="st-pill" data-sig="gscore">—</span>
+        <span class="lb-cap" data-draw="st-last" data-sig="gscore">—</span>
+      </div>
+      <div class="lb-card">
+        <span class="lb-card-name">美國 VIX（安逸）</span>
+        <span class="lb-card-val" data-draw="st-val" data-sig="vix_low" data-source="status" data-field="value" data-where="signal=vix_low">—</span>
+        <span class="lb-cap">亮燈門檻 <span class="lb-num" data-draw="st-thr" data-sig="vix_low" data-source="status" data-field="threshold" data-where="signal=vix_low">—</span></span>
+        <span class="lb-pill" data-draw="st-pill" data-sig="vix_low">—</span>
+        <span class="lb-cap" data-draw="st-last" data-sig="vix_low">—</span>
+      </div>
+      <div class="lb-card">
+        <span class="lb-card-name">選擇權 P/C 成交量比</span>
+        <span class="lb-card-val" data-draw="st-val" data-sig="pc_low" data-source="status" data-field="value" data-where="signal=pc_low">—</span>
+        <span class="lb-cap">亮燈門檻 <span class="lb-num" data-draw="st-thr" data-sig="pc_low" data-source="status" data-field="threshold" data-where="signal=pc_low">—</span></span>
+        <span class="lb-pill" data-draw="st-pill" data-sig="pc_low">—</span>
+        <span class="lb-cap" data-draw="st-last" data-sig="pc_low">—</span>
+      </div>
+      <div class="lb-card">
+        <span class="lb-card-name">外資臺股期貨淨未平倉</span>
+        <span class="lb-card-val" data-draw="st-val" data-sig="fut_long" data-source="status" data-field="value" data-where="signal=fut_long">—</span>
+        <span class="lb-cap">亮燈門檻 <span class="lb-num" data-draw="st-thr" data-sig="fut_long" data-source="status" data-field="threshold" data-where="signal=fut_long">—</span></span>
+        <span class="lb-pill" data-draw="st-pill" data-sig="fut_long">—</span>
+        <span class="lb-cap" data-draw="st-last" data-sig="fut_long">—</span>
+      </div>
+      <div class="lb-card">
+        <span class="lb-card-name">外資 5 日買賣超佔成交金額</span>
+        <span class="lb-card-val" data-draw="st-val" data-sig="foreign_buy" data-source="status" data-field="value" data-where="signal=foreign_buy">—</span>
+        <span class="lb-cap">亮燈門檻 <span class="lb-num" data-draw="st-thr" data-sig="foreign_buy" data-source="status" data-field="threshold" data-where="signal=foreign_buy">—</span></span>
+        <span class="lb-pill" data-draw="st-pill" data-sig="foreign_buy">—</span>
+        <span class="lb-cap" data-draw="st-last" data-sig="foreign_buy">—</span>
+      </div>
+      <div class="lb-card">
+        <span class="lb-card-name">融資金額 20 日變化</span>
+        <span class="lb-card-val" data-draw="st-val" data-sig="margin_up" data-source="status" data-field="value" data-where="signal=margin_up">—</span>
+        <span class="lb-cap">亮燈門檻 <span class="lb-num" data-draw="st-thr" data-sig="margin_up" data-source="status" data-field="threshold" data-where="signal=margin_up">—</span></span>
+        <span class="lb-pill" data-draw="st-pill" data-sig="margin_up">—</span>
+        <span class="lb-cap" data-draw="st-last" data-sig="margin_up">—</span>
+      </div>
+      <div class="lb-card">
+        <span class="lb-card-name">5 日成交金額比前 120 日平均</span>
+        <span class="lb-card-val" data-draw="st-val" data-sig="turnover" data-source="status" data-field="value" data-where="signal=turnover">—</span>
+        <span class="lb-cap">亮燈門檻 <span class="lb-num" data-draw="st-thr" data-sig="turnover" data-source="status" data-field="threshold" data-where="signal=turnover">—</span></span>
+        <span class="lb-pill" data-draw="st-pill" data-sig="turnover">—</span>
+        <span class="lb-cap" data-draw="st-last" data-sig="turnover">—</span>
+      </div>
+      <div class="lb-card">
+        <span class="lb-card-name">PTT 過熱文（財富自由、歐印、噴…）</span>
+        <span class="lb-card-val" data-draw="st-val" data-sig="hot_ptt" data-source="status" data-field="value" data-where="signal=hot_ptt">—</span>
+        <span class="lb-cap">亮燈門檻 <span class="lb-num" data-draw="st-thr" data-sig="hot_ptt" data-source="status" data-field="threshold" data-where="signal=hot_ptt">—</span></span>
+        <span class="lb-pill" data-draw="st-pill" data-sig="hot_ptt">—</span>
+        <span class="lb-cap" data-draw="st-last" data-sig="hot_ptt">—</span>
+        <span class="lb-cap">本期從當天 09:00 起算，到下一個交易日 09:00 截止</span>
+      </div>
+      <div class="lb-card">
+        <span class="lb-card-name">加權乖離 120 日均線</span>
+        <span class="lb-card-val" data-draw="st-val" data-sig="stretch" data-source="status" data-field="value" data-where="signal=stretch">—</span>
+        <span class="lb-cap">亮燈門檻 <span class="lb-num" data-draw="st-thr" data-sig="stretch" data-source="status" data-field="threshold" data-where="signal=stretch">—</span></span>
+        <span class="lb-pill" data-draw="st-pill" data-sig="stretch">—</span>
+        <span class="lb-cap" data-draw="st-last" data-sig="stretch">—</span>
+      </div>
+    </div>
+    <h3>偏空警示</h3>
+    <p class="lb-cap">外資臺股期貨空單到極端時，歷史上之後通常繼續偏弱，所以不算進落底分數，單獨列為警示。</p>
+    <div class="lb-cards">
+      <div class="lb-card lb-card--score">
+        <span class="lb-card-name">偏空警示（近 5 日亮燈的項目數）</span>
+        <span class="lb-card-val"><span data-draw="st-val" data-sig="wscore" data-source="status" data-field="value" data-where="signal=wscore">—</span> / 3</span>
+        <span class="lb-pill" data-draw="st-pill" data-sig="wscore">—</span>
+        <span class="lb-cap" data-draw="st-last" data-sig="wscore">—</span>
+      </div>
+      <div class="lb-card">
+        <span class="lb-card-name">外資臺股期貨淨未平倉</span>
+        <span class="lb-card-val" data-draw="st-val" data-sig="fut_short" data-source="status" data-field="value" data-where="signal=fut_short">—</span>
+        <span class="lb-cap">亮燈門檻 <span class="lb-num" data-draw="st-thr" data-sig="fut_short" data-source="status" data-field="threshold" data-where="signal=fut_short">—</span></span>
+        <span class="lb-pill" data-draw="st-pill" data-sig="fut_short">—</span>
+        <span class="lb-cap" data-draw="st-last" data-sig="fut_short">—</span>
+      </div>
+      <div class="lb-card">
+        <span class="lb-card-name">外資淨部位佔全市場未平倉</span>
+        <span class="lb-card-val" data-draw="st-val" data-sig="fut_ratio_short" data-source="status" data-field="value" data-where="signal=fut_ratio_short">—</span>
+        <span class="lb-cap">亮燈門檻 <span class="lb-num" data-draw="st-thr" data-sig="fut_ratio_short" data-source="status" data-field="threshold" data-where="signal=fut_ratio_short">—</span></span>
+        <span class="lb-pill" data-draw="st-pill" data-sig="fut_ratio_short">—</span>
+        <span class="lb-cap" data-draw="st-last" data-sig="fut_ratio_short">—</span>
+      </div>
+      <div class="lb-card">
+        <span class="lb-card-name">外資期貨 5 日淨部位變化</span>
+        <span class="lb-card-val" data-draw="st-val" data-sig="fut_chg_short" data-source="status" data-field="value" data-where="signal=fut_chg_short">—</span>
+        <span class="lb-cap">亮燈門檻 <span class="lb-num" data-draw="st-thr" data-sig="fut_chg_short" data-source="status" data-field="threshold" data-where="signal=fut_chg_short">—</span></span>
+        <span class="lb-pill" data-draw="st-pill" data-sig="fut_chg_short">—</span>
+        <span class="lb-cap" data-draw="st-last" data-sig="fut_chg_short">—</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="lb-sec" id="lb-chart-sec">
+    <h2>指數走勢與訊號亮燈日</h2>
+    <div class="lb-bar">
+      <select class="dash-select" id="lb-ix" aria-label="指數">
+        <option value="TAIEX">加權指數</option>
+        <option value="TPEx">櫃買指數</option>
+      </select>
+      <select class="dash-select" id="lb-range" aria-label="期間">
+        <option value="all">2019 年至今</option>
+        <option value="3y">近 3 年</option>
+        <option value="1y">近 1 年</option>
+        <option value="6m">近 6 個月</option>
+      </select>
+      <select class="dash-select" id="lb-strip" aria-label="色條顯示">
+        <option value="bottom">色條：落底訊號</option>
+        <option value="top">色條：過熱訊號</option>
+        <option value="warn">色條：偏空警示</option>
+      </select>
+      <label class="lb-date">從 <input type="date" id="lb-from"></label>
+      <label class="lb-date">到 <input type="date" id="lb-to"></label>
+      <button type="button" class="lb-btn" id="lb-zreset">重設範圍</button>
+    </div>
+    <div class="lb-legend">
+      <span><i class="lb-sw lb-sw--bot-o"></i>落底分數 ≥3</span>
+      <span><i class="lb-sw lb-sw--bot"></i>落底分數 ≥4</span>
+      <span class="lb-topc"><i class="lb-sw lb-sw--top-o"></i>過熱分數 ≥3</span>
+      <span class="lb-topc"><i class="lb-sw lb-sw--top"></i>過熱分數 ≥4</span>
+    </div>
+    <div class="lb-chart dash-skeleton" id="lb-main-chart" data-draw="chart" data-source="daily events"></div>
+    <p class="lb-cap">標記是分數第一次達到門檻的日子（10 個交易日內不重複）。落底標記上方的文字是事件說明：有人工註記的重大事件用註記，其次用當時 PTT 標題最常出現的主題；兩者都沒有的，放大到 2 年左右以內時改用灰字列出亮燈的訊號（例如「融資減＋外資賣＋VIX高」）。灰點是人工註記的事件低點、但落底分數沒有達到 3 的時候（例如 2022/10）。文字重疊時只留一個，指向標記可以看完整說明。價格軸是對數刻度。在圖上按住滑鼠左右拖曳可以放大某一段，也可以直接輸入起訖日期，按「重設範圍」回到原本的期間。下方色條是各訊號亮燈的日子，最底三列是每天的落底分數、過熱分數與偏空警示。指向圖表可以看當天狀況。</p>
+  </section>
+
+  <section class="lb-sec" id="lb-bottom">
+    <h2>落底訊號亮燈後的報酬</h2>
+    <p>「超額」是跟同一年、前 5 天漲跌幅最接近的 10 個交易日比較，扣掉單純跌深反彈的部分。「贏過配對」是事件中超額為正的比例。p 值是同年度隨機抽樣的平均報酬高於事件平均的機率，越小越不像運氣。</p>
+    <div class="lb-tablewrap">
+      <table class="lb-table" data-source="summary" data-row-key="signal,index">
+        <thead><tr>
+          <th data-field="name">訊號</th><th data-field="n">事件數</th><th data-field="entry">進場</th>
+          <th data-field="ret5">後 5 日</th><th data-field="ret20">後 20 日</th><th data-field="ret60">後 60 日</th>
+          <th data-field="excess5">5 日超額</th><th data-field="excess20">20 日超額</th><th data-field="beat20">20 日贏過配對</th><th data-field="p20">20 日 p 值</th>
+          <th data-field="excess60">60 日超額</th><th data-field="beat60">60 日贏過配對</th><th data-field="p60">60 日 p 值</th>
+        </tr></thead>
+        <tbody data-draw="sum-body" data-side="bottom"></tbody>
+      </table>
+    </div>
+    <div class="lb-chart lb-chart--short dash-skeleton" data-draw="excess-bars" data-side="bottom" data-source="summary"></div>
+    <p class="lb-cap">每個訊號扣掉跌深反彈後的超額報酬：由淺到深是後 5、20、60 日；紅色是正、綠色是負。</p>
+    <h3>離真正的低點多近</h3>
+    <p>每個點是一次事件：以亮燈日為 0，標出前後 20 個交易日內收盤最低的那一天。點在左邊代表低點已經過了，在右邊代表之後還會再跌。黑色短線是中位數。</p>
+    <div class="lb-chart lb-chart--short dash-skeleton" data-draw="timing" data-side="bottom" data-source="events summary"></div>
+    <div class="lb-tablewrap">
+      <table class="lb-table" data-source="summary" data-row-key="signal,index">
+        <thead><tr>
+          <th data-field="name">訊號</th><th data-field="ext_median">距低點中位數（交易日）</th><th data-field="ext_within5">低點在 ±5 日內</th>
+          <th data-field="ext_after">低點還在 5 日後</th><th data-field="further_mean">之後 20 日平均最大再跌</th><th data-field="further_big">再跌超過 5% 的比例</th><th data-field="off_ext">亮燈時距 60 日高點</th>
+        </tr></thead>
+        <tbody data-draw="timing-body" data-side="bottom"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="lb-sec" id="lb-top">
+    <h2>過熱訊號亮燈後的報酬</h2>
+    <p>過熱訊號要看的是之後會不會比較差。「跑輸配對」是事件中超額為負的比例，p 值是同年度隨機抽樣的平均報酬低於事件平均的機率，越小代表亮燈後確實偏弱。</p>
+    <div class="lb-tablewrap">
+      <table class="lb-table" data-source="summary" data-row-key="signal,index">
+        <thead><tr>
+          <th data-field="name">訊號</th><th data-field="n">事件數</th><th data-field="entry">進場</th>
+          <th data-field="ret5">後 5 日</th><th data-field="ret20">後 20 日</th><th data-field="ret60">後 60 日</th>
+          <th data-field="excess5">5 日超額</th><th data-field="excess20">20 日超額</th><th data-field="beat20">20 日跑輸配對</th><th data-field="p20">20 日 p 值</th>
+          <th data-field="excess60">60 日超額</th><th data-field="beat60">60 日跑輸配對</th><th data-field="p60">60 日 p 值</th>
+        </tr></thead>
+        <tbody data-draw="sum-body" data-side="top"></tbody>
+      </table>
+    </div>
+    <div class="lb-chart lb-chart--short dash-skeleton" data-draw="excess-bars" data-side="top" data-source="summary"></div>
+    <p class="lb-cap">過熱訊號扣掉價格因素後的超額報酬：由淺到深是後 5、20、60 日；綠色代表亮燈後表現比配對差。過熱訊號通常要看較長的期間。</p>
+    <h3>離真正的高點多近</h3>
+    <p>以亮燈日為 0，標出前後 20 個交易日內收盤最高的那一天。點在右邊代表之後還會再漲一段才見頂。</p>
+    <div class="lb-chart lb-chart--short dash-skeleton" data-draw="timing" data-side="top" data-source="events summary"></div>
+    <div class="lb-tablewrap">
+      <table class="lb-table" data-source="summary" data-row-key="signal,index">
+        <thead><tr>
+          <th data-field="name">訊號</th><th data-field="ext_median">距高點中位數（交易日）</th><th data-field="ext_within5">高點在 ±5 日內</th>
+          <th data-field="ext_after">高點還在 5 日後</th><th data-field="further_mean">之後 20 日平均最大再漲</th><th data-field="further_big">再漲超過 5% 的比例</th><th data-field="off_ext">亮燈時距 60 日低點</th>
+        </tr></thead>
+        <tbody data-draw="timing-body" data-side="top"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="lb-sec" id="lb-warn">
+    <h2>偏空警示亮燈後的報酬</h2>
+    <p>這三個項目都是外資臺股期貨部位：淨空單口數、淨部位佔全市場未平倉的比例、5 日內淨部位的變化，各自低於過去 250 個交易日的第 5 百分位就亮燈。看的是之後會不會比較差，「跑輸配對」與 p 值的意思跟過熱訊號一樣。</p>
+    <div class="lb-tablewrap">
+      <table class="lb-table" data-source="summary" data-row-key="signal,index">
+        <thead><tr>
+          <th data-field="name">項目</th><th data-field="n">事件數</th><th data-field="entry">進場</th>
+          <th data-field="ret5">後 5 日</th><th data-field="ret20">後 20 日</th><th data-field="ret60">後 60 日</th>
+          <th data-field="excess5">5 日超額</th><th data-field="excess20">20 日超額</th><th data-field="beat20">20 日跑輸配對</th><th data-field="p20">20 日 p 值</th>
+          <th data-field="excess60">60 日超額</th><th data-field="beat60">60 日跑輸配對</th><th data-field="p60">60 日 p 值</th>
+        </tr></thead>
+        <tbody data-draw="sum-body" data-side="warn"></tbody>
+      </table>
+    </div>
+    <div class="lb-chart lb-chart--short dash-skeleton" data-draw="excess-bars" data-side="warn" data-source="summary"></div>
+    <p class="lb-cap">扣掉價格因素後的超額報酬：由淺到深是後 5、20、60 日；綠色代表亮燈後表現比配對差。</p>
+    <h3>亮燈後離低點多遠</h3>
+    <div class="lb-chart lb-chart--short dash-skeleton" data-draw="timing" data-side="warn" data-source="events summary"></div>
+    <div class="lb-tablewrap">
+      <table class="lb-table" data-source="summary" data-row-key="signal,index">
+        <thead><tr>
+          <th data-field="name">項目</th><th data-field="ext_median">距低點中位數（交易日）</th><th data-field="ext_within5">低點在 ±5 日內</th>
+          <th data-field="ext_after">低點還在 5 日後</th><th data-field="further_mean">之後 20 日平均最大再跌</th><th data-field="further_big">再跌超過 5% 的比例</th><th data-field="off_ext">亮燈時距 60 日高點</th>
+        </tr></thead>
+        <tbody data-draw="timing-body" data-side="warn"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="lb-sec" id="lb-events">
+    <h2>事件明細</h2>
+    <div class="lb-bar">
+      <select class="dash-select" id="lb-evsig" aria-label="訊號">
+        <optgroup label="落底訊號">
+          <option value="dual">畢業文＋創作文同時亮燈</option>
+          <option value="thermo95">鄉民恐慌溫度 ≥95</option>
+          <option value="thermo90">鄉民恐慌溫度 ≥90</option>
+          <option value="combo4" selected>落底分數 ≥4</option>
+          <option value="combo3">落底分數 ≥3</option>
+          <option value="combo5_3">原 5 訊號落底分數 ≥3（對照）</option>
+          <option value="vix_high">美國 VIX 恐慌</option>
+          <option value="pc_high">選擇權 P/C 成交量比偏高</option>
+          <option value="foreign">外資 5 日大賣超（佔成交額）</option>
+          <option value="margin">融資張數 5 日大減</option>
+          <option value="default">違約金額爆量（佔成交額）</option>
+          <option value="loss">PTT 畢業／虧損文</option>
+          <option value="creative">PTT 創作文爆量</option>
+          <option value="bigdrop">加權單日跌 ≥3%（對照）</option>
+        </optgroup>
+        <optgroup label="過熱訊號">
+          <option value="gcombo4">過熱分數 ≥4</option>
+          <option value="gcombo3">過熱分數 ≥3</option>
+          <option value="vix_low">美國 VIX 過度安逸</option>
+          <option value="pc_low">選擇權 P/C 成交量比偏低</option>
+          <option value="fut_long">外資期貨淨多單極端</option>
+          <option value="foreign_buy">外資 5 日大買超（佔成交額）</option>
+          <option value="margin_up">融資金額 20 日大增</option>
+          <option value="turnover">成交金額爆量</option>
+          <option value="hot_ptt">PTT 過熱文爆量</option>
+          <option value="stretch">加權乖離 120 日線</option>
+        </optgroup>
+        <optgroup label="偏空警示">
+          <option value="fut_short">外資期貨淨空單極端</option>
+          <option value="fut_ratio_short">外資淨空單佔全市場未平倉（極端）</option>
+          <option value="fut_chg_short">外資 5 日大增空單</option>
+        </optgroup>
+      </select>
+    </div>
+    <div class="lb-tablewrap">
+      <table class="lb-table" id="lb-ev-table" data-source="events" data-row-key="signal,date">
+        <thead><tr>
+          <th data-field="date">日期</th><th data-field="value">當時數值</th><th data-field="tw_close">加權收盤</th>
+          <th data-field="tw_ret5">加權後 5 日</th><th data-field="tw_ret20">加權後 20 日</th><th data-field="tw_ret60">加權後 60 日</th>
+          <th data-field="tw_further">加權 20 日內最大再跌／再漲</th><th data-field="tw_ext">距加權低／高點</th>
+          <th data-field="tp_ret5">櫃買後 5 日</th><th data-field="tp_ret20">櫃買後 20 日</th><th data-field="tp_ret60">櫃買後 60 日</th>
+          <th data-field="tp_further">櫃買 20 日內最大再跌／再漲</th><th data-field="themes">事件／標題主題</th><th data-field="lit">亮燈的訊號</th>
+        </tr></thead>
+        <tbody data-draw="ev-body"></tbody>
+      </table>
+    </div>
+    <p class="lb-cap">落底訊號與偏空警示看「最大再跌」與距低點，過熱訊號看「最大再漲」與距高點；負的天數代表極值出現在亮燈之前。PTT 訊號可以點一列，下方會列出那次的文章。報酬從進場時點算起：單日大跌與乖離用當天收盤，其餘用隔天開盤（融資、法人等資料收盤後才公布；PTT 當天的篇數要到隔天 09:00 才完整）。</p>
+  </section>
+
+  <section class="lb-sec" id="lb-posts">
+    <h2>PTT 文章</h2>
+    <p>創作文、畢業／虧損文與過熱文的篇數，都來自下面這些文章。只比對標題，被刪的文章不在裡面。</p>
+    <div class="lb-bar">
+      <select class="dash-select" id="lb-psig" aria-label="文章類別">
+        <option value="creative">PTT 創作文</option>
+        <option value="loss">PTT 畢業／虧損文</option>
+        <option value="hot_ptt">PTT 過熱文</option>
+      </select>
+      <select class="dash-select" data-draw="pevent" aria-label="哪一次" data-source="posts"></select>
+    </div>
+    <div class="lb-tablewrap">
+      <table class="lb-table" data-source="posts" data-row-key="url">
+        <thead><tr><th data-field="posted">發文時間</th><th data-field="title">標題</th><th data-field="nrec">推文數</th></tr></thead>
+        <tbody data-draw="post-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <details class="lb-notes" id="lb-notes">
+    <summary>訊號定義、資料來源與限制</summary>
+    <ul>
+      <li>百分位門檻都只用「過去 250 個交易日」的資料，亮燈當下就知道，不偷看未來。回測期間 2019/1 起，2017/6–2018/12 的資料只用來算門檻。</li>
+      <li>外資大賣超／大買超：外資 5 日累計買賣超 ÷ 同期成交金額，低於第 5 百分位／高於第 95 百分位。用成交金額正規化，讓指數與成交量變大的年份可以比較。資料：證交所三大法人買賣金額統計表、每日市場成交資訊（經 FinMind 整理，抽樣比對一致）。</li>
+      <li>違約爆量：證券商申報投資人違約金額（買賣相抵後）÷ 成交日的成交金額，高於第 95 百分位。申報日是成交日後第 2 個營業日。資料：證交所違約公告專區。</li>
+      <li>融資大減：上市融資張數 5 日變化低於第 5 百分位。融資大增：融資金額 20 日變化高於第 95 百分位（用金額是因為張數會被低價股扭曲）。資料：證交所信用交易統計（經 FinMind 整理）。</li>
+      <li>畢業／虧損文：只算鄉民自己做多賠錢、認賠出場的原文（標題含畢業、斷頭、歸零、賠光、追繳、爆倉、違約交割）。排除新聞與情報、回文、問句與討論畢業文本身（例如「畢業文還沒出來，是不是還有得跌？」）、在講市場或個股的斷頭與違約（例如「大盤 融資斷頭多」）、空軍畢業（放空在上漲時賠光，方向相反），以及債券、學校、人生畢業等不相關的標題。5 個交易日內 3 篇以上亮燈。規則只看標題，仍可能有誤判。</li>
+      <li>創作文爆量：[創作] 原文當天 5 篇以上，且是前 60 個交易日平均的 4 倍以上。當天 09:00 到下一個交易日 09:00 前發的文章算當天（盤中、盤後、隔天開盤前與週末都算），所以用隔天開盤進場。</li>
+      <li>PTT 最新文章以列表頁為準：站內搜尋會比列表頁慢一段時間才收錄新文章。所有 PTT 訊號都用 09:00 分界：當天 09:00 到下一個交易日 09:00 前的文章算當天，因為畢業文有 29% 在盤中、54% 在收盤後發，創作文 80% 在收盤後發。最新一天的篇數要到下一個交易日 09:00 才完整。</li>
+      <li>過熱文：標題含財富自由、人生畢業、歐印、噴、翻倍、創新高、賺爛、上車的原文（排除新聞、公告），5 日內 5 篇以上且是前 60 日平均的 3 倍以上。</li>
+      <li>成交金額爆量：5 日平均成交金額比前 120 日平均的增幅高於第 95 百分位。乖離：加權收盤 ÷ 120 日均線 − 1 高於第 95 百分位。</li>
+      <li>美國 VIX：CBOE VIX 收盤高於第 95 百分位（恐慌）／低於第 5 百分位（安逸）。美股收盤在台灣隔天開盤前，所以用隔天開盤進場。資料：CBOE VIX History。</li>
+      <li>選擇權 P/C 成交量比：臺指選擇權賣權成交量 ÷ 買權成交量，高於第 95 百分位（大家搶買保護）／低於第 5 百分位。資料：期交所 Put/Call Ratio。台灣市場常看的「未平倉量比」習慣解讀方向相反（未平倉比高常被當成支撐），所以這裡用成交量比，未平倉比只在回測紀錄中參考。</li>
+      <li>偏空警示：外資臺股期貨（大台）淨未平倉口數、淨部位 ÷ 全市場未平倉、5 日淨部位變化，任一項低於第 5 百分位就亮燈。外資空單會隨指數變高而增加（2018–2026 相關係數約 −0.85，多半是現貨避險與套利），而且歷史上空單極端之後通常繼續偏弱，所以不算進落底分數。多單極端（高於第 95 百分位）仍放在過熱訊號。資料：期交所三大法人期貨（經 FinMind 整理，與期交所官方 701 天比對一致）。</li>
+      <li>臺指 VIX：期交所網站只提供最近 3 個月，完整歷史要到期貨智慧資訊商店付費申購，所以沒有放進回測。</li>
+      <li>畢業文＋創作文同時亮燈（雙重確認）：畢業／虧損文 5 日累計 ≥3 篇，同時創作文 5 日篇數的熱度 ≥90（比過去 250 個交易日中 90% 的日子多），而且加權指數距 60 日高點至少跌 5%。大盤條件是看到 2020/7/20 合一重挫的反例後加上的，門檻用 5% 或 8% 結果相同。隔天開盤進場。檢查過前後兩段（2019–2022、2023–2026）與相鄰門檻（畢業文 2–4 篇 × 創作文熱度 80–95），結果都一致。</li>
+      <li>事件說明：PTT 訊號的事件，會從當時 5 日內畢業文與創作文的標題，用關鍵字計算最常出現的主題（例如合一、航運、關稅／川普、被動元件、輝達／AI），並列出畢業文標題。2020/3、2021/5、2024/7、2024/8、2025/4 另有人工註記的事件名稱，是依公開資訊整理，請自行查證。</li>
+      <li>鄉民恐慌溫度：創作文與畢業／虧損文的 5 日篇數，各自跟過去 250 個交易日比，算出比今天少的天數比例，兩者平均乘以 100。沒有相關文章時是 0。≥80、≥85、≥90、≥95 四個等級各自當作事件，用隔天開盤進場回測。門檻 95 是同時測過 90 與 95 後的結果，樣本只有個位數，請保守看待。</li>
+      <li>落底分數／過熱分數：過去 5 個交易日內，各自 8 個訊號有幾個亮過燈（落底 0–7、過熱 0–8），分數 ≥3、≥4 當作事件。「原 5 訊號」是加入選擇權、期貨與 VIX 之前的版本，留著對照。單日跌 3% 只當對照，不算進分數。同一個訊號 10 個交易日內重複亮燈只算第一次。</li>
+      <li>指數：證交所發行量加權股價指數、櫃買中心櫃買指數。</li>
+      <li>限制：PTT 只看得到沒被刪的文章；落底分數用的訊號是看過單一訊號回測後挑的，同一段資料再回測會偏樂觀；事件數少且測試組合多；2019 年以來多為多頭市場。</li>
+    </ul>
+  </details>
+</div>
+
+<script>
+window.LB = {
+  ix: 'TAIEX', tix: 'TAIEX', range: 'all', trange: '1y', strip: 'bottom', evsig: 'combo4', psig: 'creative', pevent: null,
+  BORDER: ['dual', 'thermo95', 'thermo90', 'combo4', 'combo3', 'combo5_3', 'vix_high', 'pc_high', 'foreign', 'margin', 'default', 'loss', 'creative', 'bigdrop'],
+  WORDER: ['fut_short', 'fut_ratio_short', 'fut_chg_short'],
+  TORDER: ['gcombo4', 'gcombo3', 'vix_low', 'pc_low', 'fut_long', 'foreign_buy', 'margin_up', 'turnover', 'hot_ptt', 'stretch'],
+  STRIP: {
+    bottom: [['vix_high', '美國VIX高'], ['pc_high', 'P/C偏高'], ['foreign', '外資大賣'], ['margin', '融資大減'], ['default', '違約爆量'], ['loss', '畢業文'], ['creative', '創作文'], ['bigdrop', '單日跌3%']],
+    warn: [['fut_short', '淨空單極端'], ['fut_ratio_short', '空單佔比極端'], ['fut_chg_short', '5日大增空單']],
+    top: [['vix_low', '美國VIX低'], ['pc_low', 'P/C偏低'], ['fut_long', '外資多單'], ['foreign_buy', '外資大買'], ['margin_up', '融資大增'], ['turnover', '量能爆量'], ['hot_ptt', '過熱文'], ['stretch', '乖離過大']],
+  },
+  SHORT: { dual: '雙重確認', thermo95: '溫度≥95', thermo90: '溫度≥90', combo4: '落底≥4', combo3: '落底≥3', combo5_3: '原5訊號≥3', vix_high: '美國VIX高', pc_high: 'P/C偏高', fut_short: '淨空單極端', fut_ratio_short: '空單佔比極端', fut_chg_short: '5日大增空單', foreign: '外資大賣', margin: '融資大減', default: '違約爆量', loss: '畢業文', creative: '創作文', bigdrop: '單日跌3%',
+    gcombo4: '過熱≥4', gcombo3: '過熱≥3', vix_low: '美國VIX低', pc_low: 'P/C偏低', fut_long: '外資多單', foreign_buy: '外資大買', margin_up: '融資大增', turnover: '量能爆量', hot_ptt: '過熱文', stretch: '乖離過大' },
+  PTT: ['creative', 'loss', 'hot_ptt'],
+  parse: d3.utcParse('%Y-%m-%d'),
+  date: d3.utcFormat('%Y/%m/%d'),
+  pct: (x) => x == null ? '—' : (x > 0 ? '+' : '') + x.toFixed(2) + '%',
+  pct0: (x) => x == null ? '—' : Math.round(x) + '%',
+  num: (x, d) => x == null ? '—' : Number(x).toLocaleString('en-US', { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }),
+  cls: (x) => x == null ? '' : x > 0 ? 'lb-up' : x < 0 ? 'lb-down' : '',
+  color: (i) => dash.colors[i % dash.colors.length],
+  topColor: () => dash.colors[2 % dash.colors.length],
+  done: (el) => el.classList.remove('dash-skeleton'),
+  zMain: null, zTherm: null,
+  evLabel: (r) => r.note || (r.themes ? r.themes.split('、')[0].replace(/×\d+$/, '') : ''),
+  LIT_SHORT: { 'PTT 創作文爆量': '創作文', 'PTT 畢業／虧損文': '畢業文', '融資張數 5 日大減': '融資減', '違約金額爆量（佔成交額）': '違約',
+    '外資 5 日大賣超（佔成交額）': '外資賣', '選擇權 P/C 成交量比偏高': 'P/C高', '美國 VIX 恐慌': 'VIX高' },
+  litShort: (r) => {
+    const s = (r.lit || '').split('、').filter(Boolean).map((t) => LB.LIT_SHORT[t] || t);
+    return s.length > 3 ? s.slice(0, 2).join('＋') + '等' + s.length + '項' : s.join('＋');
+  },
+  titles: (r) => (r.loss_titles == null || r.loss_titles === '' ? [] : Array.isArray(r.loss_titles) ? r.loss_titles : String(r.loss_titles).split('｜')).filter(Boolean),
+  evLines: (r) => [r.note ? '事件：' + r.note : '', r.themes ? '標題主題：' + r.themes : '', LB.titles(r).length ? '畢業文：' + LB.titles(r).slice(0, 2).join('、') : ''].filter(Boolean),
+  syncDates: (a, b, rows) => {
+    const f = d3.utcFormat('%Y-%m-%d');
+    document.querySelectorAll(a).forEach((i) => { i.value = f(rows[0].t); });
+    document.querySelectorAll(b).forEach((i) => { i.value = f(rows[rows.length - 1].t); });
+  },
+};
+</script>
+
+<script>
+document.querySelectorAll('.lb-topc').forEach((e) => { e.style.color = LB.topColor(); });
+document.querySelectorAll('.lb-sw--top').forEach((e) => { e.style.background = LB.topColor(); });
+document.querySelectorAll('#lb-ix').forEach((s) => s.addEventListener('change', () => {
+  LB.ix = s.value; ['chart', 'sum-body', 'excess-bars', 'timing', 'timing-body'].forEach((n) => dash.draw(n));
+}));
+document.querySelectorAll('#lb-range').forEach((s) => s.addEventListener('change', () => { LB.range = s.value; LB.zMain = null; dash.draw('chart'); }));
+const lbZoomInputs = (fromId, toId, key, name) => document.querySelectorAll(fromId + ',' + toId).forEach((i) => i.addEventListener('change', () => {
+  const f = document.querySelector(fromId), t = document.querySelector(toId);
+  if (f && t && f.value && t.value && f.value < t.value) { LB[key] = [LB.parse(f.value), LB.parse(t.value)]; dash.draw(name); }
+}));
+lbZoomInputs('#lb-from', '#lb-to', 'zMain', 'chart');
+lbZoomInputs('#lb-tfrom', '#lb-tto', 'zTherm', 'thermo-chart');
+document.querySelectorAll('#lb-zreset').forEach((b) => b.addEventListener('click', () => { LB.zMain = null; dash.draw('chart'); }));
+document.querySelectorAll('#lb-treset').forEach((b) => b.addEventListener('click', () => { LB.zTherm = null; dash.draw('thermo-chart'); }));
+document.querySelectorAll('#lb-tix').forEach((s) => s.addEventListener('change', () => { LB.tix = s.value; dash.draw('thermo-levels'); }));
+document.querySelectorAll('#lb-trange').forEach((s) => s.addEventListener('change', () => { LB.trange = s.value; LB.zTherm = null; dash.draw('thermo-chart'); }));
+document.querySelectorAll('#lb-strip').forEach((s) => s.addEventListener('change', () => { LB.strip = s.value; dash.draw('chart'); }));
+document.querySelectorAll('#lb-evsig').forEach((s) => s.addEventListener('change', () => { LB.evsig = s.value; dash.draw('ev-body'); }));
+document.querySelectorAll('#lb-psig').forEach((s) => s.addEventListener('change', () => { LB.psig = s.value; LB.pevent = null; dash.draw('pevent'); dash.draw('post-body'); }));
+</script>
+
+<script>
+// 標題句與狀態卡
+const statusRow = (sig) => { const s = dash.data('status'); return s.status === 'ok' ? s.data.find((r) => r.signal === sig) : null; };
+const sumRow = (sig, ix) => { const s = dash.data('summary'); return s.status === 'ok' ? s.data.find((r) => r.signal === sig && r.index === ix) : null; };
+dash.draw('asof', (el) => { const r = statusRow('score'); el.textContent = r ? LB.date(LB.parse(r.asof)) : '—'; });
+dash.draw('sc-score', (el) => { const r = statusRow('score'); el.textContent = r ? String(r.value) : '—'; });
+dash.draw('sc-thermo', (el) => { const r = statusRow('thermo'); el.textContent = r ? r.value.toFixed(1) : '—'; });
+dash.draw('sc-gscore', (el) => { const r = statusRow('gscore'); el.textContent = r ? String(r.value) : '—'; });
+dash.draw('sc-wscore', (el) => { const r = statusRow('wscore'); el.textContent = r ? String(r.value) : '—'; });
+dash.draw('combo-n', (el) => { const r = sumRow('combo4', 'TAIEX'); el.textContent = r ? String(r.n) : '—'; });
+dash.draw('combo-ret', (el) => { const r = sumRow('combo4', 'TAIEX'); el.textContent = r ? LB.pct(r.ret20) : '—'; });
+dash.draw('combo-exc', (el) => { const r = sumRow('combo4', 'TAIEX'); el.textContent = r ? LB.pct(r.excess20) : '—'; });
+
+const UNIT = { foreign: LB.pct, foreign_buy: LB.pct, margin: LB.pct, margin_up: LB.pct, turnover: (v) => (v > 0 ? '+' : '') + v.toFixed(1) + '%',
+  stretch: LB.pct, bigdrop: LB.pct, default: (v) => '萬分之 ' + v.toFixed(3), loss: (v) => v + ' 篇', creative: (v) => v + ' 篇', hot_ptt: (v) => v + ' 篇',
+  pc_high: (v) => v.toFixed(2) + '%', pc_low: (v) => v.toFixed(2) + '%', fut_short: (v) => (v > 0 ? '+' : '') + v + ' 口', fut_long: (v) => (v > 0 ? '+' : '') + v + ' 口',
+  vix_high: (v) => v.toFixed(2), vix_low: (v) => v.toFixed(2), score: (v) => String(v), gscore: (v) => String(v), wscore: (v) => String(v),
+  fut_ratio_short: (v) => (v > 0 ? '+' : '') + v.toFixed(1) + '%', fut_chg_short: (v) => (v > 0 ? '+' : '') + v + ' 口' };
+
+dash.draw('st-val', (el) => { const r = statusRow(el.dataset.sig); el.textContent = r && r.value != null ? UNIT[el.dataset.sig](r.value) : '—'; });
+dash.draw('st-thr', (el) => { const r = statusRow(el.dataset.sig); el.textContent = r && r.threshold != null ? r.rule + ' ' + UNIT[el.dataset.sig](r.threshold) : '—'; });
+dash.draw('st-pill', (el) => {
+  const r = statusRow(el.dataset.sig);
+  el.className = 'lb-pill'; el.style.borderColor = ''; el.style.color = '';
+  if (!r) { el.textContent = '—'; return; }
+  const on = r.lit5 === 1, sig = el.dataset.sig, isScore = sig === 'score' || sig === 'gscore';
+  el.textContent = sig === 'wscore' ? (on ? '警示亮燈' : '未亮燈') : isScore ? (on ? '分數 ≥3' : '分數 <3') : (on ? '近 5 日亮燈' : '近 5 日未亮');
+  if (on && r.side === 'top') { el.classList.add('lb-pill--top'); el.style.borderColor = LB.topColor(); el.style.color = LB.topColor(); }
+  else if (on && r.side === 'warn') { el.classList.add('lb-pill--top'); el.style.borderColor = 'var(--lb-down)'; el.style.color = 'var(--lb-down)'; }
+  else if (on) el.classList.add('lb-pill--bot');
+});
+dash.draw('st-last', (el) => {
+  const r = statusRow(el.dataset.sig);
+  el.textContent = r ? '資料日 ' + LB.date(LB.parse(r.asof)) + '・' + (r.last_lit ? '上次亮燈 ' + LB.date(LB.parse(r.last_lit)) : '期間內未亮燈') : '—';
+});
+</script>
+
+<script>
+// 主圖
+dash.draw('chart', (el) => {
+  const d = dash.data('daily'), e = dash.data('events');
+  if (d.status === 'loading' || e.status === 'loading') { el.replaceChildren(); el.textContent = '—'; return; }
+  LB.done(el); el.replaceChildren();
+  if (d.status !== 'ok' || e.status !== 'ok') { const p = document.createElement('p'); p.className = 'lb-err'; p.textContent = '指數資料載入失敗。'; el.append(p); return; }
+  const key = LB.ix === 'TAIEX' ? 'taiex' : 'tpex', ckey = LB.ix === 'TAIEX' ? 'tw_close' : 'tp_close';
+  let rows = d.data.map((r) => ({ ...r, t: LB.parse(r.date) })).filter((r) => r[key] != null);
+  const last = rows[rows.length - 1].t;
+  const back = { all: null, '3y': d3.utcYear.offset(last, -3), '1y': d3.utcYear.offset(last, -1), '6m': d3.utcMonth.offset(last, -6) }[LB.range];
+  if (back && !LB.zMain) rows = rows.filter((r) => r.t >= back);
+  if (LB.zMain) rows = rows.filter((r) => r.t >= LB.zMain[0] && r.t <= LB.zMain[1]);
+  if (rows.length < 2) { const p = document.createElement('p'); p.className = 'lb-err'; p.textContent = '這段期間沒有資料，請按「重設範圍」。'; el.append(p); return; }
+  LB.syncDates("#lb-from", "#lb-to", rows);
+  const spanD = (rows[rows.length - 1].t - rows[0].t) / 864e5;
+  const strip = LB.STRIP[LB.strip];
+  const W = Math.max(280, el.clientWidth), narrow = W < 560;
+  const priceH = narrow ? 200 : 260, rowH = 13, stripTop = priceH + 14;
+  const labels = strip.map((s) => s[1]).concat(['落底分數', '過熱分數', '偏空警示']);
+  const H = stripTop + labels.length * rowH + 22;
+  const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img')
+    .attr('aria-label', (LB.ix === 'TAIEX' ? '加權指數' : '櫃買指數') + '走勢，標出落底分數與過熱分數達門檻的日子，以及各訊號亮燈日');
+  const lab = svg.append('g');
+  labels.forEach((t, i) => lab.append('text').attr('y', stripTop + i * rowH + rowH - 3).text(t));
+  const [lo, hi] = d3.extent(rows, (r) => r[key]);
+  const y = d3.scaleLog().domain([lo * 0.97, hi * 1.03]).range([priceH - 4, 8]);
+  let ticks = y.ticks(6).filter((v) => v >= lo * 0.97 && v <= hi * 1.03);
+  while (ticks.length > 6) ticks = ticks.filter((v, i) => i % 2 === 0);
+  const probe = svg.append('g').selectAll('text').data(ticks).join('text').text((v) => LB.num(v));
+  const labW = Math.max(...lab.selectAll('text').nodes().concat(probe.nodes()).map((n) => n.getComputedTextLength()));
+  probe.remove();
+  const m = { l: Math.ceil(labW) + 10, r: 8 };
+  lab.selectAll('text').attr('x', m.l - 6).attr('text-anchor', 'end');
+  const x = d3.scaleUtc().domain(d3.extent(rows, (r) => r.t)).range([m.l, W - m.r]);
+  svg.append('g').attr('class', 'lb-grid').selectAll('line').data(ticks).join('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y).attr('y2', y);
+  svg.append('g').selectAll('text').data(ticks).join('text').attr('x', m.l - 6).attr('y', (v) => y(v) + 4).attr('text-anchor', 'end').text((v) => LB.num(v));
+  svg.append('g').attr('class', 'lb-axis').attr('transform', `translate(0,${H - 20})`)
+    .call(d3.axisBottom(x).ticks(narrow ? 4 : 8).tickSizeOuter(0).tickFormat(d3.utcFormat(spanD < 800 ? '%Y/%m' : '%Y')));
+  svg.append('path').datum(rows).attr('fill', 'none').attr('stroke-width', 1.5).style('stroke', LB.color(0))
+    .attr('d', d3.line().x((r) => x(r.t)).y((r) => y(r[key])));
+  const t0 = rows[0].t, top = LB.topColor();
+  const ev = e.data.filter((r) => ['combo3', 'combo4', 'gcombo3', 'gcombo4'].includes(r.signal) && LB.parse(r.date) >= t0 && r[ckey] != null)
+    .sort((a, b) => a.signal.endsWith('4') - b.signal.endsWith('4'));
+  svg.append('g').selectAll('circle').data(ev).join('circle')
+    .attr('cx', (r) => x(LB.parse(r.date))).attr('cy', (r) => y(r[ckey])).attr('r', (r) => (r.signal.endsWith('4') ? 5.5 : 4.5))
+    .style('fill', (r) => (r.signal.endsWith('4') ? (r.side === 'top' ? top : 'var(--lb-bot)') : 'var(--color-bg)'))
+    .style('stroke', (r) => (r.side === 'top' ? top : 'var(--lb-bot)')).attr('stroke-width', 2);
+  // 事件文字（只標落底分數）：人工註記 > 標題主題 > 亮燈訊號；同一個事件 20 個交易日內只標一次，文字互相重疊就略過（指向標記仍看得到）
+  const idxOf = new Map(rows.map((r, i) => [r.date, i]));
+  const bev = ev.filter((r) => r.side !== 'top' && idxOf.has(r.date)).map((r) => {
+    const main = LB.evLabel(r);
+    return { r, text: main || LB.litShort(r), rank: (r.note ? 0 : main ? 1 : 2) * 2 + (r.signal === 'combo4' ? 0 : 1) };
+  }).concat(e.data.filter((r) => r.signal === 'note' && idxOf.has(r.date) && r[ckey] != null && !ev.some((q) => q.note === r.note))
+    .map((r) => ({ r, text: r.note + '（落底分數未達 3）', rank: 1.5 })))
+    .filter((o) => o.text && (o.rank < 4 || (!narrow && spanD < 800)))
+    .sort((a, b) => a.rank - b.rank || (a.r.date < b.r.date ? -1 : 1));
+  const placed = [], cw = (t) => [...t].reduce((n, c) => n + (c.charCodeAt(0) > 255 ? 10 : 6), 0);
+  const hit = (p, q) => p[0] < q[2] && q[0] < p[2] && p[1] < q[3] && q[1] < p[3];
+  const dots = ev.map((r) => { const dx = x(LB.parse(r.date)), dy = y(r[ckey]); return [dx - 6, dy - 6, dx + 6, dy + 6]; });
+  const bisL = d3.bisector((r) => r.t).left;
+  const onLine = (q) => { for (let k = Math.max(0, bisL(rows, x.invert(q[0])) - 1); k < rows.length && x(rows[k].t) <= q[2] + 1; k++) { const v = y(rows[k][key]); if (v >= q[1] - 1 && v <= q[3] + 1) return true; } return false; };
+  bev.forEach((o) => {
+    const i = idxOf.get(o.r.date), px = x(LB.parse(o.r.date)), py = y(o.r[ckey]), w = cw(o.text);
+    if (placed.some((q) => (q.text === o.text || (o.r.note && q.r.note === o.r.note)) && Math.abs(q.i - i) <= 20)) return;
+    const cx = Math.min(Math.max(px, m.l + w / 2), W - m.r - w / 2);
+    // 先放在低點下方（底部下面通常是空的），放不下再放上方；第一輪連價格線也避開，第二輪只避開文字與標記
+    for (const strict of [true, false]) {
+      for (const dy of [18, 30, 42, -11, -23, -35]) {
+        const ty = py + dy, box = [cx - w / 2 - 3, ty - 9, cx + w / 2 + 3, ty + 2];
+        if (box[1] < 0 || ty > priceH - 2) continue;
+        if (placed.some((q) => hit(box, q.box)) || dots.some((q) => hit(box, q)) || (strict && onLine(box))) continue;
+        placed.push({ ...o, i, cx, ty, box }); return;
+      }
+    }
+  });
+  svg.append('g').selectAll('circle').data(placed.filter((o) => o.r.signal === 'note')).join('circle').attr('cx', (o) => x(LB.parse(o.r.date))).attr('cy', (o) => y(o.r[ckey]))
+    .attr('r', 3).style('fill', 'var(--color-fg-muted)');
+  svg.append('g').selectAll('text').data(placed).join('text').attr('x', (o) => o.cx).attr('y', (o) => o.ty).attr('text-anchor', 'middle')
+    .style('font-size', '10px').style('paint-order', 'stroke').style('stroke', 'var(--color-bg)').style('stroke-width', '3px').style('stroke-linejoin', 'round')
+    .style('fill', (o) => (o.rank < 4 ? 'var(--color-fg)' : 'var(--color-fg-muted)')).text((o) => o.text);
+  const step = Math.max(1.5, (W - m.l - m.r) / rows.length);
+  strip.forEach(([k], i) => {
+    svg.append('rect').attr('x', m.l).attr('width', W - m.l - m.r).attr('y', stripTop + i * rowH + 2).attr('height', rowH - 4).style('fill', 'var(--cds-chart-grid)').attr('opacity', 0.5);
+    svg.append('g').selectAll('rect').data(rows.filter((r) => r['f_' + k] === 1)).join('rect')
+      .attr('x', (r) => x(r.t) - step / 2).attr('width', step).attr('y', stripTop + i * rowH + 2).attr('height', rowH - 4).style('fill', LB.color(i + 1));
+  });
+  [['score', 'var(--lb-bot)'], ['gscore', top], ['wscore', 'var(--lb-down)']].forEach(([f, c], j) => {
+    const sy = stripTop + (strip.length + j) * rowH + 2;
+    svg.append('g').selectAll('rect').data(rows.filter((r) => r[f] > 0)).join('rect')
+      .attr('x', (r) => x(r.t) - step / 2).attr('width', step).attr('y', sy).attr('height', rowH - 4)
+      .style('fill', c).attr('opacity', (r) => (f === 'wscore' ? 0.4 + 0.2 * r[f] : r[f] === 1 ? 0.2 : r[f] === 2 ? 0.45 : r[f] === 3 ? 0.75 : 1));
+  });
+  const tip = document.createElement('div'); tip.className = 'lb-tip'; tip.hidden = true; el.append(tip);
+  const rule = svg.append('line').attr('y1', 4).attr('y2', H - 20).style('stroke', 'var(--cds-chart-reference)').attr('opacity', 0);
+  const bis = d3.bisector((r) => r.t).center;
+  const all = LB.STRIP.bottom.concat(LB.STRIP.top, LB.STRIP.warn);
+  const selR = svg.append('rect').attr('y', 0).attr('height', H - 20).attr('width', 0).style('fill', 'var(--cds-chart-muted)').attr('opacity', 0.3);
+  let dragX = null;
+  svg.append('rect').attr('x', m.l).attr('y', 0).attr('width', W - m.l - m.r).attr('height', H - 20).attr('fill', 'transparent').style('cursor', 'crosshair')
+    .on('pointerdown', (evt) => {
+      if (evt.pointerType !== 'mouse' || evt.button !== 0) return;
+      dragX = d3.pointer(evt)[0]; selR.attr('x', dragX).attr('width', 0); evt.currentTarget.setPointerCapture(evt.pointerId); evt.preventDefault();
+    })
+    .on('pointerup', (evt) => {
+      if (dragX == null) return;
+      const px = d3.pointer(evt)[0], a = Math.min(px, dragX), b = Math.max(px, dragX); dragX = null; selR.attr('width', 0);
+      if (b - a > 8) { LB.zMain = [x.invert(a), x.invert(b)]; dash.draw('chart'); }
+    })
+    .on('pointermove', (evt) => {
+      const [px] = d3.pointer(evt);
+      if (dragX != null) { selR.attr('x', Math.min(px, dragX)).attr('width', Math.abs(px - dragX)); tip.hidden = true; return; }
+      const r = rows[bis(rows, x.invert(px))];
+      rule.attr('x1', x(r.t)).attr('x2', x(r.t)).attr('opacity', 1);
+      const lit = all.filter(([k]) => r['f_' + k] === 1).map((s) => s[1]);
+      tip.replaceChildren();
+      const b = document.createElement('b'); b.textContent = LB.date(r.t); tip.append(b);
+      [(LB.ix === 'TAIEX' ? '加權 ' : '櫃買 ') + LB.num(r[key], 2), '落底分數 ' + r.score + ' / 7・過熱分數 ' + r.gscore + ' / 8・偏空警示 ' + r.wscore + ' / 3',
+        lit.length ? '當天亮燈：' + lit.join('、') : '當天沒有訊號亮燈'].forEach((t) => { const div = document.createElement('div'); div.textContent = t; tip.append(div); });
+      const ri = idxOf.get(r.date), near = ev.filter((q) => Math.abs((idxOf.get(q.date) ?? -99) - ri) <= 2).sort((a, b) => b.signal.endsWith('4') - a.signal.endsWith('4'))[0];
+      const nt = e.data.find((q) => q.signal === 'note' && q.start <= r.date && r.date <= q.end);
+      if (nt && !(near && near.note)) { const div = document.createElement('div'); div.textContent = '事件註記：' + nt.note + '（' + nt.start.replaceAll('-', '/') + '–' + nt.end.slice(5).replace('-', '/') + '）'; tip.append(div); }
+      if (near) {
+        const hd = document.createElement('b'); hd.textContent = LB.date(LB.parse(near.date)) + ' ' + (LB.SHORT[near.signal] || near.signal) + ' 標記'; tip.append(hd);
+        LB.evLines(near).concat(near.lit ? ['5 日內亮燈：' + near.lit] : []).forEach((t) => { const div = document.createElement('div'); div.textContent = t; tip.append(div); });
+      }
+      tip.hidden = false;
+      const sx = x(r.t) / W * el.clientWidth;
+      tip.style.left = Math.min(Math.max(0, sx + 12), el.clientWidth - tip.offsetWidth) + 'px'; tip.style.top = '8px';
+    })
+    .on('pointerleave', () => { tip.hidden = true; rule.attr('opacity', 0); });
+});
+</script>
+
+<script>
+// 回測表、超額長條、極值距離
+const orderOf = (side) => (side === 'top' ? LB.TORDER : side === 'warn' ? LB.WORDER : LB.BORDER);
+dash.draw('sum-body', (el) => {
+  const s = dash.data('summary'); el.replaceChildren();
+  if (s.status !== 'ok') { if (s.status === 'error') { const td = el.insertRow().insertCell(); td.colSpan = 13; td.className = 'lb-err'; td.textContent = '回測結果載入失敗。'; } return; }
+  orderOf(el.dataset.side).forEach((k) => {
+    const r = s.data.find((x) => x.signal === k && x.index === LB.ix); if (!r) return;
+    const tr = el.insertRow(); tr.dataset.key = k + ',' + LB.ix; if (k.includes('combo')) tr.className = 'lb-row--combo';
+    [[r.name], [String(r.n)], [r.entry], [LB.pct(r.ret5), r.ret5], [LB.pct(r.ret20), r.ret20], [LB.pct(r.ret60), r.ret60],
+      [LB.pct(r.excess5), r.excess5], [LB.pct(r.excess20), r.excess20], [LB.pct0(r.beat20)], [r.p20 == null ? '—' : r.p20.toFixed(3)],
+      [LB.pct(r.excess60), r.excess60], [LB.pct0(r.beat60)], [r.p60 == null ? '—' : r.p60.toFixed(3)]]
+      .forEach(([t, v]) => { const td = tr.insertCell(); td.textContent = t; if (v !== undefined) td.className = LB.cls(v); });
+  });
+});
+
+dash.draw('excess-bars', (el) => {
+  const s = dash.data('summary');
+  if (s.status === 'loading') { el.replaceChildren(); el.textContent = '—'; return; }
+  LB.done(el); el.replaceChildren();
+  if (s.status !== 'ok') { const p = document.createElement('p'); p.className = 'lb-err'; p.textContent = '回測結果載入失敗。'; el.append(p); return; }
+  const rows = orderOf(el.dataset.side).map((k) => s.data.find((r) => r.signal === k && r.index === LB.ix)).filter(Boolean);
+  const W = Math.max(280, el.clientWidth), bandH = 60, H = rows.length * bandH + 30;
+  const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', '各訊號扣掉價格因素後的 5 日、20 日與 60 日超額報酬');
+  const lab = svg.append('g').selectAll('text').data(rows).join('text').text((r) => LB.SHORT[r.signal]);
+  const m = { l: Math.ceil(Math.max(...lab.nodes().map((n) => n.getComputedTextLength()))) + 12, r: 56 };
+  const lim = Math.max(1, d3.max(rows.flatMap((r) => [r.excess5, r.excess20, r.excess60]).filter((v) => v != null), Math.abs));
+  const x = d3.scaleLinear().domain([-lim, lim]).range([m.l + 44, W - m.r]).nice();
+  const yb = d3.scaleBand().domain(rows.map((r) => r.signal)).range([8, H - 22]).padding(0.25);
+  lab.attr('x', m.l - 8).attr('y', (r) => yb(r.signal) + yb.bandwidth() / 2 + 4).attr('text-anchor', 'end');
+  svg.append('g').attr('class', 'lb-grid').selectAll('line').data(x.ticks(5)).join('line').attr('x1', x).attr('x2', x).attr('y1', 4).attr('y2', H - 22);
+  svg.append('g').attr('class', 'lb-axis').attr('transform', `translate(0,${H - 22})`).call(d3.axisBottom(x).ticks(5).tickFormat((v) => v + '%').tickSizeOuter(0));
+  svg.append('line').attr('x1', x(0)).attr('x2', x(0)).attr('y1', 4).attr('y2', H - 22).style('stroke', 'var(--cds-chart-reference)');
+  const h2 = yb.bandwidth() / 3;
+  [['excess5', 0, 0.3], ['excess20', 1, 0.6], ['excess60', 2, 1]].forEach(([f, j, op]) => {
+    const g = svg.append('g'), rr = rows.filter((r) => r[f] != null);
+    g.selectAll('rect').data(rr).join('rect').attr('x', (r) => Math.min(x(0), x(r[f]))).attr('width', (r) => Math.abs(x(r[f]) - x(0)))
+      .attr('y', (r) => yb(r.signal) + j * h2).attr('height', h2 - 1).style('fill', (r) => (r[f] >= 0 ? 'var(--lb-up)' : 'var(--lb-down)')).attr('opacity', op);
+    g.selectAll('text').data(rr).join('text').attr('x', (r) => (r[f] >= 0 ? x(r[f]) + 4 : x(r[f]) - 4)).attr('text-anchor', (r) => (r[f] >= 0 ? 'start' : 'end'))
+      .attr('y', (r) => yb(r.signal) + j * h2 + h2 / 2 + 3).style('font-size', '10px').text((r) => LB.pct(r[f]));
+  });
+});
+
+dash.draw('timing', (el) => {
+  const e = dash.data('events');
+  if (e.status === 'loading') { el.replaceChildren(); el.textContent = '—'; return; }
+  LB.done(el); el.replaceChildren();
+  if (e.status !== 'ok') { const p = document.createElement('p'); p.className = 'lb-err'; p.textContent = '事件資料載入失敗。'; el.append(p); return; }
+  const side = el.dataset.side, sigs = orderOf(side), f = LB.ix === 'TAIEX' ? 'tw_ext' : 'tp_ext';
+  const pts = e.data.filter((r) => r[f] != null && sigs.includes(r.signal));
+  const W = Math.max(280, el.clientWidth), H = sigs.length * 30 + 34;
+  const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img')
+    .attr('aria-label', side === 'top' ? '每次過熱訊號亮燈與前後 20 個交易日最高點的距離' : side === 'warn' ? '每次偏空警示亮燈與前後 20 個交易日最低點的距離' : '每次落底訊號亮燈與前後 20 個交易日最低點的距離');
+  const lab = svg.append('g').selectAll('text').data(sigs).join('text').text((k) => LB.SHORT[k]);
+  const m = { l: Math.ceil(Math.max(...lab.nodes().map((n) => n.getComputedTextLength()))) + 12, r: 12 };
+  const x = d3.scaleLinear().domain([-20, 20]).range([m.l, W - m.r]);
+  const yb = d3.scaleBand().domain(sigs).range([6, H - 26]).padding(0.2);
+  lab.attr('x', m.l - 8).attr('y', (k) => yb(k) + yb.bandwidth() / 2 + 4).attr('text-anchor', 'end');
+  svg.append('g').attr('class', 'lb-grid').selectAll('line').data([-20, -10, 10, 20]).join('line').attr('x1', x).attr('x2', x).attr('y1', 4).attr('y2', H - 26);
+  svg.append('rect').attr('x', x(-5)).attr('width', x(5) - x(-5)).attr('y', 4).attr('height', H - 30).style('fill', 'var(--cds-chart-muted)').attr('opacity', 0.18);
+  svg.append('line').attr('x1', x(0)).attr('x2', x(0)).attr('y1', 4).attr('y2', H - 26).style('stroke', 'var(--cds-chart-reference)');
+  svg.append('g').attr('class', 'lb-axis').attr('transform', `translate(0,${H - 26})`)
+    .call(d3.axisBottom(x).tickValues([-20, -10, -5, 0, 5, 10, 20]).tickFormat((v) => (v > 0 ? '+' + v : v)).tickSizeOuter(0));
+  const jit = (r) => { let h = 0; for (const c of r.date) h = (h * 31 + c.charCodeAt(0)) % 997; return (h / 997 - 0.5) * yb.bandwidth() * 0.7; };
+  const c = side === 'top' ? LB.topColor() : side === 'warn' ? 'var(--lb-down)' : 'var(--lb-bot)';
+  const tip = document.createElement('div'); tip.className = 'lb-tip'; tip.hidden = true; el.append(tip);
+  svg.append('g').selectAll('circle').data(pts).join('circle')
+    .attr('cx', (r) => x(r[f])).attr('cy', (r) => yb(r.signal) + yb.bandwidth() / 2 + jit(r)).attr('r', 4)
+    .style('fill', (r) => (r.signal.includes('combo') || side === 'warn' ? c : LB.color(1))).attr('opacity', 0.8).style('stroke', 'var(--color-bg)')
+    .on('pointerenter', (evt, r) => {
+      tip.replaceChildren();
+      const b = document.createElement('b'); b.textContent = LB.date(LB.parse(r.date)) + '　' + r.name; tip.append(b);
+      const off = r[f], w = side === 'top' ? '高點' : '低點';
+      [off === 0 ? '亮燈當天就是' + w : off < 0 ? w + '在亮燈前 ' + (-off) + ' 個交易日' : w + '在亮燈後 ' + off + ' 個交易日',
+        '之後 20 日報酬 ' + LB.pct(r[LB.ix === 'TAIEX' ? 'tw_ret20' : 'tp_ret20'])].forEach((t) => { const dv = document.createElement('div'); dv.textContent = t; tip.append(dv); });
+      tip.hidden = false;
+      const [px, py] = d3.pointer(evt, el);
+      tip.style.left = Math.min(Math.max(0, px + 12), el.clientWidth - tip.offsetWidth) + 'px'; tip.style.top = Math.max(0, py - 50) + 'px';
+    })
+    .on('pointerleave', () => { tip.hidden = true; });
+  const s = dash.data('summary');
+  if (s.status === 'ok') {
+    const med = sigs.map((k) => s.data.find((r) => r.signal === k && r.index === LB.ix)).filter((r) => r && r.ext_median != null);
+    svg.append('g').selectAll('line').data(med).join('line').attr('x1', (r) => x(r.ext_median)).attr('x2', (r) => x(r.ext_median))
+      .attr('y1', (r) => yb(r.signal) + 2).attr('y2', (r) => yb(r.signal) + yb.bandwidth() - 2).style('stroke', 'var(--color-fg)').attr('stroke-width', 2);
+  }
+});
+
+dash.draw('timing-body', (el) => {
+  const s = dash.data('summary'); el.replaceChildren();
+  if (s.status !== 'ok') return;
+  orderOf(el.dataset.side).forEach((k) => {
+    const r = s.data.find((x) => x.signal === k && x.index === LB.ix); if (!r) return;
+    const tr = el.insertRow(); tr.dataset.key = k + ',' + LB.ix; if (k.includes('combo')) tr.className = 'lb-row--combo';
+    [[r.name], [r.ext_median == null ? '—' : (r.ext_median > 0 ? '+' : '') + r.ext_median], [LB.pct0(r.ext_within5)], [LB.pct0(r.ext_after)],
+      [LB.pct(r.further_mean), r.further_mean], [LB.pct0(r.further_big)], [LB.pct(r.off_ext), r.off_ext]]
+      .forEach(([t, v]) => { const td = tr.insertCell(); td.textContent = t; if (v !== undefined) td.className = LB.cls(v); });
+  });
+});
+</script>
+
+<script>
+// 事件明細與 PTT 文章
+dash.draw('ev-body', (el) => {
+  const e = dash.data('events'); el.replaceChildren();
+  if (e.status !== 'ok') { if (e.status === 'error') { const td = el.insertRow().insertCell(); td.colSpan = 14; td.className = 'lb-err'; td.textContent = '事件資料載入失敗。'; } return; }
+  const isPtt = LB.PTT.includes(LB.evsig);
+  e.data.filter((r) => r.signal === LB.evsig).slice().reverse().forEach((r) => {
+    const tr = el.insertRow(); tr.dataset.key = r.signal + ',' + r.date;
+    [[LB.date(LB.parse(r.date))], [r.value], [r.tw_close == null ? '—' : r.tw_close.toFixed(2)], [LB.pct(r.tw_ret5), r.tw_ret5], [LB.pct(r.tw_ret20), r.tw_ret20],
+      [LB.pct(r.tw_ret60), r.tw_ret60], [LB.pct(r.tw_further), r.tw_further], [r.tw_ext == null ? '—' : (r.tw_ext > 0 ? '+' : '') + r.tw_ext],
+      [LB.pct(r.tp_ret5), r.tp_ret5], [LB.pct(r.tp_ret20), r.tp_ret20], [LB.pct(r.tp_ret60), r.tp_ret60], [LB.pct(r.tp_further), r.tp_further], [LB.evLines(r).join('；') || '—'], [r.lit || '—']]
+      .forEach(([t, v]) => { const td = tr.insertCell(); td.textContent = t; if (v !== undefined) td.className = LB.cls(v); });
+    if (isPtt) {
+      tr.className = 'lb-click'; tr.tabIndex = 0;
+      const go = () => {
+        LB.psig = r.signal; LB.pevent = r.date;
+        document.querySelectorAll('#lb-psig').forEach((s) => { s.value = r.signal; });
+        dash.draw('pevent'); dash.draw('post-body');
+        document.querySelectorAll('#lb-posts').forEach((s) => s.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+      };
+      tr.addEventListener('click', go); tr.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') go(); });
+    }
+  });
+});
+
+dash.draw('pevent', (sel) => {
+  const p = dash.data('posts');
+  const evs = p.status === 'ok' ? [...new Set(p.data.filter((r) => r.signal === LB.psig && r.event !== 'latest').map((r) => r.event))].sort().reverse() : [];
+  sel.replaceChildren(new Option(LB.psig === 'creative' ? '最新一天（當天 09:00 起算）' : '最近 5 個交易日', 'latest'), ...evs.map((d) => new Option(LB.date(LB.parse(d)) + ' 那次亮燈', d)));
+  if (!LB.pevent || (LB.pevent !== 'latest' && !evs.includes(LB.pevent))) LB.pevent = 'latest';
+  sel.value = LB.pevent;
+  sel.onchange = () => { LB.pevent = sel.value; dash.draw('post-body'); };
+});
+
+dash.draw('post-body', (el) => {
+  const p = dash.data('posts'); el.replaceChildren();
+  if (p.status !== 'ok') { if (p.status === 'error') { const td = el.insertRow().insertCell(); td.colSpan = 3; td.className = 'lb-err'; td.textContent = '文章資料載入失敗。'; } return; }
+  const ev = LB.pevent || 'latest';
+  const rows = p.data.filter((r) => r.signal === LB.psig && r.event === ev);
+  if (!rows.length) { const td = el.insertRow().insertCell(); td.colSpan = 3; td.className = 'lb-l'; td.textContent = '這段期間沒有符合的文章。'; return; }
+  rows.slice().reverse().forEach((r) => {
+    const tr = el.insertRow(); tr.dataset.key = r.url;
+    tr.insertCell().textContent = r.pending ? r.posted + '（下一個交易日，尚未收盤，暫不計分）' : r.posted;
+    const td = tr.insertCell(); td.className = 'lb-l';
+    if (/^https:\/\//.test(r.url)) { const a = document.createElement('a'); a.href = r.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = r.title; td.append(a); }
+    else td.textContent = r.title;
+    tr.insertCell().textContent = r.nrec || '—';
+  });
+});
+</script>
+
+<script>
+// 鄉民恐慌溫度計
+// 每個 script 有自己的範圍，所以這裡自己定義讀取函式
+const tRow = () => { const s = dash.data('status'); return s.status === 'ok' ? s.data.find((r) => r.signal === 'thermo') : null; };
+const tSum = () => { const s = dash.data('summary'); return s.status === 'ok' ? s.data.find((r) => r.signal === 'thermo95' && r.index === 'TAIEX') : null; };
+dash.draw('thermo-val', (el) => { const r = tRow(); el.textContent = r ? r.value.toFixed(1) : '—'; });
+dash.draw('thermo-c5', (el) => { const r = tRow(); el.textContent = r ? String(r.c5) : '—'; });
+dash.draw('thermo-l5', (el) => { const r = tRow(); el.textContent = r ? String(r.l5) : '—'; });
+dash.draw('thermo-asof', (el) => { const r = tRow(); el.textContent = r ? '資料日 ' + LB.date(LB.parse(r.asof)) + '・上次 ≥95：' + (r.last_lit ? LB.date(LB.parse(r.last_lit)) : '無') : '—'; });
+dash.draw('thermo-pill', (el) => {
+  const r = tRow(); el.className = 'lb-pill'; el.style.borderColor = ''; el.style.color = '';
+  if (!r) { el.textContent = '—'; return; }
+  const v = r.value;
+  el.textContent = v >= 95 ? '極度恐慌（≥95）' : v >= 90 ? '恐慌（90–95）' : v >= 85 ? '偏恐慌（85–90）' : v >= 80 ? '留意（80–85）' : '平常（<80）';
+  if (v >= 90) { el.classList.add('lb-pill--hot'); el.style.borderColor = v >= 95 ? 'var(--color-bad)' : 'var(--color-warn)'; el.style.color = el.style.borderColor; }
+});
+dash.draw('t-n', (el) => { const r = tSum(); el.textContent = r ? String(r.n) : '—'; });
+dash.draw('t-low', (el) => { const r = tSum(); el.textContent = r ? LB.pct0(r.ext_within5) : '—'; });
+dash.draw('t-ret', (el) => { const r = tSum(); el.textContent = r ? LB.pct(r.ret20) : '—'; });
+dash.draw('t-dd', (el) => { const r = tSum(); el.textContent = r ? LB.pct(r.further_mean) : '—'; });
+
+const LEVELS = [['dual', '雙重確認（畢業文＋創作文）', null], ['thermo95', '≥95 極度恐慌', 95], ['thermo90', '≥90 恐慌', 90], ['thermo85', '≥85 偏恐慌', 85], ['thermo80', '≥80 留意', 80]];
+const dRow = () => { const s = dash.data('status'); return s.status === 'ok' ? s.data.find((r) => r.signal === 'dual') : null; };
+const dSum = () => { const s = dash.data('summary'); return s.status === 'ok' ? s.data.find((r) => r.signal === 'dual' && r.index === 'TAIEX') : null; };
+dash.draw('dual-pill', (el) => {
+  const r = dRow(); el.className = 'lb-pill'; el.style.borderColor = ''; el.style.color = '';
+  if (!r) { el.textContent = '—'; return; }
+  el.textContent = r.value === 1 ? '今天亮燈' : r.lit5 === 1 ? '近 5 日亮過燈' : '未亮燈';
+  if (r.lit5 === 1) { el.classList.add('lb-pill--hot'); el.style.borderColor = 'var(--color-bad)'; el.style.color = 'var(--color-bad)'; }
+});
+dash.draw('dual-l5', (el) => { const r = dRow(); el.textContent = r ? String(r.l5) : '—'; });
+dash.draw('dual-ch', (el) => { const r = dRow(); el.textContent = r ? r.creative_heat.toFixed(1) : '—'; });
+dash.draw('dual-dd', (el) => { const r = dRow(); el.textContent = r && r.dd60 != null ? LB.pct(r.dd60) : '—'; });
+dash.draw('dual-last', (el) => { const r = dRow(); el.textContent = r ? '上次亮燈 ' + (r.last_lit ? LB.date(LB.parse(r.last_lit)) : '無') : '—'; });
+dash.draw('d-n', (el) => { const r = dSum(); el.textContent = r ? String(r.n) : '—'; });
+dash.draw('d-ret', (el) => { const r = dSum(); el.textContent = r ? LB.pct(r.ret20) : '—'; });
+dash.draw('d-exc', (el) => { const r = dSum(); el.textContent = r ? LB.pct(r.excess20) : '—'; });
+dash.draw('d-low', (el) => { const r = dSum(); el.textContent = r ? LB.pct0(r.ext_within5) : '—'; });
+
+dash.draw('thermo-levels', (el) => {
+  const s = dash.data('summary'); el.replaceChildren();
+  if (s.status !== 'ok') { if (s.status === 'error') { const td = el.insertRow().insertCell(); td.colSpan = 9; td.className = 'lb-err'; td.textContent = '分級資料載入失敗。'; } return; }
+  const t = tRow(), now = t ? t.value : null;
+  const cur = now == null ? null : (LEVELS.find(([, , lv]) => lv != null && now >= lv) || [null])[0];
+  const ds = dash.data('status'), dRow = ds.status === 'ok' ? ds.data.find((x) => x.signal === 'dual') : null;
+  const dualOn = !!(dRow && dRow.lit5 === 1);
+  LEVELS.forEach(([k, label]) => {
+    const r = s.data.find((x) => x.signal === k && x.index === LB.tix); if (!r) return;
+    const now_ = k === 'dual' ? dualOn : k === cur;
+    const tr = el.insertRow(); tr.dataset.key = k + ',' + LB.tix; if (now_) tr.className = 'lb-now';
+    [[label + (now_ ? '（目前）' : '')], [String(r.n)], [LB.pct(r.ret20), r.ret20], [LB.pct0(r.win20)], [LB.pct(r.excess20), r.excess20],
+      [LB.pct0(r.beat20)], [LB.pct0(r.ext_within5)], [LB.pct(r.further_mean), r.further_mean], [LB.pct(r.ret60), r.ret60]]
+      .forEach(([txt, v]) => { const td = tr.insertCell(); td.textContent = txt; if (v !== undefined) td.className = LB.cls(v); });
+  });
+});
+
+dash.draw('gauge', (el) => {
+  const s = dash.data('status');
+  if (s.status === 'loading') { el.replaceChildren(); el.textContent = '—'; return; }
+  LB.done(el); el.replaceChildren();
+  const r = tRow();
+  if (!r) { const p = document.createElement('p'); p.className = 'lb-err'; p.textContent = '溫度資料載入失敗。'; el.append(p); return; }
+  const W = 320, H = 190, cx = W / 2, cy = 160, R = 130, w = 22;
+  const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', '鄉民恐慌溫度 ' + r.value.toFixed(1) + ' / 100');
+  const ang = (v) => -Math.PI / 2 + Math.PI * v / 100;
+  const arc = d3.arc().innerRadius(R - w).outerRadius(R);
+  [[0, 80, 'var(--cds-chart-grid)'], [80, 90, 'var(--cds-chart-muted)'], [90, 95, 'var(--color-warn)'], [95, 100, 'var(--color-bad)']].forEach(([a, b, c]) => {
+    svg.append('path').attr('transform', `translate(${cx},${cy})`).attr('d', arc({ startAngle: ang(a), endAngle: ang(b) })).style('fill', c);
+  });
+  [0, 50, 80, 90, 95, 100].forEach((v) => {
+    const a = ang(v), x = cx + Math.sin(a) * (R + 12), y = cy - Math.cos(a) * (R + 12);
+    svg.append('text').attr('x', x).attr('y', y + 4).attr('text-anchor', v === 0 ? 'end' : v === 100 ? 'start' : 'middle').text(v);
+  });
+  const a = ang(Math.max(0, Math.min(100, r.value)));
+  svg.append('line').attr('x1', cx).attr('y1', cy).attr('x2', cx + Math.sin(a) * (R - w - 6)).attr('y2', cy - Math.cos(a) * (R - w - 6))
+    .style('stroke', 'var(--color-fg)').attr('stroke-width', 3).attr('stroke-linecap', 'round');
+  svg.append('circle').attr('cx', cx).attr('cy', cy).attr('r', 6).style('fill', 'var(--color-fg)');
+  svg.append('text').attr('class', 'lb-gauge-val').attr('x', cx).attr('y', cy - 34).attr('text-anchor', 'middle').text(r.value.toFixed(1));
+});
+
+dash.draw('thermo-chart', (el) => {
+  const d = dash.data('daily'), e = dash.data('events');
+  if (d.status === 'loading' || e.status === 'loading') { el.replaceChildren(); el.textContent = '—'; return; }
+  LB.done(el); el.replaceChildren();
+  if (d.status !== 'ok' || e.status !== 'ok') { const p = document.createElement('p'); p.className = 'lb-err'; p.textContent = '溫度資料載入失敗。'; el.append(p); return; }
+  let rows = d.data.filter((r) => r.fear != null).map((r) => ({ ...r, t: LB.parse(r.date) }));
+  const last = rows[rows.length - 1].t;
+  const back = { all: null, '3y': d3.utcYear.offset(last, -3), '1y': d3.utcYear.offset(last, -1) }[LB.trange];
+  if (back && !LB.zTherm) rows = rows.filter((r) => r.t >= back);
+  if (LB.zTherm) rows = rows.filter((r) => r.t >= LB.zTherm[0] && r.t <= LB.zTherm[1]);
+  if (rows.length < 2) { const p = document.createElement('p'); p.className = 'lb-err'; p.textContent = '這段期間沒有溫度資料，請按「重設範圍」。'; el.append(p); return; }
+  LB.syncDates("#lb-tfrom", "#lb-tto", rows);
+  const spanD = (rows[rows.length - 1].t - rows[0].t) / 864e5;
+  const W = Math.max(280, el.clientWidth), narrow = W < 560, topH = narrow ? 110 : 140, gap = 16, botH = narrow ? 120 : 150, H = topH + gap + botH + 24;
+  const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', '加權指數與鄉民恐慌溫度走勢');
+  const [lo, hi] = d3.extent(rows, (r) => r.taiex);
+  const yP = d3.scaleLog().domain([lo * 0.97, hi * 1.03]).range([topH - 4, 6]);
+  let pt = yP.ticks(4).filter((v) => v >= lo * 0.97 && v <= hi * 1.03); while (pt.length > 4) pt = pt.filter((v, i) => i % 2 === 0);
+  const probe = svg.append('g').selectAll('text').data(pt.map((v) => LB.num(v)).concat(['100'])).join('text').text((t) => t);
+  const m = { l: Math.ceil(Math.max(...probe.nodes().map((n) => n.getComputedTextLength()))) + 10, r: 8 };
+  probe.remove();
+  const x = d3.scaleUtc().domain(d3.extent(rows, (r) => r.t)).range([m.l, W - m.r]);
+  const yT = d3.scaleLinear().domain([0, 100]).range([topH + gap + botH, topH + gap]);
+  svg.append('g').attr('class', 'lb-grid').selectAll('line').data(pt).join('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', yP).attr('y2', yP);
+  svg.append('g').selectAll('text').data(pt).join('text').attr('x', m.l - 6).attr('y', (v) => yP(v) + 4).attr('text-anchor', 'end').text((v) => LB.num(v));
+  svg.append('path').datum(rows).attr('fill', 'none').attr('stroke-width', 1.5).style('stroke', LB.color(0)).attr('d', d3.line().x((r) => x(r.t)).y((r) => yP(r.taiex)));
+  svg.append('g').attr('class', 'lb-grid').selectAll('line').data([0, 50, 100]).join('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', yT).attr('y2', yT);
+  svg.append('g').selectAll('text').data([0, 50, 90, 100]).join('text').attr('x', m.l - 6).attr('y', (v) => yT(v) + 4).attr('text-anchor', 'end').text((v) => v);
+  svg.append('path').datum(rows).style('fill', 'var(--cds-chart-muted)').attr('opacity', 0.35)
+    .attr('d', d3.area().x((r) => x(r.t)).y0(yT(0)).y1((r) => yT(r.fear)));
+  svg.append('path').datum(rows).attr('fill', 'none').attr('stroke-width', 1.2).style('stroke', 'var(--color-fg)').attr('d', d3.line().x((r) => x(r.t)).y((r) => yT(r.fear)));
+  [[90, 'var(--color-warn)'], [95, 'var(--color-bad)']].forEach(([v, c]) => svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', yT(v)).attr('y2', yT(v))
+    .style('stroke', c).attr('stroke-dasharray', '4 3'));
+  svg.append('g').attr('class', 'lb-axis').attr('transform', `translate(0,${H - 22})`)
+    .call(d3.axisBottom(x).ticks(narrow ? 4 : 8).tickSizeOuter(0).tickFormat(d3.utcFormat(spanD < 800 ? '%Y/%m' : '%Y')));
+  const t0 = rows[0].t, byDate = new Map(rows.map((r) => [r.date, r]));
+  const ev = e.data.filter((r) => r.signal === 'thermo95' && LB.parse(r.date) >= t0 && byDate.has(r.date));
+  svg.append('g').selectAll('circle').data(ev).join('circle').attr('cx', (r) => x(LB.parse(r.date))).attr('cy', (r) => yT(byDate.get(r.date).fear)).attr('r', 5)
+    .style('fill', 'var(--color-bad)').style('stroke', 'var(--color-bg)').attr('stroke-width', 1.5);
+  svg.append('g').selectAll('circle').data(ev).join('circle').attr('cx', (r) => x(LB.parse(r.date))).attr('cy', (r) => yP(byDate.get(r.date).taiex)).attr('r', 4.5)
+    .style('fill', 'var(--color-bad)').style('stroke', 'var(--color-bg)').attr('stroke-width', 1.5);
+  const dev = e.data.filter((r) => r.signal === 'dual' && LB.parse(r.date) >= t0 && byDate.has(r.date));
+  const dia = d3.symbol().type(d3.symbolDiamond).size(110);
+  [[(r) => yT(byDate.get(r.date).fear) - 12], [(r) => yP(byDate.get(r.date).taiex) - 12]].forEach(([fy]) => svg.append('g').selectAll('path').data(dev).join('path')
+    .attr('d', dia).attr('transform', (r) => `translate(${x(LB.parse(r.date))},${fy(r)})`).style('fill', 'var(--color-fg)').style('stroke', 'var(--color-bg)').attr('stroke-width', 1.5));
+  // 事件文字：雙重確認優先，3 個交易日內只標一次
+  const evAll = dev.concat(ev).sort((a, b) => (a.signal === 'dual' ? 0 : 1) - (b.signal === 'dual' ? 0 : 1));
+  const idxOf = new Map(rows.map((r, i) => [r.date, i])), labeled = [];
+  evAll.forEach((r) => { const i = idxOf.get(r.date); if (LB.evLabel(r) && !labeled.some((q) => Math.abs(idxOf.get(q.date) - i) <= 3)) labeled.push(r); });
+  labeled.sort((a, b) => (a.date < b.date ? -1 : 1));
+  svg.append('g').selectAll('text').data(labeled).join('text')
+    .attr('x', (r) => Math.min(Math.max(x(LB.parse(r.date)), m.l + 30), W - m.r - 30))
+    .attr('y', (r, k) => Math.max(10, yP(byDate.get(r.date).taiex) - 22 - (k % 2) * 12)).attr('text-anchor', 'middle')
+    .style('font-size', '10px').style('fill', 'var(--color-fg)').text((r) => LB.evLabel(r));
+  const nlab = e.data.filter((r) => r.signal === 'note' && byDate.has(r.date) && !evAll.some((q) => q.note === r.note));
+  svg.append('g').selectAll('circle').data(nlab).join('circle').attr('cx', (r) => x(LB.parse(r.date))).attr('cy', (r) => yP(byDate.get(r.date).taiex)).attr('r', 3)
+    .style('fill', 'var(--color-fg-muted)');
+  svg.append('g').selectAll('text').data(nlab).join('text')
+    .attr('x', (r) => Math.min(Math.max(x(LB.parse(r.date)), m.l + 70), W - m.r - 70))
+    .attr('y', (r) => Math.min(topH - 2, yP(byDate.get(r.date).taiex) + 16)).attr('text-anchor', 'middle')
+    .style('font-size', '10px').style('paint-order', 'stroke').style('stroke', 'var(--color-bg)').style('stroke-width', '3px').style('stroke-linejoin', 'round')
+    .style('fill', 'var(--color-fg-muted)').text((r) => r.note + '（溫度未達 95）');
+  const tip = document.createElement('div'); tip.className = 'lb-tip'; tip.hidden = true; el.append(tip);
+  const rule = svg.append('line').attr('y1', 4).attr('y2', H - 22).style('stroke', 'var(--cds-chart-reference)').attr('opacity', 0);
+  const bis = d3.bisector((r) => r.t).center;
+  const selR = svg.append('rect').attr('y', 0).attr('height', H - 22).attr('width', 0).style('fill', 'var(--cds-chart-muted)').attr('opacity', 0.3);
+  let dragX = null;
+  svg.append('rect').attr('x', m.l).attr('y', 0).attr('width', W - m.l - m.r).attr('height', H - 22).attr('fill', 'transparent').style('cursor', 'crosshair')
+    .on('pointerdown', (evt) => {
+      if (evt.pointerType !== 'mouse' || evt.button !== 0) return;
+      dragX = d3.pointer(evt)[0]; selR.attr('x', dragX).attr('width', 0); evt.currentTarget.setPointerCapture(evt.pointerId); evt.preventDefault();
+    })
+    .on('pointerup', (evt) => {
+      if (dragX == null) return;
+      const px = d3.pointer(evt)[0], a = Math.min(px, dragX), b = Math.max(px, dragX); dragX = null; selR.attr('width', 0);
+      if (b - a > 8) { LB.zTherm = [x.invert(a), x.invert(b)]; dash.draw('thermo-chart'); }
+    })
+    .on('pointermove', (evt) => {
+      const [px] = d3.pointer(evt);
+      if (dragX != null) { selR.attr('x', Math.min(px, dragX)).attr('width', Math.abs(px - dragX)); tip.hidden = true; return; }
+      const r = rows[bis(rows, x.invert(px))];
+      rule.attr('x1', x(r.t)).attr('x2', x(r.t)).attr('opacity', 1);
+      tip.replaceChildren();
+      const b = document.createElement('b'); b.textContent = LB.date(r.t); tip.append(b);
+      const ri = rows.indexOf(r), near = evAll.find((q) => Math.abs((idxOf.get(q.date) ?? -99) - ri) <= 2);
+      ['恐慌溫度 ' + r.fear.toFixed(1), '創作文 5 日 ' + r.c5 + ' 篇（熱度 ' + r.cheat + '）・畢業文 5 日 ' + r.l5 + ' 篇', '加權 ' + LB.num(r.taiex, 2)]
+        .concat(r.f_dual ? ['畢業文＋創作文同時亮燈'] : []).concat(near ? LB.evLines(near) : [])
+        .concat(((nt) => (nt && !(near && near.note) ? ['事件註記：' + nt.note] : []))(e.data.find((q) => q.signal === 'note' && q.start <= r.date && r.date <= q.end)))
+        .forEach((t) => { const div = document.createElement('div'); div.textContent = t; tip.append(div); });
+      tip.hidden = false;
+      const sx = x(r.t) / W * el.clientWidth;
+      tip.style.left = Math.min(Math.max(0, sx + 12), el.clientWidth - tip.offsetWidth) + 'px'; tip.style.top = '8px';
+    })
+    .on('pointerleave', () => { tip.hidden = true; rule.attr('opacity', 0); });
+});
+</script>

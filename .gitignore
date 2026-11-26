@@ -1,0 +1,20 @@
+# 產出（排程每次重算，不存進 repo）
+dashboard/data/
+dashboard/index_doc.json
+site/
+_preview/
+
+# FinMind 原始檔：體積大（臺指期日資料約 14 MB），且公開轉載有授權疑慮；排程只用由它整理出的小型 CSV
+data/finmind_*.json
+
+# 早期回測、稽核與記錄檔
+data/*.log
+data/main_*.csv
+data/strong_*.csv
+data/events_main.csv
+data/loss_audit.csv
+data/ptt_fear_greed.csv
+data/taifex_fut.csv
+
+__pycache__/
+.DS_Store

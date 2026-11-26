@@ -1,0 +1,76 @@
+# 定時更新鄉民指標並發布到 GitHub Pages
+# 排程是 UTC 時間；分鐘避開整點（整點時 GitHub 排程最容易延遲或被跳過）
+name: 更新鄉民指標
+
+on:
+  schedule:
+    - cron: '7,22,37,52 * * * *'   # 每 15 分鐘：只更新 PTT
+    - cron: '40 7 * * 1-5'         # 台灣 15:40（平日）：完整更新，指數、P/C、三大法人
+    - cron: '10 14 * * *'          # 台灣 22:10：完整更新，融資、違約公告；週末早上也會補到美國 VIX
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: '更新範圍'
+        type: choice
+        options: [all, ptt]
+        default: all
+
+permissions:
+  contents: write     # 把更新後的資料存回 repo
+  pages: write        # 發布 GitHub Pages
+  id-token: write
+
+concurrency:
+  group: update-data
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      TZ: Asia/Taipei
+      PTT_PAGES: '10'            # 每次往回抓幾頁 PTT 列表（每頁約 20 篇）
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+
+      - name: 抓資料並重算
+        env:
+          SCHEDULE: ${{ github.event.schedule }}
+          MODE: ${{ inputs.mode }}
+        run: |
+          if [ "$SCHEDULE" = "7,22,37,52 * * * *" ] || [ "$MODE" = "ptt" ]; then
+            python3 -I scripts/update_data.py data dashboard/data --only ptt
+          else
+            python3 -I scripts/update_data.py data dashboard/data
+          fi
+          python3 -I scripts/build_site.py dashboard site
+
+      - name: 存回資料
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          if git diff --cached --quiet; then
+            echo "資料沒有變動"
+          else
+            git commit -q -m "資料更新 $(date '+%Y-%m-%d %H:%M')"
+            git push -q
+          fi
+
+      - uses: actions/configure-pages@v6
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+          retention-days: 1
+
+      - id: deployment
+        uses: actions/deploy-pages@v5
