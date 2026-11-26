@@ -32,7 +32,8 @@ FIRST VIEWPORT:
 - Sticky top bar: title, section nav, 資料日 and PTT time.
 - Today band, left: 鄉民恐慌溫度 numeral 98.0 at about 88px, a level chip, a horizontal 0–100 scale with stops at 80/85/90/95, a context line, and the 雙重確認 lamp.
 - Today band, right: three lamp rows (落底 7, 過熱 8, 偏空 3), each with its score and a 「≥3 亮燈」 note.
-- The lamp matrix (signals × last 20 trading days) starts at the fold.
+- Below the today band (order changed at the user's request, 2026-11-26): 恐慌溫度走勢 starts at the fold, then 指數走勢與亮燈日, then the lamp matrix (signals × last 20 trading days), then the backtests (溫度分級 first).
+- The lamp legend (「燈號怎麼看」) sits above the three lamp rows, at the user's request.
 - No primary CTA: the action is reading. The nav is the action.
 
 FORM: IMPECCABLE'S PICK, #1 of 7 grounded candidates; seed:593087ef747e7778. Signature interaction: in the lamp matrix, hovering or focusing a lamp shows its date and value, and choosing a signal row opens that signal's event history.

@@ -305,7 +305,7 @@
   <div class="lb-wrap lb-top-in">
     <h1 class="lb-brand"><a href="#lb-today"><span class="lb-mark" aria-hidden="true"><i style="background:var(--lamp-blue)"></i><i style="background:linear-gradient(135deg,var(--lamp-amber) 50%,var(--lamp-blue) 50%)"></i><i style="background:var(--lamp-green)"></i><i style="background:var(--lamp-yr)"></i><i style="background:var(--lamp-red)"></i></span>台股落底訊號回測</a></h1>
     <nav class="lb-nav" aria-label="頁面章節">
-      <a href="#lb-today">今天</a><a href="#lb-lamps">燈號明細</a><a href="#lb-thermo">恐慌溫度</a><a href="#lb-chart-sec">指數走勢</a><a href="#lb-bottom">回測</a><a href="#lb-events">事件明細</a><a href="#lb-posts">PTT 文章</a><a href="#lb-notes">定義與來源</a>
+      <a href="#lb-today">今天</a><a href="#lb-thermo">恐慌溫度</a><a href="#lb-chart-sec">指數走勢</a><a href="#lb-lamps">燈號明細</a><a href="#lb-levels-sec">回測</a><a href="#lb-events">事件明細</a><a href="#lb-posts">PTT 文章</a><a href="#lb-notes">定義與來源</a>
     </nav>
     <p class="lb-stamp" data-draw="stamp" data-source="status">—</p>
   </div>
@@ -387,14 +387,6 @@
   <p class="lb-wrap lb-cap lb-disclaim">報酬數字紅色是漲、綠色是跌（台股習慣）；燈號顏色只代表訊號類別。回測期間 2019/1 起。PTT 訊號只看得到沒被刪的文章。歷史統計不代表未來，也不是投資建議。</p>
 
   <div class="lb-wrap lb-main">
-    <section class="lb-sec" id="lb-lamps">
-      <h2>燈號明細</h2>
-      <p>每一列是一個訊號，每一格是一個交易日，最右邊是最新一天。實心燈是那天亮燈；分數算的是近 5 個交易日內亮過燈的訊號數。指向或點一格可以看那天的狀態與目前數值；點訊號名稱可以看它歷史上每一次亮燈的結果。</p>
-      <div class="lb-tablewrap">
-        <table class="lb-matrix" data-draw="matrix" data-source="daily status"></table>
-      </div>
-    </section>
-
     <section class="lb-sec" id="lb-thermo">
       <h2>恐慌溫度走勢</h2>
       <div class="lb-bar">
@@ -414,24 +406,6 @@
       </div>
       <div class="lb-chart dash-skeleton" data-draw="thermo-chart" data-source="daily events"></div>
       <p class="lb-cap">上圖是加權指數，下圖是恐慌溫度；虛線是 90 與 95。標記都是 10 個交易日內不重複的第一次。標記上方的文字是事件說明：有人工註記的重大事件用註記，其他的用當時標題裡最常出現的主題（例如「合一」）；指向標記可以看畢業文標題。灰點的例子是 2022/10：人工註記的事件低點，但 PTT 訊號沒抓到。指向圖表可以看當天的篇數；按住滑鼠左右拖曳可以放大某一段，也可以輸入起訖日期，按「重設範圍」回到原本的期間。</p>
-      <h3>溫度分級與雙重確認：歷史上亮燈之後的表現</h3>
-      <div class="lb-bar">
-        <select id="lb-tix" aria-label="分級回測指數">
-          <option value="TAIEX">加權指數</option>
-          <option value="TPEx">櫃買指數</option>
-        </select>
-      </div>
-      <div class="lb-tablewrap">
-        <table class="lb-table" id="lb-levels" data-source="summary" data-row-key="signal,index">
-          <thead><tr>
-            <th data-field="name">等級</th><th data-field="n">次數</th><th data-field="ret20">後 20 日</th><th data-field="win20">上漲比例</th>
-            <th data-field="excess20">20 日超額</th><th data-field="beat20">贏過配對</th><th data-field="ext_within5">低點在 ±5 天內</th>
-            <th data-field="further_mean">之後 20 日平均最大再跌</th><th data-field="ret60" class="lb-minor">後 60 日</th>
-          </tr></thead>
-          <tbody data-draw="thermo-levels"></tbody>
-        </table>
-      </div>
-      <p class="lb-cap">每一級都是溫度第一次衝到這個數字以上的日子（10 個交易日內不重複），隔天開盤進場。「超額」與「贏過配對」是跟同一年、前 5 天漲跌最接近的日子比，扣掉單純跌深反彈。級數越高越準、但次數越少；95 以上只有個位數，請保守看待。目前溫度所在的等級會標底色。</p>
     </section>
 
     <section class="lb-sec" id="lb-chart-sec">
@@ -466,9 +440,39 @@
       <p class="lb-cap">標記是分數第一次達到門檻的日子（10 個交易日內不重複）。落底標記旁的文字是事件說明：有人工註記的重大事件用註記，其次用當時 PTT 標題最常出現的主題；兩者都沒有的，放大到 2 年左右以內時改用灰字列出亮燈的訊號（例如「融資減＋外資賣＋VIX高」）。灰點是人工註記的事件低點、但落底分數沒有達到 3 的時候（例如 2022/10）。文字重疊時只留一個，指向標記可以看完整說明。價格軸是對數刻度。在圖上按住滑鼠左右拖曳可以放大某一段，也可以直接輸入起訖日期，按「重設範圍」回到原本的期間。下方每一列是一個訊號亮燈的日子，最底三列是每天的落底分數、過熱分數與偏空警示，顏色越深分數越高。</p>
     </section>
 
+    <section class="lb-sec" id="lb-lamps">
+      <h2>燈號明細</h2>
+      <p>每一列是一個訊號，每一格是一個交易日，最右邊是最新一天。實心燈是那天亮燈；分數算的是近 5 個交易日內亮過燈的訊號數。指向或點一格可以看那天的狀態與目前數值；點訊號名稱可以看它歷史上每一次亮燈的結果。</p>
+      <div class="lb-tablewrap">
+        <table class="lb-matrix" data-draw="matrix" data-source="daily status"></table>
+      </div>
+    </section>
+
+    <section class="lb-sec" id="lb-levels-sec">
+      <h2>回測：恐慌溫度分級與雙重確認</h2>
+      <nav class="lb-sub" aria-label="回測分類"><a href="#lb-levels-sec">恐慌溫度</a><a href="#lb-bottom">落底訊號</a><a href="#lb-top">過熱訊號</a><a href="#lb-warn">偏空警示</a></nav>
+      <div class="lb-bar">
+        <select id="lb-tix" aria-label="分級回測指數">
+          <option value="TAIEX">加權指數</option>
+          <option value="TPEx">櫃買指數</option>
+        </select>
+      </div>
+      <div class="lb-tablewrap">
+        <table class="lb-table" id="lb-levels" data-source="summary" data-row-key="signal,index">
+          <thead><tr>
+            <th data-field="name">等級</th><th data-field="n">次數</th><th data-field="ret20">後 20 日</th><th data-field="win20">上漲比例</th>
+            <th data-field="excess20">20 日超額</th><th data-field="beat20">贏過配對</th><th data-field="ext_within5">低點在 ±5 天內</th>
+            <th data-field="further_mean">之後 20 日平均最大再跌</th><th data-field="ret60" class="lb-minor">後 60 日</th>
+          </tr></thead>
+          <tbody data-draw="thermo-levels"></tbody>
+        </table>
+      </div>
+      <p class="lb-cap">每一級都是溫度第一次衝到這個數字以上的日子（10 個交易日內不重複），隔天開盤進場。「超額」與「贏過配對」是跟同一年、前 5 天漲跌最接近的日子比，扣掉單純跌深反彈。級數越高越準、但次數越少；95 以上只有個位數，請保守看待。目前溫度所在的等級會標底色。</p>
+    </section>
+
     <section class="lb-sec" id="lb-bottom">
       <h2>回測：落底訊號亮燈後的報酬</h2>
-      <nav class="lb-sub" aria-label="回測分類"><a href="#lb-bottom">落底訊號</a><a href="#lb-top">過熱訊號</a><a href="#lb-warn">偏空警示</a></nav>
+      <nav class="lb-sub" aria-label="回測分類"><a href="#lb-levels-sec">恐慌溫度</a><a href="#lb-bottom">落底訊號</a><a href="#lb-top">過熱訊號</a><a href="#lb-warn">偏空警示</a></nav>
       <div class="lb-bar">
         <select data-ix aria-label="回測指數">
           <option value="TAIEX">加權指數</option>
@@ -754,8 +758,8 @@ document.querySelectorAll('#lb-psig').forEach((s) => s.addEventListener('change'
 (() => {
   const links = [...document.querySelectorAll('.lb-nav a')], map = new Map();
   links.forEach((a) => { const id = a.getAttribute('href').slice(1); map.set(id, a); });
-  map.set('lb-top', map.get('lb-bottom')); map.set('lb-warn', map.get('lb-bottom'));
-  const ids = ['lb-today', 'lb-lamps', 'lb-thermo', 'lb-chart-sec', 'lb-bottom', 'lb-top', 'lb-warn', 'lb-events', 'lb-posts', 'lb-notes'];
+  ['lb-bottom', 'lb-top', 'lb-warn'].forEach((k) => map.set(k, map.get('lb-levels-sec')));
+  const ids = ['lb-today', 'lb-thermo', 'lb-chart-sec', 'lb-lamps', 'lb-levels-sec', 'lb-bottom', 'lb-top', 'lb-warn', 'lb-events', 'lb-posts', 'lb-notes'];
   const els = ids.map((i) => document.getElementById(i)).filter(Boolean);
   if (!('IntersectionObserver' in window) || !els.length) return;
   const vis = new Set();
