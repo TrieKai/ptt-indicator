@@ -3,6 +3,7 @@ dashboard/data/
 dashboard/index_doc.json
 site/
 _preview/
+logs/
 
 # FinMind 原始檔：體積大（臺指期日資料約 14 MB），且公開轉載有授權疑慮；排程只用由它整理出的小型 CSV
 data/finmind_*.json

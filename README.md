@@ -69,6 +69,20 @@ python3 -I scripts/update_data.py data dashboard/data --only ptt   # 盤中只�
 - 若「存回資料」步驟出現權限錯誤：Settings → Actions → General → Workflow permissions 改成 Read and write
 - 本機測試（2026/11/26）：在乾淨的 clone 裡跑 PTT 更新＋重算約 43 秒，repo 壓縮後約 0.7 MB，每次資料 commit 約增加數 KB
 
+### 用另一台 Mac 負責抓 PTT（PTT 會擋雲端主機）
+
+那台 Mac 只要在一般網路（家用或公司），每 15 分鐘抓一次 PTT（約 20 秒、30 MB 記憶體），推上 GitHub 後由 GitHub 重算並更新網站。
+需要 macOS 內建的 git 與 Python 3（沒有的話先執行 `xcode-select --install`），不需要帳號密碼：推送用只限這個 repo 的 deploy key。
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/TrieKai/ptt-indicator/main/scripts/setup_mac_collector.sh -o /tmp/setup_ptt.sh && bash /tmp/setup_ptt.sh
+```
+
+- 第一次執行會印出一行公鑰：到 repo 的 Settings → Deploy keys → Add deploy key 貼上，**勾選 Allow write access**，再執行一次同一行指令
+- 完成後 repo 在 `~/ptt-indicator`，排程是 launchd（`~/Library/LaunchAgents/com.ptt-indicator.collect.plist`），記錄檔 `~/ptt-indicator/logs/collect.log`
+- Mac 睡眠時不會執行，醒來後補跑；要長時間不中斷，在「系統設定 → 電池／能源」打開「顯示器關閉時防止自動進入睡眠」（插電時）
+- 停止：`launchctl bootout gui/$(id -u)/com.ptt-indicator.collect`
+
 ### 落底訊號儀表板（dashboard/）
 
 ```bash

@@ -3,6 +3,9 @@
 name: 更新鄉民指標
 
 on:
+  push:                            # 負責抓 PTT 的電腦推上新文章 → 重算並更新網站
+    branches: [main]
+    paths: ['data/ptt_latest.json']
   schedule:
     # PTT 會擋 GitHub 的主機（2026/11/26 實測 HTTP 403），所以雲端不排每 15 分鐘的 PTT 更新；PTT 要從可連線的電腦更新後推上來
     - cron: '40 7 * * 1-5'         # 台灣 15:40（平日）：完整更新，指數、P/C、三大法人
@@ -43,10 +46,12 @@ jobs:
 
       - name: 抓資料並重算
         env:
-          SCHEDULE: ${{ github.event.schedule }}
+          EVENT: ${{ github.event_name }}
           MODE: ${{ inputs.mode }}
         run: |
-          if [ "$SCHEDULE" = "7,22,37,52 * * * *" ] || [ "$MODE" = "ptt" ]; then
+          if [ "$EVENT" = "push" ]; then
+            python3 -I scripts/build_dashboard_data.py data dashboard/data > /dev/null
+          elif [ "$MODE" = "ptt" ]; then
             python3 -I scripts/update_data.py data dashboard/data --only ptt
           else
             python3 -I scripts/update_data.py data dashboard/data
@@ -62,7 +67,7 @@ jobs:
             echo "資料沒有變動"
           else
             git commit -q -m "資料更新 $(date '+%Y-%m-%d %H:%M')"
-            git push -q
+            git push -q || { git pull -q --rebase && git push -q; }
           fi
 
       - uses: actions/configure-pages@v6

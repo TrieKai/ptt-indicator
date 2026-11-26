@@ -5,6 +5,7 @@
 
 用法: python3 -I scripts/update_data.py data dashboard/data
       python3 -I scripts/update_data.py data dashboard/data --only ptt     # 只更新 PTT（盤中用）
+      python3 -I scripts/update_data.py data dashboard/data --only ptt --no-build   # 只抓、不重算
 FinMind 的資料直接併進 CSV（不留原始 JSON）。
 來源：證交所（加權指數、違約公告）、櫃買中心（櫃買指數）、期交所（P/C 比）、FinMind（融資、三大法人、成交金額、
       外資臺指期、臺指期全市場未平倉、美元匯率）、CBOE（VIX）、PTT 股票版列表頁
@@ -137,5 +138,7 @@ if os.environ.get("GITHUB_STEP_SUMMARY"):                            # GitHub Ac
     with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
         f.write("| 來源 | 結果 | 說明 | 秒 |\n|---|---|---|---|\n" + "".join(f"| {a} | {b} | {c} | {t:.0f} |\n" for a, b, c, t in report))
 if report and all(r[1] != "成功" for r in report): sys.exit("所有來源都失敗，不重算")
+if "--no-build" in sys.argv:                                          # 只抓資料、不重算（給負責抓 PTT 的電腦用，重算交給 GitHub）
+    print(f"抓資料 {t_fetch:.0f} 秒；失敗 {sum(r[1] != '成功' for r in report)} 個來源（未重算）"); sys.exit(0)
 subprocess.run([sys.executable, "-I", os.path.join(HERE, "build_dashboard_data.py"), D, OUT], check=True, stdout=subprocess.DEVNULL)
 print(f"\n抓資料 {t_fetch:.0f} 秒、重算 {time.time() - t_all - t_fetch:.0f} 秒；失敗 {sum(r[1] != '成功' for r in report)} 個來源")
