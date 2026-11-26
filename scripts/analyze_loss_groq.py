@@ -1,5 +1,7 @@
 """用 Groq 判斷畢業文候選的內文：是不是作者本人做多賠錢、有沒有依據（截圖或具體虧損金額）。
 結果存在 data/loss_labels.json（每篇文章只判斷一次）。第一階段只存結果、不影響分數。
+歷史文章由人工參考標記（data/loss_labels_ref.json，裡面記著 cutoff）負責；有這個檔時，
+Groq 只判斷 cutoff 之後的新文章，以及 data/loss_overlap.json 列的對照樣本（用來量 Groq 跟參考標記的一致率）。
 
 用法: python3 -I scripts/analyze_loss_groq.py data [--max N] [--dry-run] [--ids id1,id2]
   --max N     這一輪最多判斷幾篇（預設 20；免費額度有每日 token 上限，舊文章會分好幾天補完）
@@ -108,6 +110,11 @@ def main():
     out_path = os.path.join(a.data, "loss_labels.json")
     labels = json.load(open(out_path, encoding="utf-8")) if os.path.exists(out_path) else {}
     cands = candidates(load_posts(a.data))
+    ref_path, ov_path = os.path.join(a.data, "loss_labels_ref.json"), os.path.join(a.data, "loss_overlap.json")
+    if os.path.exists(ref_path):   # 歷史交給參考標記：只判斷新文章與對照樣本
+        cutoff = json.load(open(ref_path, encoding="utf-8")).get("cutoff") or 0
+        overlap = set(json.load(open(ov_path, encoding="utf-8"))) if os.path.exists(ov_path) else set()
+        cands = [c for c in cands if c[0]["ts"] >= cutoff or c[0]["id"] in overlap]
     if a.ids: cands = [c for c in cands if c[0]["id"] in set(a.ids.split(","))]
     todo = [(p, kind) for p, kind in cands if p["id"] not in labels or labels[p["id"]].get("prompt_version") != PROMPT_VERSION]
     print(f"候選 {len(cands)} 篇，已判斷 {len(cands) - len(todo)} 篇，這一輪最多判斷 {min(a.max, len(todo))} 篇", flush=True)

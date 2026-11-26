@@ -1,6 +1,6 @@
 """PTT 畢業文候選與內文讀取（Groq 分析與實驗共用）。
 
-候選 = 標題規則保留的畢業文原文（loss_rules.py）＋ 標題含畢業類關鍵字的 Re:／Fw: 回文（回覆新聞、情報、公告的除外）。
+候選 = [心得] 分類、標題規則保留的畢業文原文（loss_rules.py）＋ 回覆 [心得] 文、標題含畢業類關鍵字的 Re:／Fw: 回文。
 「作者自己寫的部分」= 拿掉作者／時間等標頭、引用原文的行（": " 開頭、※ 引述）、推文與簽名檔之後的內文。
 PTT 會擋雲端主機，讀內文要在一般網路的電腦上跑；呼叫端自己控制速度（每秒 1 篇）。
 """
@@ -35,15 +35,18 @@ def load_posts(D):
     return seen
 
 
+CATS = {"心得"}   # 畢業文一定要是 [心得] 分類（2026/11/27 決定）
+
+
 def candidates(seen):
     """回傳 [(post, 'orig'|'reply')]，新到舊排序。"""
     out = []
     for p in seen.values():
         t = p["title"]
         if REPLY.match(t):
-            # 回文：標題有關鍵字，而且不是回覆新聞、情報、公告（原文的這些分類本來就排除）
-            if any(k in t for k in KEYS) and CAT(REPLY.sub("", t, count=1).strip()) not in SKIP_CAT: out.append((p, "reply"))
-        elif classify(t)[0]:
+            # 回文：回覆 [心得] 文、標題有畢業類關鍵字
+            if any(k in t for k in KEYS) and CAT(REPLY.sub("", t, count=1).strip()) in CATS: out.append((p, "reply"))
+        elif classify(t)[0] and CAT(t) in CATS:
             out.append((p, "orig"))
     out.sort(key=lambda x: -x[0]["ts"])
     return out
