@@ -8,8 +8,13 @@ on:
     paths: ['data/ptt_latest.json', 'dashboard/index.html', 'dashboard/card.js', 'scripts/build_site.py', 'scripts/build_dashboard_data.py']
   schedule:
     # PTT 會擋 GitHub 的主機（2026/11/26 實測 HTTP 403），所以雲端不排每 15 分鐘的 PTT 更新；PTT 要從可連線的電腦更新後推上來
+    # GitHub 的排程在尖峰時段可能延遲或被跳過（2026/11/26 15:40 那次就沒跑），所以平日收盤後多排幾次備援。
+    # 更新只補缺的資料，重複跑沒有影響；沒有新資料時不會 commit。
     - cron: '40 7 * * 1-5'         # 台灣 15:40（平日）：完整更新，指數、P/C、三大法人
+    - cron: '40 8 * * 1-5'         # 台灣 16:40（平日）：備援
+    - cron: '10 10 * * 1-5'        # 台灣 18:10（平日）：備援
     - cron: '10 14 * * *'          # 台灣 22:10：完整更新，融資、違約公告；週末早上也會補到美國 VIX
+    - cron: '50 0 * * 2-6'         # 台灣 08:50（週二到週六）：開盤前最後補一次前一天晚上的資料
   workflow_dispatch:
     inputs:
       mode:

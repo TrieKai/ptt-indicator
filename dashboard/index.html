@@ -1260,7 +1260,18 @@ dash.draw('post-body', (el) => {
   rows.slice().reverse().forEach((r) => {
     const tr = el.insertRow(); tr.dataset.key = r.url;
     const t0 = tr.insertCell(); t0.textContent = r.posted;
-    if (r.pending) { const s = document.createElement('span'); s.className = 'lb-pend'; s.textContent = '算下一個交易日・尚未收盤，暫不計分'; t0.append(s); }
+    if (r.pending) {
+      // 文章算在「最後一個 09:00 已經過了的交易日」：09:00 前算前一天，週末算到星期五（國定假日沒有排除）
+      const m = /^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})/.exec(r.posted || '');
+      let day = '下一個交易日';
+      if (m) {
+        const d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]));
+        if (+m[4] < 9) d.setUTCDate(d.getUTCDate() - 1);
+        while (d.getUTCDay() === 0 || d.getUTCDay() === 6) d.setUTCDate(d.getUTCDate() - 1);
+        day = (d.getUTCMonth() + 1) + '/' + d.getUTCDate();
+      }
+      const s = document.createElement('span'); s.className = 'lb-pend'; s.textContent = '算 ' + day + '・那天的收盤資料更新後才計分'; t0.append(s);
+    }
     const td = tr.insertCell(); td.className = 'lb-l';
     if (/^https:\/\//.test(r.url)) { const a = document.createElement('a'); a.href = r.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = r.title; td.append(a); }
     else td.textContent = r.title;
