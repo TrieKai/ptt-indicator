@@ -381,7 +381,9 @@ status.append({"signal": "thermo", "name": "鄉民恐慌溫度", "side": "bottom
                "threshold": 95, "unit": "/100", "rule": "≥", "lit5": int(any(flag["thermo95"][j] for j in range(N - 5, N))),
                "last_lit": days[t_last].isoformat() if t_last is not None else None, "c5": c5c[-1], "l5": l5c[-1],
                "creative_heat": None if heat(c5c, N - 1) is None else round(heat(c5c, N - 1) * 100, 1),
-               "loss_heat": None if heat(l5c, N - 1) is None else round(heat(l5c, N - 1) * 100, 1)})
+               "loss_heat": None if heat(l5c, N - 1) is None else round(heat(l5c, N - 1) * 100, 1),
+               "ptt_asof": dt.datetime.fromtimestamp(max(p["ts"] for p in seen.values()), TZ).strftime("%Y-%m-%d %H:%M"),
+               "ptt_lag_h": round((dt.datetime.now(TZ).timestamp() - max(p["ts"] for p in seen.values())) / 3600, 1)})
 
 # ---------- 收盤後（下一個交易日）新增的 PTT 文章 ----------
 after_cut = lambda plist: [p for p in plist if p["ts"] >= next_open]   # 下一個交易日 09:00 之後的文章：那天還沒有收盤資料，先列出、不算分數

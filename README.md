@@ -45,7 +45,9 @@ python3 -I scripts/update_data.py data dashboard/data --only ptt   # 盤中只�
 
 ### 部署到 GitHub（公開 repo，GitHub Actions 排程 ＋ GitHub Pages）
 
-排程設定在 `.github/workflows/update.yml`：每 15 分鐘更新 PTT；台灣 15:40（平日）與 22:10 完整更新；
+排程設定在 `.github/workflows/update.yml`：台灣 15:40（平日）與 22:10 完整更新；
+**PTT 會擋 GitHub 的主機（2026/11/26 實測 HTTP 403）**，雲端抓不到 PTT，PTT 文章要從可連線的電腦更新後推上來（`--only ptt` 後 commit、push）。
+
 每次重算後把 `data/` 的變動存回 repo，並把 `site/` 發布到 GitHub Pages。不需要任何帳號密碼或 API 金鑰。
 
 1. 在 GitHub 建立一個**公開** repo（不要勾選自動建立 README）
@@ -56,12 +58,13 @@ python3 -I scripts/update_data.py data dashboard/data --only ptt   # 盤中只�
    ```
 3. repo 的 Settings → Pages → Build and deployment → Source 選 **GitHub Actions**
 4. Actions 分頁 → 「更新鄉民指標」→ Run workflow（範圍選 all）先手動跑一次。
-   執行頁面下方有各來源的結果表；**先看 ptt 那列有沒有成功**（PTT 可能會擋 GitHub 的連線）
+   執行頁面下方有各來源的結果表（ptt 那列在雲端會失敗，屬預期；其他來源都應該成功）
 5. 網址是 `https://你的帳號.github.io/你的repo/`
 
 注意：
 - 公開 repo 裡的程式、資料（PTT 標題與連結、整理後的市場數據）任何人都看得到；FinMind 原始檔不會上傳（見 `.gitignore`）
-- 排程在 GitHub 忙碌時會延遲，偶爾會被跳過；PTT 每次往回抓 10 頁（約 200 篇），漏一兩次不會缺文章
+- 排程在 GitHub 忙碌時會延遲，偶爾會被跳過
+- 溫度計旁會顯示「PTT 文章至 …」；超過 3 小時沒有新文章會變色警示，代表溫度可能偏低
 - 公開 repo 連續 60 天沒有活動，排程會被自動停用；到 Actions 分頁重新啟用即可
 - 若「存回資料」步驟出現權限錯誤：Settings → Actions → General → Workflow permissions 改成 Read and write
 - 本機測試（2026/11/26）：在乾淨的 clone 裡跑 PTT 更新＋重算約 43 秒，repo 壓縮後約 0.7 MB，每次資料 commit 約增加數 KB

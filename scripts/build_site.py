@@ -82,7 +82,7 @@ HEAD = """<!doctype html>
 
 FOOT = """
 <footer class="site-foot">
-  資料產生時間：<span id="site-updated">—</span>（台灣時間）。PTT 每 15 分鐘更新，收盤資料每天 15:40、22:10 更新。<br>
+  資料產生時間：<span id="site-updated">—</span>（台灣時間）。收盤資料每天 15:40（平日）、22:10 自動更新；PTT 文章的更新時間見溫度計旁的說明。<br>
   資料來源：證交所、櫃買中心、期交所、FinMind、CBOE、PTT 股票版（只看標題）。程式自動計算，可能有誤；歷史統計不代表未來，也不是投資建議。
 </footer>
 </body>

@@ -911,7 +911,13 @@ const tSum = () => { const s = dash.data('summary'); return s.status === 'ok' ? 
 dash.draw('thermo-val', (el) => { const r = tRow(); el.textContent = r ? r.value.toFixed(1) : '—'; });
 dash.draw('thermo-c5', (el) => { const r = tRow(); el.textContent = r ? String(r.c5) : '—'; });
 dash.draw('thermo-l5', (el) => { const r = tRow(); el.textContent = r ? String(r.l5) : '—'; });
-dash.draw('thermo-asof', (el) => { const r = tRow(); el.textContent = r ? '資料日 ' + LB.date(LB.parse(r.asof)) + '・上次 ≥95：' + (r.last_lit ? LB.date(LB.parse(r.last_lit)) : '無') : '—'; });
+dash.draw('thermo-asof', (el) => {
+  const r = tRow(); if (!r) { el.textContent = '—'; return; }
+  el.textContent = '資料日 ' + LB.date(LB.parse(r.asof)) + '・上次 ≥95：' + (r.last_lit ? LB.date(LB.parse(r.last_lit)) : '無')
+    + (r.ptt_asof ? '・PTT 文章至 ' + r.ptt_asof.slice(5).replace('-', '/') : '');
+  el.style.color = '';
+  if (r.ptt_lag_h != null && r.ptt_lag_h > 3) { el.textContent += '（PTT 超過 ' + Math.floor(r.ptt_lag_h) + ' 小時沒有更新，溫度可能偏低）'; el.style.color = 'var(--color-warn)'; }
+});
 dash.draw('thermo-pill', (el) => {
   const r = tRow(); el.className = 'lb-pill'; el.style.borderColor = ''; el.style.color = '';
   if (!r) { el.textContent = '—'; return; }
