@@ -1,4 +1,549 @@
 {
+"M.1773403078.A.5A1": {
+"amount": "",
+"confidence": 0.9,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 3,
+"nums": [],
+"own_len": 327,
+"short_links": 0
+},
+"id": "M.1773403078.A.5A1",
+"kind": "reply",
+"labeled_at": "2026-11-27 00:06",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v1",
+"reason": "未提及自身虧損或金額，只談策略",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 股市多頭 但我畢業了",
+"tokens": 863,
+"ts": 1773403078
+},
+"M.1774311051.A.3CD": {
+"amount": "",
+"confidence": 0.8,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": false,
+"hosts": [],
+"img": 0,
+"nums": [
+"-3.66%",
+"-52.40%",
+"-75%",
+"虧損  -3.66%"
+],
+"own_len": 125,
+"short_links": 0
+},
+"id": "M.1774311051.A.3CD",
+"kind": "reply",
+"labeled_at": "2026-11-27 00:06",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v1",
+"reason": "未明確說自己虧損，只是計算示例",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [請益] 台指順拉1200點 多少人直接斷頭滑價？",
+"tokens": 818,
+"ts": 1774311051
+},
+"M.1776573988.A.67C": {
+"amount": "-2400W",
+"confidence": 0.8,
+"counts": true,
+"evidence": "amount",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [
+"-2400W"
+],
+"own_len": 148,
+"short_links": 0
+},
+"id": "M.1776573988.A.67C",
+"kind": "reply",
+"labeled_at": "2026-11-27 00:06",
+"model": "openai/gpt-oss-120b",
+"own_loss": true,
+"prompt_version": "loss-v1",
+"reason": "提及 -2400W 損失，屬於多單持有",
+"side": "long",
+"status": "ok",
+"title": "Re: [心得] 畢業了，我只是風口上的豬（-2400W）",
+"tokens": 796,
+"ts": 1776573988
+},
+"M.1780038975.A.0C3": {
+"amount": "-123w、-1600w",
+"confidence": 0.95,
+"counts": false,
+"evidence": "both",
+"hints": {
+"first": true,
+"hosts": [
+"i.mopix.cc"
+],
+"img": 2,
+"nums": [
+"-123w",
+"-1600w"
+],
+"own_len": 558,
+"short_links": 0
+},
+"id": "M.1780038975.A.0C3",
+"kind": "reply",
+"labeled_at": "2026-11-27 00:06",
+"model": "openai/gpt-oss-120b",
+"own_loss": true,
+"prompt_version": "loss-v1",
+"reason": "作者自述空單賠錢並畢業，提供截圖與金額",
+"side": "short",
+"status": "ok",
+"title": "Re: [心得] 微台空軍凹單畢業 -123w （-1600w)",
+"tokens": 1166,
+"ts": 1780038975
+},
+"M.1783960194.A.A84": {
+"amount": "",
+"confidence": 0.98,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 146,
+"short_links": 0
+},
+"id": "M.1783960194.A.A84",
+"kind": "reply",
+"labeled_at": "2026-11-27 00:06",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v1",
+"reason": "未提及本人虧損或持倉",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [請益] 為何韓國的2X ETF會爆倉？",
+"tokens": 734,
+"ts": 1783960194
+},
+"M.1783961735.A.85E": {
+"amount": "",
+"confidence": 0.97,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [
+"ibb.co"
+],
+"img": 1,
+"nums": [
+"-100億"
+],
+"own_len": 506,
+"short_links": 0
+},
+"id": "M.1783961735.A.85E",
+"kind": "reply",
+"labeled_at": "2026-11-27 00:05",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v1",
+"reason": "未提及作者本人虧損，只在討論市場情況",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [請益] 為何韓國的2X ETF會爆倉？",
+"tokens": 1048,
+"ts": 1783961735
+},
+"M.1783964092.A.503": {
+"amount": "",
+"confidence": 0.97,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 483,
+"short_links": 0
+},
+"id": "M.1783964092.A.503",
+"kind": "reply",
+"labeled_at": "2026-11-27 00:05",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v1",
+"reason": "未提及作者本人虧損或截圖",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [請益] 為何韓國的2X ETF會爆倉？",
+"tokens": 1052,
+"ts": 1783964092
+},
+"M.1783968914.A.131": {
+"amount": "",
+"confidence": 0.95,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": false,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 757,
+"short_links": 0
+},
+"id": "M.1783968914.A.131",
+"kind": "reply",
+"labeled_at": "2026-11-27 00:05",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v1",
+"reason": "未提及本人虧損，只是理論說明",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [請益] 為何韓國的2X ETF會爆倉？",
+"tokens": 1316,
+"ts": 1783968914
+},
+"M.1785297910.A.D94": {
+"amount": "",
+"confidence": 0.9,
+"counts": true,
+"evidence": "screenshot",
+"hints": {
+"first": true,
+"hosts": [
+"i.mopix.cc"
+],
+"img": 2,
+"nums": [],
+"own_len": 122,
+"short_links": 0
+},
+"id": "M.1785297910.A.D94",
+"kind": "orig",
+"labeled_at": "2026-11-27 00:05",
+"model": "openai/gpt-oss-120b",
+"own_loss": true,
+"prompt_version": "loss-v1",
+"reason": "作者提供損益圖截圖，顯示自己持有多單虧損",
+"side": "long",
+"status": "ok",
+"title": "[心得] 融資仔先來畢業文",
+"tokens": 718,
+"ts": 1785297910
+},
+"M.1785299788.A.C37": {
+"amount": "",
+"confidence": 0.95,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": false,
+"hosts": [
+"i.mopix.cc"
+],
+"img": 1,
+"nums": [],
+"own_len": 94,
+"short_links": 0
+},
+"id": "M.1785299788.A.C37",
+"kind": "orig",
+"labeled_at": "2026-11-27 00:05",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v1",
+"reason": "作者只說打平，未提虧損",
+"side": "unknown",
+"status": "ok",
+"title": "[心得] 融資畢業仔  part2",
+"tokens": 683,
+"ts": 1785299788
+},
+"M.1785301018.A.D6E": {
+"amount": "-240萬",
+"confidence": 0.95,
+"counts": true,
+"evidence": "both",
+"hints": {
+"first": false,
+"hosts": [
+"myppt.cc"
+],
+"img": 0,
+"nums": [
+"-240萬"
+],
+"own_len": 91,
+"short_links": 0
+},
+"id": "M.1785301018.A.D6E",
+"kind": "reply",
+"labeled_at": "2026-11-27 00:05",
+"model": "openai/gpt-oss-120b",
+"own_loss": true,
+"prompt_version": "loss-v1",
+"reason": "作者自稱畢業文並列出-240萬損失",
+"side": "long",
+"status": "ok",
+"title": "Re: [心得] 融資仔先來畢業文 part3",
+"tokens": 754,
+"ts": 1785301018
+},
+"M.1785390511.A.1A0": {
+"amount": "虧不到20萬、虧40萬、虧了快十萬",
+"confidence": 0.95,
+"counts": true,
+"evidence": "both",
+"hints": {
+"first": true,
+"hosts": [
+"i.mopix.cc",
+"www.ptt.cc"
+],
+"img": 2,
+"nums": [
+"虧不到20萬",
+"虧40萬",
+"虧了快十萬"
+],
+"own_len": 477,
+"short_links": 0
+},
+"id": "M.1785390511.A.1A0",
+"kind": "orig",
+"labeled_at": "2026-11-27 00:05",
+"model": "openai/gpt-oss-120b",
+"own_loss": true,
+"prompt_version": "loss-v1",
+"reason": "作者敘述自己多單虧損並提供對帳單截圖",
+"side": "long",
+"status": "ok",
+"title": "[心得] 畢業了",
+"tokens": 1042,
+"ts": 1785390511
+},
+"M.1785419476.A.243": {
+"amount": "",
+"confidence": 0.7,
+"counts": true,
+"evidence": "screenshot",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 2,
+"nums": [],
+"own_len": 187,
+"short_links": 0
+},
+"id": "M.1785419476.A.243",
+"kind": "orig",
+"labeled_at": "2026-11-27 00:05",
+"model": "openai/gpt-oss-120b",
+"own_loss": true,
+"prompt_version": "loss-v1",
+"reason": "作者自稱畢業文且提供持倉截圖，屬多頭持倉",
+"side": "long",
+"status": "ok",
+"title": "[心得] 融資貪狗畢業文",
+"tokens": 802,
+"ts": 1785419476
+},
+"M.1785461976.A.081": {
+"amount": "",
+"confidence": 0.85,
+"counts": true,
+"evidence": "screenshot",
+"hints": {
+"first": false,
+"hosts": [
+"i.mopix.cc"
+],
+"img": 1,
+"nums": [],
+"own_len": 139,
+"short_links": 0
+},
+"id": "M.1785461976.A.081",
+"kind": "orig",
+"labeled_at": "2026-11-27 00:05",
+"model": "openai/gpt-oss-120b",
+"own_loss": true,
+"prompt_version": "loss-v1",
+"reason": "作者敘述自己做多後大賠，附截圖證據",
+"side": "long",
+"status": "ok",
+"title": "[心得] 畢業了",
+"tokens": 757,
+"ts": 1785461976
+},
+"M.1792915891.A.0F8": {
+"amount": "",
+"confidence": 0.8,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 8,
+"nums": [
+"-42%"
+],
+"own_len": 935,
+"short_links": 0
+},
+"id": "M.1792915891.A.0F8",
+"kind": "reply",
+"labeled_at": "2026-11-27 00:05",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v1",
+"reason": "未提及本人實際虧損金額或比例，只是敘述資產成長",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [請益] 3000萬可以退休了嗎?（畢業了….）",
+"tokens": 1285,
+"ts": 1792915891
+},
+"M.1793002557.A.667": {
+"amount": "",
+"confidence": 0.9,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [
+"myppt.cc"
+],
+"img": 0,
+"nums": [],
+"own_len": 245,
+"short_links": 0
+},
+"id": "M.1793002557.A.667",
+"kind": "reply",
+"labeled_at": "2026-11-27 00:05",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v1",
+"reason": "未提及作者本人虧損或截圖",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [請益] 3000萬可以退休了嗎?（畢業了….）",
+"tokens": 827,
+"ts": 1793002557
+},
+"M.1794891650.A.08A": {
+"amount": "賠了幾十萬",
+"confidence": 0.9,
+"counts": true,
+"evidence": "amount",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [
+"-62元",
+"賠了幾十萬",
+"賠百萬"
+],
+"own_len": 305,
+"short_links": 0
+},
+"id": "M.1794891650.A.08A",
+"kind": "reply",
+"labeled_at": "2026-11-27 00:05",
+"model": "openai/gpt-oss-120b",
+"own_loss": true,
+"prompt_version": "loss-v1",
+"reason": "作者自述賣出後虧損，屬於多單",
+"side": "long",
+"status": "ok",
+"title": "Re: [心得] 畢業了",
+"tokens": 960,
+"ts": 1794891650
+},
+"M.1794895322.A.E43": {
+"amount": "-200多萬",
+"confidence": 0.9,
+"counts": true,
+"evidence": "both",
+"hints": {
+"first": false,
+"hosts": [
+"i.mopix.cc"
+],
+"img": 1,
+"nums": [],
+"own_len": 150,
+"short_links": 0
+},
+"id": "M.1794895322.A.E43",
+"kind": "orig",
+"labeled_at": "2026-11-27 00:05",
+"model": "openai/gpt-oss-120b",
+"own_loss": true,
+"prompt_version": "loss-v1",
+"reason": "標題與截圖暗示作者自有長倉虧損",
+"side": "long",
+"status": "ok",
+"title": "[心得] 畢業了 -200多萬",
+"tokens": 799,
+"ts": 1794895322
+},
+"M.1795133211.A.FB8": {
+"amount": "",
+"confidence": 0.7,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [
+"i.mopix.cc"
+],
+"img": 1,
+"nums": [],
+"own_len": 240,
+"short_links": 0
+},
+"id": "M.1795133211.A.FB8",
+"kind": "reply",
+"labeled_at": "2026-11-27 00:05",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v1",
+"reason": "未提及自己虧損，只談空單持有",
+"side": "short",
+"status": "ok",
+"title": "Re: [心得] 續昨日的空單畢業文",
+"tokens": 875,
+"ts": 1795133211
+},
 "M.1795158212.A.866": {
 "amount": "200萬沒了",
 "confidence": 0.96,
@@ -28,6 +573,37 @@
 "title": "[心得] 7年存款賠光 畢業了",
 "tokens": 907,
 "ts": 1795158212
+},
+"M.1795159947.A.E88": {
+"amount": "",
+"confidence": 0.97,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [
+"i.mopix.cc"
+],
+"img": 2,
+"nums": [
+"-120%",
+"-32k"
+],
+"own_len": 465,
+"short_links": 0
+},
+"id": "M.1795159947.A.E88",
+"kind": "reply",
+"labeled_at": "2026-11-27 00:05",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v1",
+"reason": "文中只說獲利了結，未提及自己虧損",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 續昨日的空單畢業文",
+"tokens": 1078,
+"ts": 1795159947
 },
 "M.1795402955.A.89B": {
 "amount": "賠了87000元",
