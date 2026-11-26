@@ -96,7 +96,26 @@ typography:
     fontSize: "0.75rem"
     fontWeight: 400
     lineHeight: 1.25
+  display-sm:
+    fontFamily: "Noto Sans TC, system-ui, sans-serif"
+    fontSize: "3.75rem"
+    fontWeight: 900
+    lineHeight: 1
+    letterSpacing: "-0.035em"
+    fontFeature: "tnum"
+  score-sm:
+    fontFamily: "Noto Sans TC, system-ui, sans-serif"
+    fontSize: "1.625rem"
+    fontWeight: 900
+    letterSpacing: "-0.02em"
+    fontFeature: "tnum"
+  lamp-label-sm:
+    fontFamily: "Noto Sans TC, system-ui, sans-serif"
+    fontSize: "0.6875rem"
+    fontWeight: 400
+    lineHeight: 1.25
 rounded:
+  focus: "2px"
   panel: "3px"
   control: "4px"
   lamp: "50%"
@@ -135,6 +154,12 @@ components:
   chip-level:
     rounded: "{rounded.panel}"
     padding: "1px 10px"
+    typography: "{typography.body-sm}"
+  button-primary:
+    backgroundColor: "{colors.ink}"
+    textColor: "{colors.panel}"
+    rounded: "{rounded.control}"
+    padding: "5px 14px"
     typography: "{typography.body-sm}"
   nav-link:
     textColor: "{colors.ink-2}"

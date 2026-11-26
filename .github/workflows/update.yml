@@ -5,7 +5,7 @@ name: 更新鄉民指標
 on:
   push:                            # 負責抓 PTT 的電腦推上新文章，或改了網頁／重算程式 → 重算並更新網站
     branches: [main]
-    paths: ['data/ptt_latest.json', 'dashboard/index.html', 'scripts/build_site.py', 'scripts/build_dashboard_data.py']
+    paths: ['data/ptt_latest.json', 'dashboard/index.html', 'dashboard/card.js', 'scripts/build_site.py', 'scripts/build_dashboard_data.py']
   schedule:
     # PTT 會擋 GitHub 的主機（2026/11/26 實測 HTTP 403），所以雲端不排每 15 分鐘的 PTT 更新；PTT 要從可連線的電腦更新後推上來
     - cron: '40 7 * * 1-5'         # 台灣 15:40（平日）：完整更新，指數、P/C、三大法人
@@ -57,6 +57,16 @@ jobs:
             python3 -I scripts/update_data.py data dashboard/data
           fi
           python3 -I scripts/build_site.py dashboard site
+
+      # 連結預覽圖（og:image）：用 runner 內建的 Chrome 把 site/card.html 截成 1200×630 的 PNG。失敗也照常部署，只是沒有預覽圖
+      - name: 產生連結預覽圖
+        continue-on-error: true
+        run: |
+          OG=$(cat site/og/.target); rm -f site/og/.target
+          CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
+          "$CHROME" --headless=new --disable-gpu --no-sandbox --hide-scrollbars --force-device-scale-factor=1 \
+            --window-size=1200,630 --virtual-time-budget=20000 --screenshot="$PWD/site/$OG" "file://$PWD/site/card.html"
+          test -s "site/$OG" && echo "預覽圖：$OG"
 
       - name: 存回資料
         run: |

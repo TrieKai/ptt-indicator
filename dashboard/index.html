@@ -71,7 +71,7 @@
   .lb-top { position: sticky; top: 0; z-index: 10; background: var(--ground); border-bottom: 1px solid var(--rule); }
   .lb-top-in { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px 28px; min-height: 60px; }
   .lb-brand { display: flex; align-items: center; margin: 0; font-size: 1.0625rem; font-weight: 900; letter-spacing: 0.02em; white-space: nowrap; }
-  .lb-brand a { text-decoration: none; display: inline-flex; align-items: center; }
+  .lb-brand a { text-decoration: none; display: inline-flex; align-items: center; color: var(--ink); }
   .lb-nav { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
   .lb-nav::-webkit-scrollbar { display: none; }
   .lb-nav a { flex: none; padding: 6px 10px; border-radius: 4px; font-size: var(--fs-sm); font-weight: 500; color: var(--ink-2); text-decoration: none; transition: background-color 150ms ease-out, color 150ms ease-out; }
@@ -127,6 +127,14 @@
   .lb-key span { display: inline-flex; align-items: center; gap: 6px; }
   .lb-key .lamp { --ls: 13px; }
   .lb-disclaim { padding-top: 12px; padding-bottom: 14px; }
+  .lb-share { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding-top: 16px; }
+  .lb-btn.lb-btn--primary { display: inline-flex; align-items: center; gap: 7px; background: var(--ink); color: var(--panel); border-color: var(--ink); font-weight: 700; padding: 5px 14px; }
+  .lb-btn.lb-btn--primary:hover { background: var(--ink-2); border-color: var(--ink-2); }
+  .lb-btn.lb-btn--primary:active { background: var(--ink); }
+  .lb-btn:disabled { opacity: 0.55; cursor: progress; }
+  .lb-share-panel { flex-basis: 100%; display: grid; gap: 10px; padding-top: 4px; }
+  .lb-share-panel[hidden] { display: none; }
+  .lb-share-panel #lb-share-prev img { display: block; width: 100%; max-width: 640px; height: auto; border: 1px solid var(--rule); border-radius: 3px; background: var(--panel-2); }
 
   /* 區塊 */
   .lb-main { display: grid; gap: 16px; padding-top: 16px; padding-bottom: 16px; }
@@ -333,6 +341,23 @@
           <span><i class="lamp lamp--bottom" data-s="on"></i>藍燈＝落底</span>
           <span><i class="lamp lamp--top" data-s="on"></i>紅燈＝過熱</span>
           <span><i class="lamp lamp--warn" data-s="on"></i>黃藍燈＝偏空</span>
+        </div>
+        <div class="lb-share">
+          <button type="button" class="lb-btn lb-btn--primary" id="lb-share-btn" aria-expanded="false" aria-controls="lb-share-panel">
+            <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5v8.5M4.8 4.6 8 1.5l3.2 3.1M3 8.5v5h10v-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            分享今天的圖卡
+          </button>
+          <span class="lb-cap">把今天的溫度與三排燈做成一張圖</span>
+          <div class="lb-share-panel" id="lb-share-panel" hidden>
+            <div id="lb-share-prev"></div>
+            <div class="lb-bar">
+              <button type="button" class="lb-btn lb-btn--primary" id="lb-share-go" hidden>分享</button>
+              <button type="button" class="lb-btn" id="lb-share-dl">下載 PNG</button>
+              <button type="button" class="lb-btn" id="lb-share-copy">複製連結</button>
+              <span class="lb-cap" id="lb-share-msg" role="status" aria-live="polite"></span>
+            </div>
+            <p class="lb-cap">圖上印有資料日與免責聲明；轉貼到 PTT 可以先下載再上傳到圖床。</p>
+          </div>
         </div>
       </div>
     </div>
@@ -630,7 +655,7 @@ window.LB = {
     top: [['vix_low', '美國VIX低'], ['pc_low', 'P/C偏低'], ['fut_long', '外資多單'], ['foreign_buy', '外資大買'], ['margin_up', '融資大增'], ['turnover', '量能爆量'], ['hot_ptt', '過熱文'], ['stretch', '乖離過大']],
   },
   // 分數用的燈（固定順序，天天看位置不會跳）
-  FAM: {
+  FAM: window.LBCard ? LBCard.FAM : {
     bottom: [['vix_high', 'VIX 高'], ['pc_high', 'P/C 高'], ['foreign', '外資賣'], ['margin', '融資減'], ['default', '違約'], ['loss', '畢業文'], ['creative', '創作文']],
     top: [['vix_low', 'VIX 低'], ['pc_low', 'P/C 低'], ['fut_long', '期貨多單'], ['foreign_buy', '外資買'], ['margin_up', '融資增'], ['turnover', '量能'], ['hot_ptt', '過熱文'], ['stretch', '乖離']],
     warn: [['fut_short', '淨空單'], ['fut_ratio_short', '空單佔比'], ['fut_chg_short', '增空單']],
@@ -779,6 +804,54 @@ dash.draw('stamp', (el) => {
   el.classList.toggle('is-stale', r.ptt_lag_h != null && r.ptt_lag_h > 3);
   if (r.ptt_lag_h != null && r.ptt_lag_h > 3) el.textContent += '（PTT 超過 ' + Math.floor(r.ptt_lag_h) + ' 小時沒有更新，溫度可能偏低）';
 });
+
+// 分享今天的圖卡：畫法在 card.js（連結預覽圖用的是同一份）
+(() => {
+  const btn = document.getElementById('lb-share-btn'), panel = document.getElementById('lb-share-panel');
+  if (!btn || !panel) return;
+  if (!window.LBCard) { btn.closest('.lb-share').hidden = true; return; }
+  const prev = document.getElementById('lb-share-prev'), go = document.getElementById('lb-share-go');
+  const dl = document.getElementById('lb-share-dl'), cp = document.getElementById('lb-share-copy'), msg = document.getElementById('lb-share-msg');
+  const pageUrl = () => location.origin + location.pathname;
+  let card = null;
+  const say = (t) => { msg.textContent = t; };
+  const make = async () => {
+    const st = dash.data('status'), sm = dash.data('summary');
+    if (st.status !== 'ok') throw new Error(st.status === 'loading' ? '資料還在載入，請稍候再試' : '資料載入失敗');
+    const m = LBCard.model(st.data, lastDaily(), sm.status === 'ok' ? sm.data : []);
+    if (!m) throw new Error('找不到溫度資料');
+    await LBCard.fontsReady(m);
+    const c = document.createElement('canvas'); LBCard.draw(c, m, 2);
+    const blob = await new Promise((res, rej) => c.toBlob((b) => (b ? res(b) : rej(new Error('瀏覽器無法產生圖片'))), 'image/png'));
+    const name = 'ptt-indicator-' + m.asof.replaceAll('/', '') + '.png';
+    return { m, blob, name, file: new File([blob], name, { type: 'image/png' }), url: URL.createObjectURL(blob) };
+  };
+  btn.addEventListener('click', async () => {
+    if (!panel.hidden) { panel.hidden = true; btn.setAttribute('aria-expanded', 'false'); return; }
+    btn.disabled = true; say('');
+    try {
+      if (card) URL.revokeObjectURL(card.url);
+      card = await make();
+      const img = new Image(1200, 630); img.src = card.url; img.alt = '今日圖卡：' + LBCard.text(card.m); prev.replaceChildren(img);
+      go.hidden = !(navigator.canShare && navigator.canShare({ files: [card.file] }));
+      panel.hidden = false; btn.setAttribute('aria-expanded', 'true');
+    } catch (e) { say('產生圖卡失敗：' + e.message); panel.hidden = false; btn.setAttribute('aria-expanded', 'true'); }
+    finally { btn.disabled = false; }
+  });
+  go.addEventListener('click', async () => {
+    if (!card) return;
+    try { await navigator.share({ files: [card.file], title: '台股落底訊號回測', text: LBCard.text(card.m) + ' ' + pageUrl() }); say('已開啟分享'); }
+    catch (e) { if (e.name !== 'AbortError') say('分享失敗，可以改用「下載 PNG」'); }
+  });
+  dl.addEventListener('click', () => {
+    if (!card) return;
+    const a = document.createElement('a'); a.href = card.url; a.download = card.name; document.body.append(a); a.click(); a.remove();
+    say('已下載 ' + card.name);
+  });
+  cp.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(pageUrl()); say('已複製連結'); } catch (e) { say('無法複製，請手動複製網址列'); }
+  });
+})();
 
 // 燈號明細：訊號 × 最近 20 個交易日
 dash.draw('matrix', (el) => {
