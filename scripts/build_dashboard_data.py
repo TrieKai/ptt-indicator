@@ -363,9 +363,14 @@ for k in BOT + TOP + WARN + ["bigdrop"]:
         li = max(i for i in range(N) if val[k][i] is not None)
         v, t = disp(k, val[k][li]), disp(k, thr[k][li])
     rule = "≤" if k in ("margin", "foreign", "bigdrop", "pc_low", "fut_short", "fut_ratio_short", "fut_chg_short", "vix_low") else "≥"
+    # 最近 20 個交易日每天的數值與門檻（燈號明細的提示用）：[日期, 數值, 門檻]
+    if k == "bigdrop":
+        recent = [[days[i].isoformat(), r2(ctw[i] / ctw[i - 1] - 1), -3.0] for i in range(N - 20, N)]
+    else:
+        recent = [[days[i].isoformat(), disp(k, val[k][i]), disp(k, thr[k][i])] for i in range(N - 20, N)]
     status.append({"signal": k, "name": NAMES[k], "side": "top" if k in TOP else ("warn" if k in WARN else "bottom"), "asof": days[li].isoformat(), "value": v,
                    "threshold": t, "unit": UNIT[k], "rule": rule, "lit5": int(any(flag[k][j] for j in range(N - 5, N))),
-                   "last_lit": days[last_i].isoformat() if last_i is not None else None})
+                   "last_lit": days[last_i].isoformat() if last_i is not None else None, "recent": recent})
 for k, s, name, side, th, unit in [("score", score, "落底分數", "bottom", 3, "/7"), ("gscore", gscore, "過熱分數", "top", 3, "/8"),
                                    ("wscore", wscore, "偏空警示", "warn", 1, "/3")]:
     status.append({"signal": k, "name": name, "side": side, "asof": days[-1].isoformat(), "value": s[-1], "threshold": th, "unit": unit,

@@ -3,9 +3,9 @@
 name: 更新鄉民指標
 
 on:
-  push:                            # 負責抓 PTT 的電腦推上新文章 → 重算並更新網站
+  push:                            # 負責抓 PTT 的電腦推上新文章，或改了網頁／重算程式 → 重算並更新網站
     branches: [main]
-    paths: ['data/ptt_latest.json']
+    paths: ['data/ptt_latest.json', 'dashboard/index.html', 'scripts/build_site.py', 'scripts/build_dashboard_data.py']
   schedule:
     # PTT 會擋 GitHub 的主機（2026/11/26 實測 HTTP 403），所以雲端不排每 15 分鐘的 PTT 更新；PTT 要從可連線的電腦更新後推上來
     - cron: '40 7 * * 1-5'         # 台灣 15:40（平日）：完整更新，指數、P/C、三大法人

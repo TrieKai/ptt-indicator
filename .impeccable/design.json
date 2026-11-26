@@ -1,0 +1,901 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-26T12:00:01+00:00",
+  "title": "Design System: 台股落底訊號回測",
+  "extensions": {
+    "colorMeta": {
+      "ground": {
+        "role": "neutral",
+        "displayName": "Cool Gray Ground",
+        "canonical": "#e8eaee",
+        "tonalRamp": [
+          "#23252a",
+          "#393d47",
+          "#505867",
+          "#68748c",
+          "#8b94a7",
+          "#afb5c0",
+          "#d2d5da",
+          "#f1f2f3"
+        ]
+      },
+      "ground-dark": {
+        "role": "neutral",
+        "displayName": "Cool Gray Ground (dark)",
+        "canonical": "#0f1113",
+        "tonalRamp": [
+          "#232629",
+          "#3a4045",
+          "#535c65",
+          "#6c7a88",
+          "#8e99a4",
+          "#b1b8be",
+          "#d3d6d9",
+          "#f1f2f3"
+        ]
+      },
+      "panel": {
+        "role": "neutral",
+        "displayName": "Report White",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#262626",
+          "#404040",
+          "#5c5c5c",
+          "#7a7a7a",
+          "#999999",
+          "#b8b8b8",
+          "#d6d6d6",
+          "#f2f2f2"
+        ]
+      },
+      "panel-dark": {
+        "role": "neutral",
+        "displayName": "Report White (dark)",
+        "canonical": "#171a1e",
+        "tonalRamp": [
+          "#232629",
+          "#3a3f46",
+          "#525a66",
+          "#6b788a",
+          "#8d97a5",
+          "#b0b7bf",
+          "#d3d6da",
+          "#f1f2f3"
+        ]
+      },
+      "panel-2": {
+        "role": "neutral",
+        "displayName": "Panel Tint",
+        "canonical": "#f3f4f7",
+        "tonalRamp": [
+          "#22242b",
+          "#373b49",
+          "#4c546b",
+          "#626e92",
+          "#8790ab",
+          "#adb2c2",
+          "#d1d4db",
+          "#f1f2f4"
+        ]
+      },
+      "panel-2-dark": {
+        "role": "neutral",
+        "displayName": "Panel Tint (dark)",
+        "canonical": "#1e2227",
+        "tonalRamp": [
+          "#232629",
+          "#3a3f46",
+          "#525b66",
+          "#6b798a",
+          "#8d98a5",
+          "#b1b7bf",
+          "#d3d6da",
+          "#f1f2f3"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#1c1f24",
+        "tonalRamp": [
+          "#232629",
+          "#3a3e46",
+          "#525966",
+          "#6b7789",
+          "#8e96a4",
+          "#b1b6be",
+          "#d3d5d9",
+          "#f1f2f3"
+        ]
+      },
+      "ink-dark": {
+        "role": "neutral",
+        "displayName": "Ink (dark)",
+        "canonical": "#e8eaed",
+        "tonalRamp": [
+          "#232629",
+          "#3a3f45",
+          "#525a65",
+          "#6c7789",
+          "#8e97a4",
+          "#b1b6be",
+          "#d3d6d9",
+          "#f1f2f3"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Ink 2",
+        "canonical": "#464d58",
+        "tonalRamp": [
+          "#242629",
+          "#3a3f45",
+          "#535a65",
+          "#6d7788",
+          "#8f97a3",
+          "#b1b6be",
+          "#d3d6d9",
+          "#f2f2f3"
+        ]
+      },
+      "ink-2-dark": {
+        "role": "neutral",
+        "displayName": "Ink 2 (dark)",
+        "canonical": "#c1c6cd",
+        "tonalRamp": [
+          "#242629",
+          "#3b3f45",
+          "#535a64",
+          "#6e7887",
+          "#8f97a3",
+          "#b2b7bd",
+          "#d3d6d9",
+          "#f2f2f3"
+        ]
+      },
+      "ink-3": {
+        "role": "neutral",
+        "displayName": "Ink 3",
+        "canonical": "#5f6671",
+        "tonalRamp": [
+          "#242628",
+          "#3c3f44",
+          "#555a63",
+          "#707885",
+          "#9197a1",
+          "#b3b7bc",
+          "#d4d6d8",
+          "#f2f2f3"
+        ]
+      },
+      "ink-3-dark": {
+        "role": "neutral",
+        "displayName": "Ink 3 (dark)",
+        "canonical": "#a1a8b2",
+        "tonalRamp": [
+          "#242629",
+          "#3b3f44",
+          "#545a64",
+          "#6e7886",
+          "#9097a2",
+          "#b2b7bd",
+          "#d4d6d9",
+          "#f2f2f3"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Rule",
+        "canonical": "#d2d5db",
+        "tonalRamp": [
+          "#242529",
+          "#3b3e45",
+          "#535964",
+          "#6d7688",
+          "#8f96a3",
+          "#b2b6be",
+          "#d3d5d9",
+          "#f2f2f3"
+        ]
+      },
+      "rule-dark": {
+        "role": "neutral",
+        "displayName": "Rule (dark)",
+        "canonical": "#2d3239",
+        "tonalRamp": [
+          "#232629",
+          "#3a3f45",
+          "#535a65",
+          "#6c7888",
+          "#8e97a4",
+          "#b1b7be",
+          "#d3d6d9",
+          "#f1f2f3"
+        ]
+      },
+      "rule-2": {
+        "role": "neutral",
+        "displayName": "Light Rule",
+        "canonical": "#e4e6eb",
+        "tonalRamp": [
+          "#23252a",
+          "#393d47",
+          "#505767",
+          "#69738c",
+          "#8b93a7",
+          "#b0b4c0",
+          "#d2d5da",
+          "#f1f2f3"
+        ]
+      },
+      "rule-2-dark": {
+        "role": "neutral",
+        "displayName": "Light Rule (dark)",
+        "canonical": "#252a30",
+        "tonalRamp": [
+          "#232629",
+          "#3a3f46",
+          "#525b66",
+          "#6b798a",
+          "#8d98a5",
+          "#b1b7bf",
+          "#d3d6da",
+          "#f1f2f3"
+        ]
+      },
+      "rule-ink": {
+        "role": "neutral",
+        "displayName": "Ink Rule",
+        "canonical": "#1c1f24",
+        "tonalRamp": [
+          "#232629",
+          "#3a3e46",
+          "#525966",
+          "#6b7789",
+          "#8e96a4",
+          "#b1b6be",
+          "#d3d5d9",
+          "#f1f2f3"
+        ]
+      },
+      "lamp-blue": {
+        "role": "primary",
+        "displayName": "Signal Blue",
+        "canonical": "#2456ad",
+        "tonalRamp": [
+          "#172236",
+          "#21385e",
+          "#294e8f",
+          "#2c65c9",
+          "#5d89d5",
+          "#94aedb",
+          "#c5d2e7",
+          "#eef1f6"
+        ]
+      },
+      "lamp-blue-dark": {
+        "role": "primary",
+        "displayName": "Signal Blue (dark)",
+        "canonical": "#5d8ff0",
+        "tonalRamp": [
+          "#13203a",
+          "#193366",
+          "#1b479c",
+          "#175bde",
+          "#4e81e4",
+          "#8ba9e5",
+          "#c1cfeb",
+          "#edf1f8"
+        ]
+      },
+      "lamp-red": {
+        "role": "primary",
+        "displayName": "Signal Red",
+        "canonical": "#cc3328",
+        "tonalRamp": [
+          "#361916",
+          "#5f2521",
+          "#902f28",
+          "#cb352a",
+          "#d6645c",
+          "#dc9893",
+          "#e7c7c5",
+          "#f7efee"
+        ]
+      },
+      "lamp-red-dark": {
+        "role": "primary",
+        "displayName": "Signal Red (dark)",
+        "canonical": "#ff6457",
+        "tonalRamp": [
+          "#3e120f",
+          "#6e1912",
+          "#a91a0e",
+          "#f21503",
+          "#f44c3e",
+          "#ee8a81",
+          "#f0c1bd",
+          "#f9edec"
+        ]
+      },
+      "lamp-amber": {
+        "role": "primary",
+        "displayName": "Signal Amber",
+        "canonical": "#d99511",
+        "tonalRamp": [
+          "#3a2d12",
+          "#674c18",
+          "#9e7119",
+          "#e19b14",
+          "#e7b24b",
+          "#e6c689",
+          "#ecddc0",
+          "#f8f4ed"
+        ]
+      },
+      "lamp-amber-dark": {
+        "role": "primary",
+        "displayName": "Signal Amber (dark)",
+        "canonical": "#f0b43c",
+        "tonalRamp": [
+          "#3a2d12",
+          "#674d18",
+          "#9e7219",
+          "#e19d14",
+          "#e7b34b",
+          "#e6c789",
+          "#ecddc0",
+          "#f8f4ed"
+        ]
+      },
+      "lamp-green": {
+        "role": "secondary",
+        "displayName": "Brand-mark Green",
+        "canonical": "#2c9152",
+        "tonalRamp": [
+          "#1a3323",
+          "#27583a",
+          "#328552",
+          "#3aba6b",
+          "#68ca8d",
+          "#9bd5b0",
+          "#c9e4d3",
+          "#eff6f1"
+        ]
+      },
+      "lamp-green-dark": {
+        "role": "secondary",
+        "displayName": "Brand-mark Green (dark)",
+        "canonical": "#4cc27c",
+        "tonalRamp": [
+          "#1b3224",
+          "#29563c",
+          "#368255",
+          "#40b56f",
+          "#6cc691",
+          "#9dd2b3",
+          "#cae3d4",
+          "#eff5f2"
+        ]
+      },
+      "lamp-yr": {
+        "role": "secondary",
+        "displayName": "Brand-mark Yellow-Red",
+        "canonical": "#e0731f",
+        "tonalRamp": [
+          "#382414",
+          "#633b1d",
+          "#975421",
+          "#d56f20",
+          "#de9054",
+          "#e1b28f",
+          "#ead4c3",
+          "#f7f2ed"
+        ]
+      },
+      "lamp-yr-dark": {
+        "role": "secondary",
+        "displayName": "Brand-mark Yellow-Red (dark)",
+        "canonical": "#ff9a4d",
+        "tonalRamp": [
+          "#3e230f",
+          "#6e3a12",
+          "#a9510e",
+          "#f26a03",
+          "#f48d3e",
+          "#eeb081",
+          "#f0d3bd",
+          "#f9f1ec"
+        ]
+      },
+      "lamp-off": {
+        "role": "neutral",
+        "displayName": "Lamp Off",
+        "canonical": "#b9bec6",
+        "tonalRamp": [
+          "#242629",
+          "#3b3f44",
+          "#545a64",
+          "#6e7887",
+          "#9097a2",
+          "#b2b6bd",
+          "#d4d6d9",
+          "#f2f2f3"
+        ]
+      },
+      "lamp-off-dark": {
+        "role": "neutral",
+        "displayName": "Lamp Off (dark)",
+        "canonical": "#4b525b",
+        "tonalRamp": [
+          "#242629",
+          "#3b3f44",
+          "#545b63",
+          "#6f7986",
+          "#9098a2",
+          "#b2b7bd",
+          "#d4d6d9",
+          "#f2f2f3"
+        ]
+      },
+      "wash-blue": {
+        "role": "secondary",
+        "displayName": "Blue Wash",
+        "canonical": "#e4ebf7",
+        "tonalRamp": [
+          "#192333",
+          "#273959",
+          "#325186",
+          "#3969bb",
+          "#688cca",
+          "#9ab0d5",
+          "#c8d3e4",
+          "#eff1f6"
+        ]
+      },
+      "wash-blue-dark": {
+        "role": "secondary",
+        "displayName": "Blue Wash (dark)",
+        "canonical": "#1b2840",
+        "tonalRamp": [
+          "#1d2330",
+          "#2d3a53",
+          "#3c527b",
+          "#4a6cab",
+          "#748ebe",
+          "#a2b1ce",
+          "#ccd3e1",
+          "#f0f1f5"
+        ]
+      },
+      "wash-red": {
+        "role": "secondary",
+        "displayName": "Red Wash",
+        "canonical": "#f9e5e2",
+        "tonalRamp": [
+          "#361b17",
+          "#5e2921",
+          "#8f3629",
+          "#c9402c",
+          "#d56d5d",
+          "#db9d94",
+          "#e7cac5",
+          "#f6efee"
+        ]
+      },
+      "wash-red-dark": {
+        "role": "secondary",
+        "displayName": "Red Wash (dark)",
+        "canonical": "#3a1f1d",
+        "tonalRamp": [
+          "#2e1f1e",
+          "#4f3230",
+          "#764542",
+          "#a25852",
+          "#b77f7b",
+          "#caa8a6",
+          "#dfcfce",
+          "#f4f0f0"
+        ]
+      },
+      "wash-amber": {
+        "role": "secondary",
+        "displayName": "Amber Wash",
+        "canonical": "#f8eed6",
+        "tonalRamp": [
+          "#372d16",
+          "#604d1f",
+          "#937225",
+          "#cf9d26",
+          "#d9b359",
+          "#dec791",
+          "#e8dec4",
+          "#f7f4ee"
+        ]
+      },
+      "wash-amber-dark": {
+        "role": "secondary",
+        "displayName": "Amber Wash (dark)",
+        "canonical": "#352a14",
+        "tonalRamp": [
+          "#312a1c",
+          "#55472b",
+          "#7f6839",
+          "#b18c44",
+          "#c2a770",
+          "#d0c09f",
+          "#e2dacb",
+          "#f5f3ef"
+        ]
+      },
+      "up": {
+        "role": "tertiary",
+        "displayName": "Return Up",
+        "canonical": "#c22b24",
+        "tonalRamp": [
+          "#361816",
+          "#602320",
+          "#912b26",
+          "#cd2f28",
+          "#d7605b",
+          "#dd9692",
+          "#e8c6c5",
+          "#f7eeee"
+        ]
+      },
+      "up-dark": {
+        "role": "tertiary",
+        "displayName": "Return Up (dark)",
+        "canonical": "#ff6b63",
+        "tonalRamp": [
+          "#3e110f",
+          "#6e1612",
+          "#a9160e",
+          "#f20f03",
+          "#f4483e",
+          "#ee8781",
+          "#f0bfbd",
+          "#f9ecec"
+        ]
+      },
+      "down": {
+        "role": "tertiary",
+        "displayName": "Return Down",
+        "canonical": "#15734a",
+        "tonalRamp": [
+          "#163728",
+          "#206044",
+          "#269163",
+          "#28cd85",
+          "#5ad8a1",
+          "#92ddbc",
+          "#c5e8d8",
+          "#eef7f3"
+        ]
+      },
+      "down-dark": {
+        "role": "tertiary",
+        "displayName": "Return Down (dark)",
+        "canonical": "#4cc38a",
+        "tonalRamp": [
+          "#1b3227",
+          "#295741",
+          "#35825d",
+          "#3fb67d",
+          "#6cc69b",
+          "#9dd3b9",
+          "#c9e3d7",
+          "#eff5f2"
+        ]
+      },
+      "warn": {
+        "role": "tertiary",
+        "displayName": "Caution Ochre",
+        "canonical": "#9a5600",
+        "tonalRamp": [
+          "#3e290f",
+          "#6e4512",
+          "#a9650e",
+          "#f28803",
+          "#f4a43e",
+          "#eebe81",
+          "#f0d9bd",
+          "#f9f3ec"
+        ]
+      },
+      "warn-dark": {
+        "role": "tertiary",
+        "displayName": "Caution Ochre (dark)",
+        "canonical": "#f0a43a",
+        "tonalRamp": [
+          "#3a2a12",
+          "#674618",
+          "#9e6719",
+          "#e18b14",
+          "#e7a64b",
+          "#e6bf89",
+          "#ecdac0",
+          "#f8f3ed"
+        ]
+      },
+      "focus": {
+        "role": "primary",
+        "displayName": "Focus Blue",
+        "canonical": "#2456ad",
+        "tonalRamp": [
+          "#172236",
+          "#21385e",
+          "#294e8f",
+          "#2c65c9",
+          "#5d89d5",
+          "#94aedb",
+          "#c5d2e7",
+          "#eef1f6"
+        ]
+      },
+      "focus-dark": {
+        "role": "primary",
+        "displayName": "Focus Blue (dark)",
+        "canonical": "#7da6f5",
+        "tonalRamp": [
+          "#12203a",
+          "#183367",
+          "#19479e",
+          "#145ae1",
+          "#4b80e7",
+          "#89a9e6",
+          "#c0cfec",
+          "#edf1f8"
+        ]
+      },
+      "chart-axis": {
+        "role": "neutral",
+        "displayName": "Chart Axis",
+        "canonical": "#8c929b",
+        "tonalRamp": [
+          "#252628",
+          "#3d3f43",
+          "#565b61",
+          "#727983",
+          "#93989f",
+          "#b4b7bb",
+          "#d4d6d8",
+          "#f2f2f3"
+        ]
+      },
+      "chart-axis-dark": {
+        "role": "neutral",
+        "displayName": "Chart Axis (dark)",
+        "canonical": "#7d848e",
+        "tonalRamp": [
+          "#252628",
+          "#3d3f43",
+          "#565b61",
+          "#727983",
+          "#93989f",
+          "#b4b7bb",
+          "#d4d6d8",
+          "#f2f2f3"
+        ]
+      },
+      "chart-muted": {
+        "role": "neutral",
+        "displayName": "Chart Muted",
+        "canonical": "#c9cdd3",
+        "tonalRamp": [
+          "#242629",
+          "#3b3f44",
+          "#545a64",
+          "#6e7887",
+          "#9097a2",
+          "#b2b6bd",
+          "#d4d6d9",
+          "#f2f2f3"
+        ]
+      },
+      "chart-muted-dark": {
+        "role": "neutral",
+        "displayName": "Chart Muted (dark)",
+        "canonical": "#3d434b",
+        "tonalRamp": [
+          "#242629",
+          "#3b3f45",
+          "#545b64",
+          "#6e7987",
+          "#9098a2",
+          "#b2b7bd",
+          "#d4d6d9",
+          "#f2f2f3"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Reading numeral",
+        "purpose": "鄉民恐慌溫度 reading only; 3.75rem at ≤720px."
+      },
+      "score": {
+        "displayName": "Family score",
+        "purpose": "Lit-lamp count beside each lamp row; 1.625rem at ≤720px."
+      },
+      "headline": {
+        "displayName": "Section title",
+        "purpose": "Panel titles over a 2px ink rule."
+      },
+      "brand": {
+        "displayName": "Brand",
+        "purpose": "Top-bar title beside the five-lamp mark."
+      },
+      "title": {
+        "displayName": "Subhead",
+        "purpose": "Sub-headings inside panels and the today band."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Prose, capped at 46–52em."
+      },
+      "body-sm": {
+        "displayName": "Body small",
+        "purpose": "Tables, nav, controls, disclosure summaries."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Context lines, legends, table headers, tooltips, stamps, chips."
+      },
+      "lamp-label": {
+        "displayName": "Lamp label",
+        "purpose": "Names under lamps and matrix date headers."
+      }
+    },
+    "shadows": [
+      {
+        "name": "tooltip-lift",
+        "value": "0 6px 20px rgba(20, 24, 30, 0.16)",
+        "purpose": "Floating tooltips only; dark mode uses rgba(0,0,0,0.5)."
+      },
+      {
+        "name": "scroll-edge",
+        "value": "radial-gradient(farthest-side at 100% 50%, rgba(20, 24, 30, 0.16), transparent) right / 12px 100%",
+        "purpose": "Overflow cue on horizontally scrolling tables (background, not box-shadow)."
+      }
+    ],
+    "motion": [
+      {
+        "name": "state-150",
+        "value": "150ms ease-out",
+        "purpose": "Nav hover colours and disclosure-triangle rotation. All transitions are removed under prefers-reduced-motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "stack",
+        "value": "1080px"
+      },
+      {
+        "name": "phone",
+        "value": "720px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Lamp states",
+      "kind": "custom",
+      "refersTo": "lamp",
+      "description": "Signature lamp: lit today, lit within 5 days (dot in ring), off; plus the split 偏空 lamp.",
+      "html": "<span class=\"ds-lamps\"><i class=\"ds-lamp ds-lamp--bottom\" data-s=\"on\"></i><i class=\"ds-lamp ds-lamp--bottom\" data-s=\"recent\"></i><i class=\"ds-lamp\" data-s=\"off\"></i><i class=\"ds-lamp ds-lamp--top\" data-s=\"on\"></i><i class=\"ds-lamp ds-lamp--warn\" data-s=\"on\"></i><i class=\"ds-lamp ds-lamp--warn\" data-s=\"recent\"></i></span>",
+      "css": ".ds-lamps{display:inline-flex;gap:12px;align-items:center}.ds-lamp{--c:var(--lamp-off,#b9bec6);--fill:var(--c);position:relative;display:inline-block;box-sizing:border-box;width:26px;height:26px;border-radius:50%;border:3px solid var(--lamp-off,#b9bec6)}.ds-lamp::after{content:\"\";position:absolute;inset:22%;border-radius:50%}.ds-lamp--bottom{--c:var(--lamp-blue,#2456ad)}.ds-lamp--top{--c:var(--lamp-red,#cc3328)}.ds-lamp--warn{--c:var(--lamp-amber,#d99511);--fill:linear-gradient(135deg,var(--lamp-amber,#d99511) 50%,var(--lamp-blue,#2456ad) 50%)}.ds-lamp[data-s=\"on\"]{border-color:var(--c);background:var(--fill)}.ds-lamp[data-s=\"recent\"]{border-color:var(--c)}.ds-lamp[data-s=\"recent\"]::after{background:var(--fill)}.ds-lamp--warn[data-s=\"on\"],.ds-lamp--warn[data-s=\"recent\"]{border-color:var(--lamp-amber,#d99511) var(--lamp-blue,#2456ad) var(--lamp-blue,#2456ad) var(--lamp-amber,#d99511)}"
+    },
+    {
+      "name": "Family lamp row",
+      "kind": "custom",
+      "refersTo": "lamp-row-lamp",
+      "description": "A family score as a row of lamps with the count of lit ones.",
+      "html": "<div class=\"ds-fam\"><div class=\"ds-fam-h\"><b class=\"ds-fam-t\">偏空警示</b><span class=\"ds-chip ds-chip--warn\">≥3 亮燈</span><span class=\"ds-fam-n\"><b>2</b> / 3</span></div><ol class=\"ds-row\"><li class=\"is-lit\"><i class=\"ds-l ds-l--on\"></i>淨空單</li><li class=\"is-lit\"><i class=\"ds-l ds-l--recent\"></i>空單佔比</li><li><i class=\"ds-l\"></i>增空單</li></ol></div>",
+      "css": ".ds-fam{font-family:\"Noto Sans TC\",system-ui,sans-serif;color:var(--ink,#1c1f24);display:grid;gap:10px;padding:16px 0;border-bottom:1px solid var(--rule,#d2d5db);max-width:420px}.ds-fam-h{display:flex;align-items:baseline;gap:10px}.ds-fam-t{font-size:1rem;font-weight:700}.ds-fam-n{margin-left:auto;color:var(--ink-3,#5f6671)}.ds-fam-n b{font-size:2rem;font-weight:900;color:var(--ink,#1c1f24);letter-spacing:-0.02em;font-variant-numeric:tabular-nums}.ds-chip{display:inline-block;padding:0 8px;border-radius:3px;font-size:.8125rem;font-weight:700;line-height:1.7}.ds-chip--warn{background:var(--wash-amber,#f8eed6);color:var(--warn,#9a5600)}.ds-row{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:4px}.ds-row li{display:grid;justify-items:center;gap:5px;font-size:.75rem;line-height:1.25;color:var(--ink-3,#5f6671)}.ds-row li.is-lit{color:var(--ink,#1c1f24);font-weight:500}.ds-l{position:relative;width:26px;height:26px;box-sizing:border-box;border-radius:50%;border:3px solid var(--lamp-off,#b9bec6)}.ds-l::after{content:\"\";position:absolute;inset:22%;border-radius:50%}.ds-l--on,.ds-l--recent{border-color:var(--lamp-amber,#d99511) var(--lamp-blue,#2456ad) var(--lamp-blue,#2456ad) var(--lamp-amber,#d99511)}.ds-l--on{background:linear-gradient(135deg,var(--lamp-amber,#d99511) 50%,var(--lamp-blue,#2456ad) 50%)}.ds-l--recent::after{background:linear-gradient(135deg,var(--lamp-amber,#d99511) 50%,var(--lamp-blue,#2456ad) 50%)}"
+    },
+    {
+      "name": "Ruled report panel",
+      "kind": "card",
+      "refersTo": "report-panel",
+      "description": "White panel with 1px rule border and a 900-weight title over a 2px ink rule.",
+      "html": "<section class=\"ds-sec\"><h2>燈號明細</h2><p>每一列是一個訊號，每一格是一個交易日，最右邊是最新一天。</p></section>",
+      "css": ".ds-sec{font-family:\"Noto Sans TC\",system-ui,sans-serif;background:var(--panel,#fff);color:var(--ink,#1c1f24);border:1px solid var(--rule,#d2d5db);border-radius:3px;padding:24px 24px 22px;display:grid;gap:14px}.ds-sec h2{margin:0;font-size:1.25rem;font-weight:900;letter-spacing:.01em;padding-bottom:10px;border-bottom:2px solid var(--rule-ink,#1c1f24)}.ds-sec p{margin:0;color:var(--ink-2,#464d58);font-size:.9375rem;line-height:1.6;max-width:48em}"
+    },
+    {
+      "name": "Return table",
+      "kind": "custom",
+      "refersTo": "report-panel",
+      "description": "Ruled numeric table; returns red up, green down; current row on blue wash.",
+      "html": "<table class=\"ds-table\"><thead><tr><th>訊號</th><th>次數</th><th>20日報酬</th><th>超額</th></tr></thead><tbody><tr class=\"ds-click\"><td>落底≥4</td><td>12</td><td class=\"ds-up\">+4.21%</td><td class=\"ds-up\">+2.10%</td></tr><tr class=\"ds-now\"><td>雙重確認</td><td>5</td><td class=\"ds-down\">-1.35%</td><td class=\"ds-up\">+0.42%</td></tr></tbody></table>",
+      "css": ".ds-table{font-family:\"Noto Sans TC\",system-ui,sans-serif;border-collapse:collapse;font-size:.875rem;font-variant-numeric:tabular-nums;color:var(--ink,#1c1f24);background:var(--panel,#fff)}.ds-table th{text-align:right;font-weight:500;font-size:.8125rem;color:var(--ink-3,#5f6671);padding:8px 9px;border-bottom:1px solid var(--rule-ink,#1c1f24)}.ds-table td{text-align:right;padding:7px 9px;border-bottom:1px solid var(--rule-2,#e4e6eb)}.ds-table th:first-child,.ds-table td:first-child{text-align:left}.ds-click{cursor:pointer}.ds-click:hover td{background:var(--panel-2,#f3f4f7)}.ds-now td{background:var(--wash-blue,#e4ebf7);font-weight:700}.ds-up{color:var(--up,#c22b24)}.ds-down{color:var(--down,#15734a)}"
+    },
+    {
+      "name": "Family chips",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Neutral chip, the three family-toned chips, and the larger level chip beside the reading.",
+      "html": "<span class=\"ds-c\">未亮燈</span> <span class=\"ds-c ds-c--b\">極度恐慌（≥95）</span> <span class=\"ds-c ds-c--t\">過熱亮燈</span> <span class=\"ds-c ds-c--w\">偏空亮燈</span> <span class=\"ds-c ds-c--b ds-c--lv\">恐慌（90–95）</span>",
+      "css": ".ds-c{display:inline-block;font-family:\"Noto Sans TC\",system-ui,sans-serif;padding:0 8px;border-radius:3px;font-size:.8125rem;font-weight:700;line-height:1.7;border:1px solid var(--rule,#d2d5db);color:var(--ink-3,#5f6671)}.ds-c--b{background:var(--wash-blue,#e4ebf7);border-color:transparent;color:var(--lamp-blue,#2456ad)}.ds-c--t{background:var(--wash-red,#f9e5e2);border-color:transparent;color:var(--lamp-red,#cc3328)}.ds-c--w{background:var(--wash-amber,#f8eed6);border-color:transparent;color:var(--warn,#9a5600)}.ds-c--lv{font-size:.875rem;padding:1px 10px}"
+    },
+    {
+      "name": "Button and select",
+      "kind": "button",
+      "refersTo": "button",
+      "description": "Quiet bordered controls for index switch, range and zoom reset.",
+      "html": "<span class=\"ds-bar\"><select class=\"ds-ctl ds-sel\"><option>加權指數</option></select><button class=\"ds-ctl ds-btn\" type=\"button\">重設縮放</button></span>",
+      "css": ".ds-bar{display:inline-flex;gap:8px;align-items:center}.ds-ctl{font-family:\"Noto Sans TC\",system-ui,sans-serif;font-size:.875rem;color:var(--ink,#1c1f24);background:var(--panel,#fff);border:1px solid var(--rule,#d2d5db);border-radius:4px;min-height:34px;box-sizing:border-box}.ds-ctl:hover{border-color:var(--ink-3,#5f6671)}.ds-ctl:focus-visible{outline:2px solid var(--focus,#2456ad);outline-offset:2px}.ds-btn{padding:4px 12px;cursor:pointer;background:var(--panel-2,#f3f4f7)}.ds-btn:active{background:var(--rule-2,#e4e6eb)}.ds-sel{padding:4px 28px 4px 10px;appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--ink-3,#5f6671) 50%),linear-gradient(135deg,var(--ink-3,#5f6671) 50%,transparent 50%);background-position:calc(100% - 15px) 52%,calc(100% - 10px) 52%;background-size:5px 5px;background-repeat:no-repeat}"
+    },
+    {
+      "name": "Section nav",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Sticky top-bar section links; current section inverts to ink.",
+      "html": "<nav class=\"ds-nav\"><a href=\"#\" aria-current=\"true\">今天</a><a href=\"#\">燈號明細</a><a href=\"#\">恐慌溫度</a><a href=\"#\">回測</a></nav>",
+      "css": ".ds-nav{display:flex;gap:2px;font-family:\"Noto Sans TC\",system-ui,sans-serif;background:var(--ground,#e8eaee);padding:12px}.ds-nav a{padding:6px 10px;border-radius:4px;font-size:.875rem;font-weight:500;color:var(--ink-2,#464d58);text-decoration:none;transition:background-color 150ms ease-out,color 150ms ease-out}.ds-nav a:hover{background:var(--panel-2,#f3f4f7);color:var(--ink,#1c1f24)}.ds-nav a:focus-visible{outline:2px solid var(--focus,#2456ad);outline-offset:2px}.ds-nav a[aria-current=\"true\"]{background:var(--ink,#1c1f24);color:var(--panel,#fff)}"
+    },
+    {
+      "name": "Tooltip",
+      "kind": "custom",
+      "refersTo": "tooltip",
+      "description": "The only lifted surface: chart hover detail, and the fixed matrix-cell tooltip that escapes the scroll container.",
+      "html": "<div class=\"ds-tip\"><b>2022/10/25</b><div>創作文爆量：亮燈</div><div>那天數值 14 篇（門檻 ≥ 9 篇）</div><div>今日值 6 篇（門檻 ≥ 9 篇）</div><div>上次亮燈 2022/10/25</div></div>",
+      "css": ".ds-tip{display:inline-block;font-family:\"Noto Sans TC\",system-ui,sans-serif;background:var(--panel,#fff);color:var(--ink,#1c1f24);border:1px solid var(--rule,#d2d5db);box-shadow:0 6px 20px rgba(20,24,30,.16);border-radius:4px;padding:8px 10px;font-size:.8125rem;line-height:1.55;max-width:280px}.ds-tip b{font-weight:700}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Signal Report",
+    "overview": "The page is a government statistical bulletin that happens to be interactive. White ruled panels sit on a cool gray ground, every heading is set in heavy Noto Sans TC ink over a 2px ink rule, and the only saturated colour on the page belongs to lamps. A score is not a number in a card: it is a row of lamps, and the number beside it is a count of the lit ones. The register is the 國發會 景氣對策信號 table, which a Taiwanese reader already knows how to read.\n\nDensity is high and deliberate. Tables, the lamp matrix and charts carry the content; prose is short, plain and cautious, and captions sit next to every headline number. Nothing floats, glows or tilts. Depth comes from the step between the gray ground and the white panel, and from rules, not from shadows.\n\nColour carries two separate meanings that must never cross. Lamp colours name the signal family (blue 落底, red 過熱, amber-over-blue 偏空). Red and green on numbers name direction of return (red up, green down, the Taiwan convention). The page states this on itself.",
+    "keyCharacteristics": [
+      "Cool gray ground (#e8eaee), white ruled report panels, ink #1c1f24, one typeface.",
+      "Lamps are the signature: solid = lit today, dot inside a ring = lit within 5 days, hollow gray ring = off.",
+      "Heavy 900-weight numerals and headings over 2px ink rules; everything else light and gray.",
+      "Tabular figures everywhere numbers appear.",
+      "Flat: one soft shadow in the whole system, on floating tooltips only."
+    ],
+    "rules": [
+      {
+        "name": "The Two Reds Rule",
+        "body": "Lamp colours mean signal family; red/green on figures means return direction. Never colour a lamp by return, never colour a return by family. Lamp red (#cc3328) and return red (#c22b24) are separate tokens for this reason.",
+        "section": "colors"
+      },
+      {
+        "name": "The Lamps Own the Colour Rule",
+        "body": "Saturated colour appears on lamps, family chips and data marks. Panels, headings, nav and controls stay ink and gray.",
+        "section": "colors"
+      },
+      {
+        "name": "The Split Lamp Rule",
+        "body": "偏空 is never plain amber on a lamp: fill is a 135deg split, amber top-left and blue bottom-right, and the ring is amber on top/left, blue on right/bottom.",
+        "section": "colors"
+      },
+      {
+        "name": "The Weight Not Size Rule",
+        "body": "Hierarchy steps are small (13 / 14 / 15 / 16 / 20px); weight does the work. Only the reading and the scores break scale.",
+        "section": "typography"
+      },
+      {
+        "name": "The Ruled Not Raised Rule",
+        "body": "Separate with rules (1px rule, 2px ink under headings), never with shadow, on any resting surface.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do express any family score as a row of lamps with the count beside it.",
+      "Do use the three lamp states exactly: solid today, dot-in-ring within 5 days, hollow off.",
+      "Do keep red-up/green-down on return figures and return bars, using `up` and `down`.",
+      "Do put every section title over a 2px ink rule at 1.25rem 900.",
+      "Do use tabular figures for every number and right-align numeric columns.",
+      "Do keep the matrix keyboard-reachable: one tabbable cell per row, arrow/Home/End roving, inset 2px focus ring, Escape to dismiss the tooltip."
+    ],
+    "donts": [
+      "Don't colour a lamp, marker or family chip by return direction, or a return figure by family.",
+      "Don't use lamp-green or lamp-yr outside the five-lamp brand mark.",
+      "Don't draw 偏空 as a plain amber lamp; it is always the amber/blue split.",
+      "Don't add shadows to resting panels, chips or controls; only floating tooltips lift.",
+      "Don't introduce a second typeface; weight carries hierarchy.",
+      "Don't replace the lamp-row score with a gauge or a metric card."
+    ]
+  }
+}
