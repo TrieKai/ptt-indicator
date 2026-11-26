@@ -1,4 +1,34 @@
 {
+"M.1795158212.A.866": {
+"amount": "200萬沒了",
+"confidence": 0.96,
+"counts": true,
+"evidence": "both",
+"hints": {
+"first": false,
+"hosts": [
+"i.ibb.co"
+],
+"img": 1,
+"nums": [
+"200萬沒了"
+],
+"own_len": 160,
+"short_links": 0
+},
+"id": "M.1795158212.A.866",
+"kind": "orig",
+"labeled_at": "2026-11-26 23:35",
+"model": "openai/gpt-oss-120b",
+"own_loss": true,
+"prompt_version": "loss-v1",
+"reason": "作者自述買進後虧損200萬並附圖",
+"side": "long",
+"status": "ok",
+"title": "[心得] 7年存款賠光 畢業了",
+"tokens": 907,
+"ts": 1795158212
+},
 "M.1795402955.A.89B": {
 "amount": "賠了87000元",
 "confidence": 0.97,
