@@ -3,9 +3,9 @@
 name: 更新鄉民指標
 
 on:
-  push:                            # 負責抓 PTT 的電腦推上新文章，或改了網頁／重算程式 → 重算並更新網站
+  push:                            # 負責抓 PTT 的電腦推上新文章或畢業文判斷結果，或改了網頁／重算程式 → 重算並更新網站
     branches: [main]
-    paths: ['data/ptt_latest.json', 'dashboard/index.html', 'dashboard/card.js', 'scripts/build_site.py', 'scripts/build_dashboard_data.py']
+    paths: ['data/ptt_latest.json', 'data/loss_labels.json', 'data/loss_labels_ref.json', 'dashboard/index.html', 'dashboard/card.js', 'scripts/build_site.py', 'scripts/build_dashboard_data.py']
   schedule:
     # PTT 會擋 GitHub 的主機（2026/11/26 實測 HTTP 403），所以雲端不排每 15 分鐘的 PTT 更新；PTT 要從可連線的電腦更新後推上來
     # GitHub 的排程在尖峰時段可能延遲或被跳過（2026/11/26 15:40 那次就沒跑），所以平日收盤後多排幾次備援。

@@ -83,6 +83,28 @@ creative_posts = [p for p in orig if p["title"].startswith("[創作]")]
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from loss_rules import classify as loss_classify              # 只留下鄉民自己做多賠錢的文章（規則與排除原因見 loss_rules.py）
 loss_posts = [p for p in orig if loss_classify(p["title"])[0]]
+# 畢業文改用內文判斷（2026/11/27 起）：只算〔心得〕原文，內文要是作者本人做多認賠或重大虧損、而且有截圖或具體金額。
+# 歷史（cutoff 之前）用參考標記 loss_labels_ref.json（Claude 判斷＋複核）；cutoff 之後的新文章用 loss_labels.json（Groq 判斷）；
+# 還沒判斷到的新文章暫時照標題規則算。JUDGE 記下每篇的判斷來源，文章列表會標出來。
+from loss_rules import CAT as loss_cat
+JUDGE = {}
+if os.path.exists(f"{D}/loss_labels_ref.json"):
+    _ref = json.load(open(f"{D}/loss_labels_ref.json", encoding="utf-8"))
+    _rows, _cut = _ref["rows"], _ref.get("cutoff") or 0
+    _ai = json.load(open(f"{D}/loss_labels.json", encoding="utf-8")) if os.path.exists(f"{D}/loss_labels.json") else {}
+    _keep = []
+    for p in loss_posts:
+        if loss_cat(p["title"]) != "心得": continue
+        a = _ai.get(p["id"]) or {}
+        if p["id"] in _rows:
+            if _rows[p["id"]]["counts"]: _keep.append(p); JUDGE[p["id"]] = "ref"
+        elif a.get("status") == "ok" and "counts" in a:
+            if a["counts"]: _keep.append(p); JUDGE[p["id"]] = "ai"
+        elif a.get("status") == "deleted":
+            continue
+        elif p["ts"] >= _cut:
+            _keep.append(p); JUDGE[p["id"]] = "title"
+    loss_posts = _keep
 if os.environ.get("LOSS_IDS"):   # 實驗用：指定要算進畢業文的文章 id（例如只算內文有依據的），正式建置不會設定
     _ids = set(json.load(open(os.environ["LOSS_IDS"], encoding="utf-8")))
     loss_posts = [seen[i] for i in _ids if i in seen]
@@ -402,7 +424,8 @@ for r in status:
 # ---------- PTT 文章連結 ----------
 def post_row(k, ev, p):
     return {"signal": k, "event": ev, "posted": dt.datetime.fromtimestamp(p["ts"], TZ).strftime("%Y-%m-%d %H:%M"),
-            "title": p["title"], "url": "https://www.ptt.cc/bbs/Stock/" + p["id"] + ".html", "nrec": p.get("nrec", "")}
+            "title": p["title"], "url": "https://www.ptt.cc/bbs/Stock/" + p["id"] + ".html", "nrec": p.get("nrec", ""),
+            **({"judge": JUDGE.get(p["id"], "title")} if k == "loss" and JUDGE else {})}
 posts = []
 for k, plist, win in [("creative", creative_posts, 1), ("loss", loss_posts, 5), ("hot_ptt", hot_posts, 5)]:
     idx = collections.defaultdict(list)
