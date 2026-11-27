@@ -1,4 +1,205 @@
 {
+"M.1752908318.A.B56": {
+"amount": "",
+"confidence": 0.98,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 332,
+"short_links": 0
+},
+"id": "M.1752908318.A.B56",
+"kind": "reply",
+"labeled_at": "2026-11-27 12:22",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v2",
+"reason": "回文未提及作者虧損或出場",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 一個小散戶被世芯嘎空手的暫時畢業文",
+"tokens": 1027,
+"ts": 1752908318
+},
+"M.1757073584.A.A69": {
+"amount": "",
+"confidence": 0.95,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [],
+"own_len": 444,
+"short_links": 0
+},
+"id": "M.1757073584.A.A69",
+"kind": "reply",
+"labeled_at": "2026-11-27 12:22",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v2",
+"reason": "作者說已回本並獲利，未提及自己虧損",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 畢業了 究竟該何去何從",
+"tokens": 1179,
+"ts": 1757073584
+},
+"M.1758026874.A.72F": {
+"amount": "賠一兩萬、賠七八萬、賠十五六萬、賠二十萬",
+"confidence": 0.7,
+"counts": true,
+"evidence": "amount",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [
+"賠一兩萬",
+"賠七八萬",
+"賠十五六萬",
+"賠二十萬"
+],
+"own_len": 1149,
+"short_links": 0
+},
+"id": "M.1758026874.A.72F",
+"kind": "reply",
+"labeled_at": "2026-11-27 12:22",
+"model": "openai/gpt-oss-120b",
+"own_loss": true,
+"prompt_version": "loss-v2",
+"reason": "文中列出多筆自身賠錢金額，屬於畢業文",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 當沖畢業文 三個月賠二十萬",
+"tokens": 2010,
+"ts": 1758026874
+},
+"M.1758058046.A.6CE": {
+"amount": "賠二十萬",
+"confidence": 0.9,
+"counts": true,
+"evidence": "amount",
+"hints": {
+"first": false,
+"hosts": [
+"www.facebook.com"
+],
+"img": 0,
+"nums": [
+"賠二十萬"
+],
+"own_len": 194,
+"short_links": 0
+},
+"id": "M.1758058046.A.6CE",
+"kind": "reply",
+"labeled_at": "2026-11-27 12:22",
+"model": "openai/gpt-oss-120b",
+"own_loss": true,
+"prompt_version": "loss-v2",
+"reason": "回文者提及自己賠二十萬，屬於多頭虧損",
+"side": "long",
+"status": "ok",
+"title": "Re: [心得] 當沖畢業文 三個月賠二十萬",
+"tokens": 978,
+"ts": 1758058046
+},
+"M.1758075200.A.F53": {
+"amount": "",
+"confidence": 0.8,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [
+"賠二十萬"
+],
+"own_len": 653,
+"short_links": 0
+},
+"id": "M.1758075200.A.F53",
+"kind": "reply",
+"labeled_at": "2026-11-27 12:22",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v2",
+"reason": "未見作者敘述自己賠錢金額或出場",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 當沖畢業文 三個月賠二十萬",
+"tokens": 1366,
+"ts": 1758075200
+},
+"M.1758247383.A.2B5": {
+"amount": "賠二十萬",
+"confidence": 0.95,
+"counts": true,
+"evidence": "amount",
+"hints": {
+"first": false,
+"hosts": [
+"i.meee.com.tw"
+],
+"img": 1,
+"nums": [
+"賠二十萬"
+],
+"own_len": 147,
+"short_links": 0
+},
+"id": "M.1758247383.A.2B5",
+"kind": "reply",
+"labeled_at": "2026-11-27 12:22",
+"model": "openai/gpt-oss-120b",
+"own_loss": true,
+"prompt_version": "loss-v2",
+"reason": "作者直接說自己賠二十萬，屬於多頭虧損",
+"side": "long",
+"status": "ok",
+"title": "Re: [心得] 當沖畢業文 三個月賠二十萬",
+"tokens": 948,
+"ts": 1758247383
+},
+"M.1766125150.A.71B": {
+"amount": "",
+"confidence": 0.95,
+"counts": false,
+"evidence": "screenshot",
+"hints": {
+"first": true,
+"hosts": [
+"i.mopix.cc"
+],
+"img": 5,
+"nums": [],
+"own_len": 266,
+"short_links": 0
+},
+"id": "M.1766125150.A.71B",
+"kind": "orig",
+"labeled_at": "2026-11-27 12:22",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v2",
+"reason": "文中只提到賺錢，未顯示虧損",
+"side": "unknown",
+"status": "ok",
+"title": "[心得] 畢業了",
+"tokens": 960,
+"ts": 1766125150
+},
 "M.1773403078.A.5A1": {
 "amount": "",
 "confidence": 0.9,
@@ -227,7 +428,7 @@
 },
 "M.1785297910.A.D94": {
 "amount": "",
-"confidence": 0.9,
+"confidence": 0.85,
 "counts": true,
 "evidence": "screenshot",
 "hints": {
@@ -242,15 +443,15 @@
 },
 "id": "M.1785297910.A.D94",
 "kind": "orig",
-"labeled_at": "2026-11-27 00:05",
+"labeled_at": "2026-11-27 12:22",
 "model": "openai/gpt-oss-120b",
 "own_loss": true,
-"prompt_version": "loss-v1",
-"reason": "作者提供損益圖截圖，顯示自己持有多單虧損",
+"prompt_version": "loss-v2",
+"reason": "作者提供損益圖截圖顯示虧損，屬於多頭畢業文",
 "side": "long",
 "status": "ok",
 "title": "[心得] 融資仔先來畢業文",
-"tokens": 718,
+"tokens": 874,
 "ts": 1785297910
 },
 "M.1785299788.A.C37": {
@@ -346,9 +547,9 @@
 },
 "M.1785419476.A.243": {
 "amount": "",
-"confidence": 0.7,
-"counts": true,
-"evidence": "screenshot",
+"confidence": 0.95,
+"counts": false,
+"evidence": "none",
 "hints": {
 "first": true,
 "hosts": [
@@ -361,15 +562,15 @@
 },
 "id": "M.1785419476.A.243",
 "kind": "orig",
-"labeled_at": "2026-11-27 00:05",
+"labeled_at": "2026-11-27 12:22",
 "model": "openai/gpt-oss-120b",
-"own_loss": true,
-"prompt_version": "loss-v1",
-"reason": "作者自稱畢業文且提供持倉截圖，屬多頭持倉",
-"side": "long",
+"own_loss": false,
+"prompt_version": "loss-v2",
+"reason": "未提及實際虧損，只說賺到",
+"side": "unknown",
 "status": "ok",
 "title": "[心得] 融資貪狗畢業文",
-"tokens": 802,
+"tokens": 919,
 "ts": 1785419476
 },
 "M.1785461976.A.081": {
@@ -694,7 +895,7 @@
 },
 "M.1795586984.A.D42": {
 "amount": "-22.5%",
-"confidence": 0.97,
+"confidence": 0.95,
 "counts": true,
 "evidence": "both",
 "hints": {
@@ -712,15 +913,15 @@
 },
 "id": "M.1795586984.A.D42",
 "kind": "orig",
-"labeled_at": "2026-11-26 23:34",
+"labeled_at": "2026-11-27 12:22",
 "model": "openai/gpt-oss-120b",
 "own_loss": true,
-"prompt_version": "loss-v1",
-"reason": "作者自述多單止損，虧損約 -22.5%",
+"prompt_version": "loss-v2",
+"reason": "作者自述持有多單並以約-22.5%實現虧損，提供截圖連結",
 "side": "long",
 "status": "ok",
 "title": "[心得] 正二畢業",
-"tokens": 1043,
+"tokens": 1137,
 "ts": 1795586984
 }
 }
