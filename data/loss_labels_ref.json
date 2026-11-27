@@ -1,7 +1,7 @@
 {
 "cutoff": 1795708145,
 "cutoff_text": "2026-11-26 23:49",
-"labeler": "Claude（6 個子代理同一套規則標記）＋一致性複核",
+"labeler": "Claude（6 個子代理同一套規則標記）＋一致性複核；2026/11/27 人工覆核 38 篇原文（改判 4 篇，見各列 human 欄位；ai_counts 是改判前的判斷）",
 "rule": "畢業文＝[心得] 分類；作者本人做多後認賠出場或帳戶重大虧損；要有依據（截圖或具體虧損金額／比例）。不算：討論提問、轉述別人、假設語氣、差點出事、已賺回或整體不虧、放空（含買進賣權）、多年前舊事、小額帳面虧損未出場。",
 "rows": {
 "M.1447711197.A.D58": {
@@ -324,7 +324,12 @@
 "amount": "總資金也才130萬左右 就賠了將近10%",
 "confidence": 0.95,
 "reason": "追高陽明認賠賣出附對帳單",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1621273496.A.A22": {
 "id": "M.1621273496.A.A22",
@@ -380,7 +385,12 @@
 "amount": "這三個月前前後後損失有40幾萬",
 "confidence": 0.95,
 "reason": "萬海出清認錯附圖損失40幾萬",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1634136335.A.247": {
 "id": "M.1634136335.A.247",
@@ -506,7 +516,12 @@
 "amount": "",
 "confidence": 0.9,
 "reason": "抱股半年市值蒸發附截圖",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1663698586.A.51B": {
 "id": "M.1663698586.A.51B",
@@ -618,7 +633,12 @@
 "amount": "75%160萬我沒錢了",
 "confidence": 0.9,
 "reason": "融資維持率不足自行賣出附圖",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1732245927.A.346": {
 "id": "M.1732245927.A.346",
@@ -843,7 +863,12 @@
 "confidence": 0.55,
 "reason": "當沖虧42萬附圖，但總損益為正",
 "counts": false,
-"review": "整體總損益為正（當沖虧、總損益 +24 萬）"
+"review": "整體總損益為正（當沖虧、總損益 +24 萬）",
+"human": {
+"final": "nocount",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1773381789.A.0E6": {
 "id": "M.1773381789.A.0E6",
@@ -913,7 +938,13 @@
 "amount": "大約賠了60多萬元加上基金的部分大概賠了70萬",
 "confidence": 0.7,
 "reason": "早年虧損已賺回，今年仍獲利，自願轉職",
-"counts": false
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+},
+"ai_counts": false
 },
 "M.1556162142.A.9CE": {
 "id": "M.1556162142.A.9CE",
@@ -1026,7 +1057,12 @@
 "amount": "",
 "confidence": 0.8,
 "reason": "未及時逃，忍痛賣出畢業並附圖",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1584683640.A.112": {
 "id": "M.1584683640.A.112",
@@ -1055,7 +1091,12 @@
 "confidence": 0.55,
 "reason": "買進LK賣權被歸零，買方虧三千美金",
 "counts": false,
-"review": "買進賣權（put）屬看空，方向相反"
+"review": "買進賣權（put）屬看空，方向相反",
+"human": {
+"final": "nocount",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1593823691.A.108": {
 "id": "M.1593823691.A.108",
@@ -1097,7 +1138,12 @@
 "amount": "全部賠回去了，大概一百二十萬",
 "confidence": 0.9,
 "reason": "當沖賠光約120萬，半年-50萬附圖",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1608072394.A.6F5": {
 "id": "M.1608072394.A.6F5",
@@ -1209,7 +1255,12 @@
 "amount": "損益從+6萬變-7萬",
 "confidence": 0.9,
 "reason": "聯詠由賺轉賠7萬後出場畢業",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1620902332.A.C9A": {
 "id": "M.1620902332.A.C9A",
@@ -1279,7 +1330,12 @@
 "amount": "",
 "confidence": 0.9,
 "reason": "陽明打到停損忍痛全部出清附圖",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1634203002.A.A59": {
 "id": "M.1634203002.A.A59",
@@ -1503,7 +1559,12 @@
 "amount": "一口大台賠快五萬",
 "confidence": 0.7,
 "reason": "貼損益圖含貸款資金，大台賠快5萬",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1722836918.A.A7C": {
 "id": "M.1722836918.A.A7C",
@@ -1783,7 +1844,12 @@
 "amount": "萬海虧了快十萬 融資也虧了快十萬",
 "confidence": 0.95,
 "reason": "萬海與融資4915各虧近十萬出場",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1795158212.A.866": {
 "id": "M.1795158212.A.866",
@@ -1797,7 +1863,12 @@
 "amount": "存7年的200萬沒了",
 "confidence": 0.97,
 "reason": "槓桿買股200萬賠光出清附圖",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1535382998.A.CAD": {
 "id": "M.1535382998.A.CAD",
@@ -1995,7 +2066,12 @@
 "amount": "",
 "confidence": 0.85,
 "reason": "買價外選擇權歸零並附對帳單",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1608074596.A.74B": {
 "id": "M.1608074596.A.74B",
@@ -2107,7 +2183,12 @@
 "amount": "",
 "confidence": 0.85,
 "reason": "買面板狂跌虧光並附截圖",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1620977197.A.E64": {
 "id": "M.1620977197.A.E64",
@@ -2177,7 +2258,12 @@
 "amount": "",
 "confidence": 0.75,
 "reason": "海運撐不住畢業並附截圖",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1634233168.A.183": {
 "id": "M.1634233168.A.183",
@@ -2402,7 +2488,12 @@
 "amount": "屌虧50萬",
 "confidence": 0.9,
 "reason": "追高隔日虧50萬並附截圖",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1724372169.A.08D": {
 "id": "M.1724372169.A.08D",
@@ -2458,7 +2549,12 @@
 "amount": "原本+250 結果遇到川普亂搞直接變-240",
 "confidence": 0.95,
 "reason": "持股由賺轉虧全部出清並附圖",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1744894380.A.BC9": {
 "id": "M.1744894380.A.BC9",
@@ -2557,8 +2653,14 @@
 "amount": "",
 "confidence": 0.5,
 "reason": "買賣權屬選擇權買方，賠光畢業",
-"counts": false,
-"review": "做空的買進賣權，方向相反"
+"counts": true,
+"review": "做空的買進賣權，方向相反",
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+},
+"ai_counts": false
 },
 "M.1747904254.A.69A": {
 "id": "M.1747904254.A.69A",
@@ -2811,7 +2913,12 @@
 "amount": "本金縮為12",
 "confidence": 0.6,
 "reason": "石油正1抄底大虧停損，本金縮水",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1584582887.A.8B5": {
 "id": "M.1584582887.A.8B5",
@@ -2825,7 +2932,12 @@
 "amount": "跌到…將近一半了",
 "confidence": 0.9,
 "reason": "持股跌近一半，附對帳單",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1585405159.A.6B1": {
 "id": "M.1585405159.A.6B1",
@@ -2867,7 +2979,12 @@
 "amount": "",
 "confidence": 0.45,
 "reason": "因法規離開Etoro，未明說虧損",
-"counts": false
+"counts": false,
+"human": {
+"final": "nocount",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1595246486.A.D4E": {
 "id": "M.1595246486.A.D4E",
@@ -2895,7 +3012,12 @@
 "amount": "一百二十萬",
 "confidence": 0.85,
 "reason": "當沖兩年半虧120萬，附對帳單",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1608208976.A.D21": {
 "id": "M.1608208976.A.D21",
@@ -3063,7 +3185,12 @@
 "amount": "四次積蓄歸零",
 "confidence": 0.75,
 "reason": "融資做多，四次積蓄歸零",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1634034122.A.21C": {
 "id": "M.1634034122.A.21C",
@@ -3091,8 +3218,14 @@
 "amount": "沒想到還是可以跌掉快3成",
 "confidence": 0.65,
 "reason": "長榮單筆虧近3成，附對帳單",
-"counts": false,
-"review": "單筆虧損但整體仍賺"
+"counts": true,
+"review": "單筆虧損但整體仍賺",
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+},
+"ai_counts": false
 },
 "M.1636630697.A.841": {
 "id": "M.1636630697.A.841",
@@ -3359,7 +3492,12 @@
 "amount": "損益: -862W",
 "confidence": 0.95,
 "reason": "質押00713認賠殺出虧862萬",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1744900559.A.563": {
 "id": "M.1744900559.A.563",
@@ -3583,7 +3721,12 @@
 "amount": "期貨帳戶一度打到600+ 短短幾周 都沒了",
 "confidence": 0.6,
 "reason": "多空皆錯，期貨帳戶虧光",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1795402955.A.89B": {
 "id": "M.1795402955.A.89B",
@@ -3597,7 +3740,12 @@
 "amount": "本金十萬…拿回18000元 賠了87000元",
 "confidence": 0.9,
 "reason": "本金十萬賣出賠87000，附圖",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1553185611.A.20A": {
 "id": "M.1553185611.A.20A",
@@ -3723,7 +3871,12 @@
 "amount": "",
 "confidence": 0.8,
 "reason": "台積電332買進後停損出場附對帳單",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1589388427.A.27F": {
 "id": "M.1589388427.A.27F",
@@ -4087,7 +4240,12 @@
 "amount": "",
 "confidence": 0.7,
 "reason": "附截圖稱虧損超出承受範圍畢業",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1663571945.A.F7C": {
 "id": "M.1663571945.A.F7C",
@@ -4241,7 +4399,12 @@
 "amount": "慘賠14%以上 慘賠-45000元",
 "confidence": 0.8,
 "reason": "股災庫存慘賠14%附截圖",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1744176587.A.30B": {
 "id": "M.1744176587.A.30B",
@@ -4465,7 +4628,12 @@
 "amount": "",
 "confidence": 0.8,
 "reason": "融資虧損附兩個月損益圖",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1794891650.A.08A": {
 "id": "M.1794891650.A.08A",
@@ -4858,7 +5026,12 @@
 "amount": "",
 "confidence": 0.85,
 "reason": "長榮砍股畢業，一年薪水沒了附圖",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1634055963.A.7A1": {
 "id": "M.1634055963.A.7A1",
@@ -4985,7 +5158,12 @@
 "amount": "",
 "confidence": 0.7,
 "reason": "買開發金畢業，賠近月薪附圖",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1663585786.A.6BE": {
 "id": "M.1663585786.A.6BE",
@@ -5140,7 +5318,12 @@
 "amount": "",
 "confidence": 0.8,
 "reason": "跌停遭追繳無錢補只好賣出",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 },
 "M.1744230273.A.984": {
 "id": "M.1744230273.A.984",
@@ -5378,8 +5561,14 @@
 "amount": "-200多萬",
 "confidence": 0.6,
 "reason": "標題-200多萬附圖，上半年獲利吐回",
-"counts": false,
-"review": "內文說是上半年獲利吐回，整年打平"
+"counts": true,
+"review": "內文說是上半年獲利吐回，整年打平",
+"human": {
+"final": "count",
+"note": "圖片有對帳單",
+"at": "2026-11-27"
+},
+"ai_counts": false
 },
 "M.1795586984.A.D42": {
 "id": "M.1795586984.A.D42",
@@ -5393,7 +5582,12 @@
 "amount": "已實現報酬率大概在 -22.5% 左右",
 "confidence": 0.95,
 "reason": "正二9張停損-22.5%附對帳單",
-"counts": true
+"counts": true,
+"human": {
+"final": "count",
+"note": "",
+"at": "2026-11-27"
+}
 }
 }
 }
