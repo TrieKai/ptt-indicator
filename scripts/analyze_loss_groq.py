@@ -14,7 +14,7 @@ import sys, os, re, json, time, argparse, datetime as dt, urllib.request, urllib
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from ptt_content import load_posts, candidates, fetch, hints
 
-PROMPT_VERSION = "loss-v3"   # v2：寫進邊界規則；v3：回文不再把原文標題的金額當線索，標題明確標示是原文的
+PROMPT_VERSION = "loss-v4"   # v2：寫進邊界規則；v3：回文不再把原文標題的金額當線索，標題明確標示是原文的；v4：推測或暗示的虧損不算
 PREFER = ["qwen/qwen3.6-27b", "moonshotai/kimi-k2-instruct-0905", "openai/gpt-oss-120b", "llama-3.3-70b-versatile"]
 API = "https://api.groq.com/openai/v1"
 MAX_CHARS = 1800
@@ -29,6 +29,9 @@ SYSTEM = """你是資料標註員，幫忙判斷 PTT 股票版的文章。只根
 - 多年前的舊事順口一提（例如「我以前…賠過」），不是這次的虧損
 - 只是小額帳面虧損、還沒出場（例如負幾千元）
 - 回文只看回文者自己寫的內容；原文標題或引用裡的金額不能當作回文者的依據
+- 推測或暗示的虧損：作者要自己明確寫出賠了（例如認賠、停損、砍倉、斷頭、追繳、賠了多少、虧損幾 %）。只說套牢、還沒賣、獲利回吐、少賺，或要從語氣推測「應該有賠」的，own_loss 填 false
+- 你看不到圖片內容：不能因為附了截圖就推定有虧損，截圖只能當作文字已寫出的虧損的依據
+- 標題寫畢業但內文說的是獲利回吐、整體還有賺或只是套牢，以內文為準
 依據：內文附圖片連結（多半是對帳單或庫存截圖，視為 screenshot），或寫出具體的虧損金額或比例（視為 amount）。
 只輸出一個 JSON 物件，欄位如下：
 {"own_loss": true 或 false, "side": "long" 或 "short" 或 "unknown", "evidence": "screenshot" 或 "amount" 或 "both" 或 "none", "amount": "虧損金額或比例的原文，沒有就空字串", "confidence": 0 到 1 的數字, "reason": "30 字內的理由"}"""
