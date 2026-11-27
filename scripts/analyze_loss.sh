@@ -17,7 +17,7 @@ main() {
   fi
   trap 'rmdir "$LOCK" 2>/dev/null || true' EXIT
 
-  git pull -q --rebase
+  git pull -q --rebase --autostash
   "$PY" -I scripts/analyze_loss_groq.py data --max "$MAX"
   [ -f data/loss_labels.json ] && git add data/loss_labels.json
   if git diff --cached --quiet; then
@@ -25,7 +25,7 @@ main() {
     return 0
   fi
   git commit -q -m "畢業文內文判斷 $(date '+%Y-%m-%d %H:%M')"
-  git push -q || { git pull -q --rebase && git push -q; }
+  git push -q || { git pull -q --rebase --autostash && git push -q; }
   echo "已推上 GitHub"
 }
 # 整個檔案先讀完再執行：git pull 更新這支腳本時，不會讀到一半的新內容

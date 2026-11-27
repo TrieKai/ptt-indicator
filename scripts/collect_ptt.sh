@@ -11,7 +11,7 @@ main() {
   local PY="${PYTHON:-/usr/bin/python3}"
 
   echo "=== $(date '+%Y-%m-%d %H:%M:%S')"
-  git pull -q --rebase
+  git pull -q --rebase --autostash
   "$PY" -I scripts/update_data.py data dashboard/data --only ptt --no-build
 
   # 畢業文內文判斷：新文章優先，一輪最多 ANALYZE_MAX 篇；失敗或額度用完都不影響抓文章，下一輪再補
@@ -26,7 +26,7 @@ main() {
     return 0
   fi
   git commit -q -m "PTT 文章更新 $(date '+%Y-%m-%d %H:%M')"
-  git push -q || { git pull -q --rebase && git push -q; }
+  git push -q || { git pull -q --rebase --autostash && git push -q; }
   echo "已推上 GitHub"
 }
 # 整個檔案先讀完再執行：git pull 更新這支腳本時，不會讀到一半的新內容
