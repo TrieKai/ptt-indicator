@@ -5,7 +5,8 @@
 訊號（都用 09:00 分界、隔天開盤進場、10 個交易日內不重複）：
   畢業文熱度 ≥ 95   ：畢業／虧損文 W 日篇數，跟過去 250 個交易日比「比今天少的天數比例」≥ 0.95
   恐慌溫度 ≥ 95     ：創作文與畢業文的 W 日熱度平均 ≥ 0.95
-  畢業文 W 日 ≥ 3 篇 ：目前儀表板用的固定篇數規則（W=5）
+  畢業文 W 日 ≥ 3 篇 ：儀表板用的固定篇數規則（現行 W=5）
+畢業文跟儀表板同一套：〔心得〕原文＋內文判斷（loss_labels_ref.json／loss_labels.json）
 評估：後 20 日報酬、扣掉跌深反彈的超額（同年度、前 5 日漲跌最接近的 10 天）、低點在 ±5 天內的比例
 
 用法: python3 -I window_sensitivity.py data
@@ -34,7 +35,24 @@ def daily(plist):
         i = bisect.bisect_left(open_cut, p["ts"]) - 1
         if 0 <= i < N: c[i] += 1
     return c
-loss_d = daily([p for p in seen.values() if classify(p["title"])[0]])
+def loss_posts():
+    """跟 build_dashboard_data.py 同一套畢業文：〔心得〕原文、標題規則之後看內文判斷（歷史用參考標記，新文章用 AI 判斷，還沒判斷的照標題）"""
+    from loss_rules import CAT
+    lp = [p for p in seen.values() if not re.match(r"(Re|RE|Fw|FW):", p["title"]) and classify(p["title"])[0]]
+    if not os.path.exists(f"{D}/loss_labels_ref.json"): return lp
+    ref = json.load(open(f"{D}/loss_labels_ref.json", encoding="utf-8")); rows, cut = ref["rows"], ref.get("cutoff") or 0
+    ai = json.load(open(f"{D}/loss_labels.json", encoding="utf-8")) if os.path.exists(f"{D}/loss_labels.json") else {}
+    out = []
+    for p in lp:
+        if CAT(p["title"]) != "心得": continue
+        a = ai.get(p["id"]) or {}
+        if p["id"] in rows: ok = rows[p["id"]]["counts"]
+        elif a.get("status") == "ok" and "counts" in a: ok = a["counts"]
+        elif a.get("status") == "deleted": ok = False
+        else: ok = p["ts"] >= cut
+        if ok: out.append(p)
+    return out
+loss_d = daily(loss_posts())
 crea_d = daily([p for p in seen.values() if p["title"].startswith("[創作]") and not re.match(r"(Re|RE|Fw|FW)\s*:", p["title"])])
 start = days.index(next(d for d in days if d >= "2019-01-02"))
 roll = lambda c, w: [sum(c[max(0, i - w + 1):i + 1]) for i in range(N)]
@@ -65,11 +83,12 @@ def stats(ev, ix):
 def main():
     print(f"期間 {days[start]} ~ {days[-1]}｜欄位：次數、後 20 日報酬、超額、贏過配對、低點在 ±5 天內\n")
     print(f"{'訊號':<22}{'天數':>4} | {'加權':^34} | {'櫃買':^34}")
-    for W in [1, 3, 5, 10, 20]:
+    for W in [1, 3, 5, 7, 10, 20]:
         lh, ch = heat(roll(loss_d, W)), heat(roll(crea_d, W))
         rows = [("畢業文熱度 ≥95", events(lambda i: lh[i] is not None and lh[i] >= 0.95)),
                 ("恐慌溫度 ≥95", events(lambda i: lh[i] is not None and (lh[i] + ch[i]) / 2 >= 0.95))]
-        if W == 5: rows.append(("畢業文 5 日 ≥3 篇（現行）", events(lambda i: roll(loss_d, 5)[i] >= 3)))
+        lw = roll(loss_d, W)
+        rows.append((f"畢業文 {W} 日 ≥3 篇" + ("（現行）" if W == 5 else ""), events(lambda i: lw[i] >= 3)))
         for name, ev in rows:
             print(f"{name:<22}{W:>4} | {stats(ev, '加權') or '樣本太少':<34} | {stats(ev, '櫃買') or '樣本太少':<34}")
         print()
