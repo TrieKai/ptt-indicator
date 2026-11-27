@@ -17,7 +17,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from ptt_content import load_posts, candidates, fetch, hints
 
 PROMPT_VERSION = "loss-v4"   # v2：寫進邊界規則；v3：回文不再把原文標題的金額當線索，標題明確標示是原文的；v4：推測或暗示的虧損不算
-PREFER = ["qwen/qwen3.6-27b", "moonshotai/kimi-k2-instruct-0905", "openai/gpt-oss-120b", "llama-3.3-70b-versatile"]
+# 2026/11/27 試跑 60 篇對照樣本：qwen3.8-27b 跟參考標記一致 59/60（原文 35/35），gpt-oss-120b 35/40。
+# Qwen3.8 在 Groq 是預覽版，可能臨時下架；下架後自動改用 gpt-oss-120b（額度各自分開）。
+PREFER = ["qwen/qwen3.8-27b", "openai/gpt-oss-120b"]
 API = "https://api.groq.com/openai/v1"
 MAX_CHARS = 1800
 TZ = dt.timezone(dt.timedelta(hours=8))
