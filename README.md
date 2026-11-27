@@ -135,7 +135,7 @@ python3 -I scripts/build_dashboard_data.py data dashboard/data               # �
 
 畢業文只算〔心得〕分類，而且內文要有依據（對帳單截圖或具體虧損金額）。
 - 歷史文章：由 Claude 逐篇判斷並做一致性複核，存在 `data/loss_labels_ref.json`（裡面記著 cutoff）。
-  2026/11/27 人工覆核 38 篇原文（構成訊號的 30 篇＋模型意見不同的 8 篇），改判 4 篇；各列的 `human` 欄位是人工判斷，`ai_counts` 是改判前的結果。
+  2026/11/27 人工覆核 38 篇原文（構成訊號的 30 篇＋模型意見不同的 8 篇），改判 3 篇；各列的 `human` 欄位是人工判斷，`ai_counts` 是改判前的結果。
 - cutoff 之後的新文章：負責抓 PTT 的電腦在每輪抓完列表後，交給 Groq 判斷，結果存在 `data/loss_labels.json`，跟 `ptt_latest.json` 一起推上 GitHub。
 - `data/loss_overlap.json` 是 60 篇對照樣本（歷史文章），也交給 Groq 判斷，用來量 Groq 跟參考標記的一致率。
 - 網站算分（2026/11/27 起）：cutoff 以前用參考標記，之後用 Groq 的判斷；還沒判斷到的新文章暫時照標題計算，網站上會註明。
