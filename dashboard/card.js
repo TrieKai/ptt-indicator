@@ -27,7 +27,7 @@
     const li = [...LEVELS].reverse().findIndex(([lv]) => t.value >= lv);
     const level = LEVELS[LEVELS.length - 1 - li];
     const lamp = (sig) => { const r = st(sig); if (!r) return 'off'; if (dailyLast && dailyLast['f_' + sig] === 1) return 'on'; return r.lit5 === 1 ? 'recent' : 'off'; };
-    const fams = Object.keys(FAM).map((key) => {
+    const fams = ['bottom', 'warn'].map((key) => {   // 過熱面回測沒有效果，2026/11/27 起圖卡不畫
       const [name, scoreSig, of] = FAM_INFO[key], sc = st(scoreSig), v = sc ? sc.value : 0;
       const on = key === 'warn' ? v >= 1 : v >= 3;
       const ref = key !== 'warn';
@@ -137,7 +137,7 @@
       wrap(g, cav, LW).slice(0, 3).forEach((ln, i) => g.fillText(ln, L, 476 + i * 28));
     }
 
-    // 右：三排燈
+    // 右：落底面與偏空警示兩排燈、雙重確認
     const R = 628, RW = W - 48 - R;
     m.fams.forEach((f, k) => {
       const top = 92 + k * 132;
@@ -161,7 +161,7 @@
       g.fillStyle = C.rule2; g.fillRect(R, top + 126, RW, 1.5);
     });
     if (m.dual) {
-      const y = 512;
+      const y = 92 + m.fams.length * 132 + 40;
       lampAt(g, R + 12, y, 12, m.dual.s === 'off' ? null : 'bottom', m.dual.s);
       g.fillStyle = C.ink; g.font = '700 20px ' + FONT; g.fillText('雙重確認', R + 34, y + 7);
       const a = g.measureText('雙重確認').width;
@@ -174,7 +174,7 @@
     g.fillStyle = C.rule; g.fillRect(48, 556, W - 96, 1);
     g.fillStyle = C.ink; g.font = '700 18px ' + FONT; g.fillText('triekai.github.io/ptt-indicator', 48, 594);
     let x = 400; g.font = '400 15px ' + FONT;
-    [['bottom', 'on', '藍＝落底'], ['top', 'on', '紅＝過熱'], ['warn', 'on', '黃藍＝偏空'], ['bottom', 'recent', '近 5 日亮過']].forEach(([fam, st, t]) => {
+    [['bottom', 'on', '藍＝落底'], ['warn', 'on', '黃藍＝偏空'], ['bottom', 'recent', '近 5 日亮過']].forEach(([fam, st, t]) => {
       lampAt(g, x + 7, 588, 7, fam, st); g.fillStyle = C.ink3; g.fillText(t, x + 19, 594); x += 19 + g.measureText(t).width + 16;
     });
     g.textAlign = 'right'; g.fillStyle = C.ink3; g.font = '400 15px ' + FONT;
