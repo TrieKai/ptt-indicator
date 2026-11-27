@@ -241,6 +241,7 @@
   .lb-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: var(--fs-cap); color: var(--ink-3); }
   .lb-legend span { display: inline-flex; align-items: center; gap: 6px; }
   .lb-legend .lamp { --ls: 12px; }
+  .lb-legend .lb-ring { box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 3.5px var(--lamp-blue); }
 
   .lb-notes { background: var(--panel); border: 1px solid var(--rule); border-radius: 3px; padding: 18px 24px; }
   .lb-notes summary { font-weight: 700; color: var(--ink); font-size: var(--fs-body); }
@@ -450,13 +451,12 @@
         <button type="button" class="lb-btn" id="lb-zreset">重設範圍</button>
       </div>
       <div class="lb-legend">
-        <span><i class="lamp lamp--bottom" data-s="recent"></i>落底分數 ≥3</span>
-        <span><i class="lamp lamp--bottom" data-s="on"></i>落底分數 ≥4</span>
-        <span><i class="lamp lamp--top" data-s="recent"></i>過熱分數 ≥3</span>
-        <span><i class="lamp lamp--top" data-s="on"></i>過熱分數 ≥4</span>
+        <span><i class="lamp lamp--bottom" data-s="recent"></i>恐慌溫度 ≥90</span>
+        <span><i class="lamp lamp--bottom" data-s="on"></i>恐慌溫度 ≥95</span>
+        <span><i class="lamp lamp--bottom lb-ring" data-s="on"></i>雙重確認</span>
       </div>
       <div class="lb-chart dash-skeleton" id="lb-main-chart" data-draw="chart" data-source="daily events"></div>
-      <p class="lb-cap">標記是分數第一次達到門檻的日子（10 個交易日內不重複）。落底標記旁的文字是事件說明：有人工註記的重大事件用註記，其次用當時 PTT 標題最常出現的主題；兩者都沒有的，放大到 2 年左右以內時改用灰字列出亮燈的訊號（例如「融資減＋外資賣＋VIX高」）。灰點是人工註記的事件低點、但落底分數沒有達到 3 的時候（例如 2022/10）。文字重疊時只留一個，指向標記可以看完整說明。價格軸是對數刻度。在圖上按住滑鼠左右拖曳可以放大某一段，也可以直接輸入起訖日期，按「重設範圍」回到原本的期間。下方每一列是一個訊號亮燈的日子，最底三列是每天的落底分數、過熱分數與偏空警示，顏色越深分數越高。</p>
+      <p class="lb-cap">標記是鄉民恐慌溫度第一次到 90、95 以上，以及雙重確認亮燈的日子（10 個交易日內不重複），外面多一圈的是雙重確認。標記旁的文字是事件說明：有人工註記的重大事件用註記，其次用當時 PTT 標題最常出現的主題。灰點是人工註記的事件低點、但恐慌溫度沒有到 90 的時候（例如 2022/10）。文字重疊時只留一個，指向標記可以看完整說明。價格軸是對數刻度。在圖上按住滑鼠左右拖曳可以放大某一段，也可以直接輸入起訖日期，按「重設範圍」回到原本的期間。下方每一列是一個訊號亮燈的日子；最底三列是恐慌溫度（80 以上才上色，越深越高）、雙重確認與偏空警示。</p>
     </section>
 
     <section class="lb-sec" id="lb-lamps">
@@ -1100,10 +1100,10 @@ dash.draw('chart', (el) => {
   const strip = LB.STRIP[LB.strip], stripC = LB.FAMC[LB.strip];
   const W = Math.max(280, el.clientWidth), narrow = W < 560;
   const priceH = narrow ? 220 : 300, rowH = 14, stripTop = priceH + 16;
-  const labels = strip.map((s) => s[1]).concat(['落底分數', '過熱分數', '偏空警示']);
+  const labels = strip.map((s) => s[1]).concat(['恐慌溫度', '雙重確認', '偏空警示']);
   const H = stripTop + labels.length * rowH + 24;
   const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img')
-    .attr('aria-label', (LB.ix === 'TAIEX' ? '加權指數' : '櫃買指數') + '走勢，標出落底分數與過熱分數達門檻的日子，以及各訊號亮燈日');
+    .attr('aria-label', (LB.ix === 'TAIEX' ? '加權指數' : '櫃買指數') + '走勢，標出恐慌溫度 90、95 以上與雙重確認的日子，以及各訊號亮燈日');
   const lab = svg.append('g');
   labels.forEach((t, i) => lab.append('text').attr('y', stripTop + i * rowH + rowH - 3).style('font-size', '11px').text(t));
   const [lo, hi] = d3.extent(rows, (r) => r[key]);
@@ -1123,18 +1123,22 @@ dash.draw('chart', (el) => {
   svg.append('path').datum(rows).attr('fill', 'none').attr('stroke-width', 1.4).style('stroke', 'var(--ink-2)')
     .attr('d', d3.line().x((r) => x(r.t)).y((r) => y(r[key])));
   const t0 = rows[0].t, top = LB.topColor();
-  const ev = e.data.filter((r) => ['combo3', 'combo4', 'gcombo3', 'gcombo4'].includes(r.signal) && LB.parse(r.date) >= t0 && r[ckey] != null)
-    .sort((a, b) => a.signal.endsWith('4') - b.signal.endsWith('4'));
+  const ORD = { thermo90: 0, thermo95: 1, dual: 2 };   // 後畫的蓋在上面：雙重確認最上層
+  const ev = e.data.filter((r) => r.signal in ORD && LB.parse(r.date) >= t0 && r[ckey] != null).sort((a, b) => ORD[a.signal] - ORD[b.signal]);
   const mk = svg.append('g');
-  ev.forEach((r) => LB.lampSvg(mk, x(LB.parse(r.date)), y(r[ckey]), r.signal.endsWith('4') ? 6 : 5.5, r.side === 'top' ? top : 'var(--lamp-blue)', r.signal.endsWith('4') ? 'on' : 'recent'));
-  // 事件文字（只標落底分數）：人工註記 > 標題主題 > 亮燈訊號；同一個事件 20 個交易日內只標一次，文字互相重疊就略過（指向標記仍看得到）
+  ev.forEach((r) => {
+    const cx = x(LB.parse(r.date)), cy = y(r[ckey]);
+    if (r.signal === 'dual') mk.append('circle').attr('cx', cx).attr('cy', cy).attr('r', 9.5).style('fill', 'none').style('stroke', 'var(--lamp-blue)').attr('stroke-width', 1.5);
+    LB.lampSvg(mk, cx, cy, r.signal === 'thermo90' ? 5.5 : 6, 'var(--lamp-blue)', r.signal === 'thermo90' ? 'recent' : 'on');
+  });
+  // 事件文字：人工註記 > 標題主題；同一個事件 20 個交易日內只標一次，文字互相重疊就略過（指向標記仍看得到）
   const idxOf = new Map(rows.map((r, i) => [r.date, i]));
   const bev = ev.filter((r) => r.side !== 'top' && idxOf.has(r.date)).map((r) => {
     const main = LB.evLabel(r);
-    return { r, text: main || LB.litShort(r), rank: (r.note ? 0 : main ? 1 : 2) * 2 + (r.signal === 'combo4' ? 0 : 1) };
+    return { r, text: main, rank: (r.note ? 0 : 1) * 3 + (2 - ORD[r.signal]) };
   }).concat(e.data.filter((r) => r.signal === 'note' && idxOf.has(r.date) && r[ckey] != null && !ev.some((q) => q.note === r.note))
-    .map((r) => ({ r, text: r.note + '（落底分數未達 3）', rank: 1.5 })))
-    .filter((o) => o.text && (o.rank < 4 || (!narrow && spanD < 800)))
+    .map((r) => ({ r, text: r.note + '（溫度未達 90）', rank: 2.5 })))
+    .filter((o) => o.text)
     .sort((a, b) => a.rank - b.rank || (a.r.date < b.r.date ? -1 : 1));
   const placed = [], cw = (t) => [...t].reduce((n, c) => n + (c.charCodeAt(0) > 255 ? 10.5 : 6), 0);
   const hit = (p, q) => p[0] < q[2] && q[0] < p[2] && p[1] < q[3] && q[1] < p[3];
@@ -1158,18 +1162,21 @@ dash.draw('chart', (el) => {
     .attr('r', 3.5).style('fill', 'var(--ink-3)');
   svg.append('g').selectAll('text').data(placed).join('text').attr('x', (o) => o.cx).attr('y', (o) => o.ty).attr('text-anchor', 'middle')
     .style('font-size', '11px').style('paint-order', 'stroke').style('stroke', 'var(--color-bg)').style('stroke-width', '3px').style('stroke-linejoin', 'round')
-    .style('fill', (o) => (o.rank < 4 ? 'var(--ink)' : 'var(--ink-3)')).style('font-weight', (o) => (o.rank < 2 ? 500 : 400)).text((o) => o.text);
+    .style('fill', (o) => (o.rank < 3 ? 'var(--ink)' : 'var(--ink-2)')).style('font-weight', (o) => (o.rank < 3 ? 500 : 400)).text((o) => o.text);
   const step = Math.max(1.5, (W - m.l - m.r) / rows.length);
   strip.forEach(([k], i) => {
     svg.append('rect').attr('x', m.l).attr('width', W - m.l - m.r).attr('y', stripTop + i * rowH + 3).attr('height', rowH - 6).style('fill', 'var(--panel-2)');
     svg.append('g').selectAll('rect').data(rows.filter((r) => r['f_' + k] === 1)).join('rect')
       .attr('x', (r) => x(r.t) - step / 2).attr('width', step).attr('y', stripTop + i * rowH + 2).attr('height', rowH - 4).style('fill', stripC);
   });
-  [['score', 'var(--lamp-blue)'], ['gscore', top], ['wscore', 'var(--lamp-amber)']].forEach(([f, c], j) => {
+  [['fear', 'var(--lamp-blue)', (v) => v >= 80, (v) => (v >= 95 ? 1 : v >= 90 ? 0.75 : v >= 85 ? 0.45 : 0.22)],
+   ['f_dual', 'var(--lamp-blue)', (v) => v === 1, () => 1],
+   ['wscore', 'var(--lamp-amber)', (v) => v > 0, (v) => 0.4 + 0.2 * v]].forEach(([f, c, lit, op], j) => {
     const sy = stripTop + (strip.length + j) * rowH + 2;
-    svg.append('g').selectAll('rect').data(rows.filter((r) => r[f] > 0)).join('rect')
+    svg.append('rect').attr('x', m.l).attr('width', W - m.l - m.r).attr('y', sy + 1).attr('height', rowH - 6).style('fill', 'var(--panel-2)');
+    svg.append('g').selectAll('rect').data(rows.filter((r) => r[f] != null && lit(r[f]))).join('rect')
       .attr('x', (r) => x(r.t) - step / 2).attr('width', step).attr('y', sy).attr('height', rowH - 4)
-      .style('fill', c).attr('opacity', (r) => (f === 'wscore' ? 0.4 + 0.2 * r[f] : r[f] === 1 ? 0.2 : r[f] === 2 ? 0.45 : r[f] === 3 ? 0.75 : 1));
+      .style('fill', c).attr('opacity', (r) => op(r[f]));
   });
   const tip = document.createElement('div'); tip.className = 'lb-tip'; tip.hidden = true; el.append(tip);
   const rule = svg.append('line').attr('y1', 4).attr('y2', H - 20).style('stroke', 'var(--cds-chart-reference)').attr('opacity', 0);
@@ -1195,14 +1202,14 @@ dash.draw('chart', (el) => {
       const lit = all.filter(([k]) => r['f_' + k] === 1).map((s) => s[1]);
       tip.replaceChildren();
       const b = document.createElement('b'); b.textContent = LB.date(r.t); tip.append(b);
-      [(LB.ix === 'TAIEX' ? '加權 ' : '櫃買 ') + LB.num(r[key], 2), '落底分數 ' + r.score + ' / 7・過熱分數 ' + r.gscore + ' / 8・偏空警示 ' + r.wscore + ' / 3',
+      [(LB.ix === 'TAIEX' ? '加權 ' : '櫃買 ') + LB.num(r[key], 2), (r.fear != null ? '恐慌溫度 ' + r.fear.toFixed(1) : '恐慌溫度 —') + (r.f_dual === 1 ? '・雙重確認亮燈' : '') + '・偏空警示 ' + r.wscore + ' / 3',
         lit.length ? '當天亮燈：' + lit.join('、') : '當天沒有訊號亮燈'].forEach((t) => { const div = document.createElement('div'); div.textContent = t; tip.append(div); });
-      const ri = idxOf.get(r.date), near = ev.filter((q) => Math.abs((idxOf.get(q.date) ?? -99) - ri) <= 2).sort((a, b) => b.signal.endsWith('4') - a.signal.endsWith('4'))[0];
+      const ri = idxOf.get(r.date), near = ev.filter((q) => Math.abs((idxOf.get(q.date) ?? -99) - ri) <= 2).sort((a, b) => ORD[b.signal] - ORD[a.signal])[0];
       const nt = e.data.find((q) => q.signal === 'note' && q.start <= r.date && r.date <= q.end);
       if (nt && !(near && near.note)) { const div = document.createElement('div'); div.textContent = '事件註記：' + nt.note + '（' + nt.start.replaceAll('-', '/') + '–' + nt.end.slice(5).replace('-', '/') + '）'; tip.append(div); }
       if (near) {
         const hd = document.createElement('b'); hd.textContent = LB.date(LB.parse(near.date)) + ' ' + (LB.SHORT[near.signal] || near.signal) + ' 標記'; tip.append(hd);
-        LB.evLines(near).concat(near.lit ? ['5 日內亮燈：' + near.lit] : []).forEach((t) => { const div = document.createElement('div'); div.textContent = t; tip.append(div); });
+        [near.value || ''].concat(LB.evLines(near)).filter(Boolean).forEach((t) => { const div = document.createElement('div'); div.textContent = t; tip.append(div); });
       }
       tip.hidden = false;
       const sx = x(r.t) / W * el.clientWidth;
