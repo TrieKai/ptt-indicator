@@ -1,4 +1,290 @@
 {
+"M.1732254451.A.ADB": {
+"amount": "",
+"confidence": 0.99,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 132,
+"short_links": 0
+},
+"id": "M.1732254451.A.ADB",
+"kind": "reply",
+"labeled_at": "2026-11-27 13:26",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "未提及任何賠錢或出場情況",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 大家小心凱基證券會亂報違約交割",
+"tokens": 1111,
+"ts": 1732254451
+},
+"M.1736255837.A.2D6": {
+"amount": "",
+"confidence": 0.97,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 220,
+"short_links": 0
+},
+"id": "M.1736255837.A.2D6",
+"kind": "reply",
+"labeled_at": "2026-11-27 13:26",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "未提及實際虧損或認賠",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 債蛙畢業，長天期美債",
+"tokens": 1151,
+"ts": 1736255837
+},
+"M.1743995693.A.922": {
+"amount": "-45000元",
+"confidence": 0.95,
+"counts": true,
+"evidence": "both",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [
+"-45000元",
+"-14%",
+"-24%",
+"賠14%",
+"賠-45000元"
+],
+"own_len": 168,
+"short_links": 0
+},
+"id": "M.1743995693.A.922",
+"kind": "orig",
+"labeled_at": "2026-11-27 13:26",
+"model": "openai/gpt-oss-120b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "作者明確說慘賠-45000元且附截圖",
+"side": "long",
+"status": "ok",
+"title": "[心得] 畢業了",
+"tokens": 1089,
+"ts": 1743995693
+},
+"M.1744125754.A.485": {
+"amount": "",
+"confidence": 0.35,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [],
+"own_len": 404,
+"short_links": 0
+},
+"id": "M.1744125754.A.485",
+"kind": "orig",
+"labeled_at": "2026-11-27 13:26",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "未明確說明賠錢金額或比例",
+"side": "long",
+"status": "ok",
+"title": "[心得] 今天只有我畢業，感覺變阿呆了",
+"tokens": 1203,
+"ts": 1744125754
+},
+"M.1744128836.A.9EA": {
+"amount": "",
+"confidence": 0.95,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 153,
+"short_links": 0
+},
+"id": "M.1744128836.A.9EA",
+"kind": "reply",
+"labeled_at": "2026-11-27 13:26",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "未提及賠錢或出場，僅為心得",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 今天只有我畢業，感覺變阿呆了",
+"tokens": 1116,
+"ts": 1744128836
+},
+"M.1744437638.A.1C6": {
+"amount": "",
+"confidence": 0.8,
+"counts": true,
+"evidence": "screenshot",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [],
+"own_len": 375,
+"short_links": 0
+},
+"id": "M.1744437638.A.1C6",
+"kind": "reply",
+"labeled_at": "2026-11-27 13:26",
+"model": "openai/gpt-oss-120b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "回文者提及破產、帳戶大額虧損並附圖，屬於多單虧損",
+"side": "long",
+"status": "ok",
+"title": "Re: [心得] 畢業了,被自己心魔給打敗",
+"tokens": 1395,
+"ts": 1744437638
+},
+"M.1744444721.A.0DE": {
+"amount": "-90%-80%",
+"confidence": 0.7,
+"counts": true,
+"evidence": "amount",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [
+"-90%",
+"-80%"
+],
+"own_len": 205,
+"short_links": 0
+},
+"id": "M.1744444721.A.0DE",
+"kind": "reply",
+"labeled_at": "2026-11-27 13:26",
+"model": "openai/gpt-oss-120b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "作者提及 -90%~-80% 的賠率，明確表示自己虧損",
+"side": "long",
+"status": "ok",
+"title": "Re: [心得] 畢業了,被自己心魔給打敗",
+"tokens": 1237,
+"ts": 1744444721
+},
+"M.1744894380.A.BC9": {
+"amount": "-2400萬",
+"confidence": 0.97,
+"counts": true,
+"evidence": "both",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [
+"-2400W",
+"賠了 2400 萬",
+"損益有到大概 +300萬"
+],
+"own_len": 1406,
+"short_links": 0
+},
+"id": "M.1744894380.A.BC9",
+"kind": "orig",
+"labeled_at": "2026-11-27 13:26",
+"model": "openai/gpt-oss-120b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "作者明確說賠了2400萬且附對帳單截圖",
+"side": "long",
+"status": "ok",
+"title": "[心得] 畢業了，我只是風口上的豬（-2400W）",
+"tokens": 2204,
+"ts": 1744894380
+},
+"M.1744900559.A.563": {
+"amount": "",
+"confidence": 0.3,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 3,
+"nums": [
+"-10%",
+"-20%"
+],
+"own_len": 689,
+"short_links": 0
+},
+"id": "M.1744900559.A.563",
+"kind": "reply",
+"labeled_at": "2026-11-27 13:26",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "未明確說自己虧損，只提到跌幅與可能賺",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 畢業了，我只是風口上的豬（-2400W）",
+"tokens": 1618,
+"ts": 1744900559
+},
+"M.1745040258.A.52D": {
+"amount": "負債最多就 500萬",
+"confidence": 0.75,
+"counts": true,
+"evidence": "amount",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 450,
+"short_links": 0
+},
+"id": "M.1745040258.A.52D",
+"kind": "reply",
+"labeled_at": "2026-11-27 13:26",
+"model": "openai/gpt-oss-120b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "作者明確說自己負債約500萬，屬於自認虧損",
+"side": "long",
+"status": "ok",
+"title": "Re: [心得] 畢業了，我只是風口上的豬（-2400W）",
+"tokens": 1471,
+"ts": 1745040258
+},
 "M.1746216844.A.2B5": {
 "amount": "",
 "confidence": 0.9,
