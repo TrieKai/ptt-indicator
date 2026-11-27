@@ -5,10 +5,11 @@ name: 更新鄉民指標
 on:
   push:                            # 負責抓 PTT 的電腦推上新文章或畢業文判斷結果，或改了網頁／重算程式 → 重算並更新網站
     branches: [main]
-    paths: ['data/ptt_latest.json', 'data/loss_labels.json', 'data/loss_labels_ref.json', 'dashboard/index.html', 'dashboard/card.js', 'scripts/build_site.py', 'scripts/build_dashboard_data.py']
+    paths: ['scripts/close_data_missing.sh', 'data/ptt_latest.json', 'data/loss_labels.json', 'data/loss_labels_ref.json', 'dashboard/index.html', 'dashboard/card.js', 'scripts/build_site.py', 'scripts/build_dashboard_data.py']
   schedule:
     # PTT 會擋 GitHub 的主機（2026/11/26 實測 HTTP 403），所以雲端不排每 15 分鐘的 PTT 更新；PTT 要從可連線的電腦更新後推上來
-    # GitHub 的排程在尖峰時段可能延遲或被跳過（2026/11/26 15:40 那次就沒跑），所以平日收盤後多排幾次備援。
+    # GitHub 的排程在尖峰時段可能延遲或被跳過（2026/11/26、11/27 的 15:40 都沒跑），所以平日收盤後多排幾次備援；
+    # 另外，平日 15:35–19:00 抓 PTT 的電腦推文章時，若還沒有今天的收盤資料也會順便完整更新（scripts/close_data_missing.sh）。
     # 更新只補缺的資料，重複跑沒有影響；沒有新資料時不會 commit。
     - cron: '40 7 * * 1-5'         # 台灣 15:40（平日）：完整更新，指數、P/C、三大法人
     - cron: '40 8 * * 1-5'         # 台灣 16:40（平日）：備援
@@ -55,7 +56,14 @@ jobs:
           MODE: ${{ inputs.mode }}
         run: |
           if [ "$EVENT" = "push" ]; then
-            python3 -I scripts/build_dashboard_data.py data dashboard/data > /dev/null
+            # 平日收盤後還沒有今天的收盤資料，就順便完整更新（不必等常延遲或被跳過的排程）；其餘時候只重算
+            MISS=$(bash scripts/close_data_missing.sh data)
+            if [ -n "$MISS" ]; then
+              echo "收盤資料還缺：$MISS → 完整更新"
+              python3 -I scripts/update_data.py data dashboard/data
+            else
+              python3 -I scripts/build_dashboard_data.py data dashboard/data > /dev/null
+            fi
           elif [ "$MODE" = "ptt" ]; then
             python3 -I scripts/update_data.py data dashboard/data --only ptt
           else
