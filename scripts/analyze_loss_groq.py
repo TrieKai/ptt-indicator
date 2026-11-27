@@ -14,7 +14,7 @@ import sys, os, re, json, time, argparse, datetime as dt, urllib.request, urllib
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from ptt_content import load_posts, candidates, fetch, hints
 
-PROMPT_VERSION = "loss-v2"   # v2：把參考標記複核時的邊界規則寫進提示詞
+PROMPT_VERSION = "loss-v3"   # v2：寫進邊界規則；v3：回文不再把原文標題的金額當線索，標題明確標示是原文的
 PREFER = ["qwen/qwen3.6-27b", "moonshotai/kimi-k2-instruct-0905", "openai/gpt-oss-120b", "llama-3.3-70b-versatile"]
 API = "https://api.groq.com/openai/v1"
 MAX_CHARS = 1800
@@ -35,8 +35,9 @@ SYSTEM = """你是資料標註員，幫忙判斷 PTT 股票版的文章。只根
 
 def user_msg(post, kind, own, h):
     t = own if len(own) <= MAX_CHARS else own[:MAX_CHARS] + "…（以下省略）"
-    return (f"標題：{post['title']}\n"
-            f"類型：{'原文' if kind == 'orig' else '回文（只看回文者自己寫的部分，引用原文已去掉）'}\n"
+    head = (f"標題：{post['title']}\n類型：原文\n" if kind == "orig" else
+            f"原文標題（回文者沒有寫這個標題，標題裡的金額或敘述不是回文者的）：{post['title']}\n類型：回文（只看回文者自己寫的部分，引用原文已去掉）\n")
+    return (head +
             f"內文中的連結網域：{', '.join(h['hosts']) or '無'}\n"
             f"程式找到的金額片段（僅供參考，可能有誤）：{'、'.join(h['nums']) or '無'}\n"
             f"作者自己寫的內文：\n\"\"\"\n{t}\n\"\"\"")
@@ -133,7 +134,7 @@ def main():
         lab = {"id": p["id"], "ts": p["ts"], "title": p["title"], "kind": kind, "status": status, "model": model, "prompt_version": PROMPT_VERSION,
                "labeled_at": dt.datetime.now(TZ).strftime("%Y-%m-%d %H:%M")}
         if status == "ok":
-            h = hints(own, p["title"]); lab["hints"] = h
+            h = hints(own, p["title"] if kind == "orig" else ""); lab["hints"] = h   # 回文不掃標題的金額
             if a.dry_run:
                 print("—" * 20, "\n", user_msg(p, kind, own, h)[:600]); continue
             res, stop = None, False

@@ -71,7 +71,8 @@ def own_text(page):
 
 
 def hints(own, title=""):
-    """規則找到的線索：圖片連結、短網址、金額片段、第一人稱。給模型參考，也用來跟模型比對。"""
+    """規則找到的線索：圖片連結、短網址、金額片段、第一人稱。給模型參考，也用來跟模型比對。
+    title 只在原文時傳入；回文的標題是原文的，裡面的金額不是回文者的。"""
     imgs = IMG.findall(own)
     shorts = SHORT_LINK.findall(own)
     hosts = sorted({re.sub(r"https?://([^/]+)/.*", r"\1", u) for u in LINK.findall(own)})
