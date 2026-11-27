@@ -1,4 +1,261 @@
 {
+"M.1746247492.A.3A7": {
+"amount": "",
+"confidence": 0.97,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [
+"輸10萬"
+],
+"own_len": 462,
+"short_links": 0
+},
+"id": "M.1746247492.A.3A7",
+"kind": "reply",
+"labeled_at": "2026-11-27 12:54",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v3",
+"reason": "未提及本人股票多單虧損，只說運彩輸10萬",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 準備違約畢業了",
+"tokens": 1280,
+"ts": 1746247492
+},
+"M.1746289118.A.7CD": {
+"amount": "",
+"confidence": 0.95,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": false,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 264,
+"short_links": 0
+},
+"id": "M.1746289118.A.7CD",
+"kind": "reply",
+"labeled_at": "2026-11-27 12:54",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v3",
+"reason": "未提及作者自身虧損，只是說明操作策略",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 準備違約畢業了",
+"tokens": 1057,
+"ts": 1746289118
+},
+"M.1746337578.A.7C5": {
+"amount": "",
+"confidence": 0.98,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [
+"imgur.com"
+],
+"img": 5,
+"nums": [],
+"own_len": 1168,
+"short_links": 0
+},
+"id": "M.1746337578.A.7C5",
+"kind": "reply",
+"labeled_at": "2026-11-27 12:54",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v3",
+"reason": "未提及作者本人實際虧損或出場",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 準備違約畢業了",
+"tokens": 1735,
+"ts": 1746337578
+},
+"M.1747281887.A.12A": {
+"amount": "-8萬多, 賠50萬",
+"confidence": 0.97,
+"counts": false,
+"evidence": "both",
+"hints": {
+"first": true,
+"hosts": [
+"ibb.co"
+],
+"img": 3,
+"nums": [
+"-8萬",
+"賠50萬"
+],
+"own_len": 656,
+"short_links": 0
+},
+"id": "M.1747281887.A.12A",
+"kind": "orig",
+"labeled_at": "2026-11-27 12:54",
+"model": "openai/gpt-oss-120b",
+"own_loss": true,
+"prompt_version": "loss-v3",
+"reason": "作者自述放空國泰金期貨，最終賠約50萬，提供金額與截圖",
+"side": "short",
+"status": "ok",
+"title": "[心得] 畢業了，在期貨市場陣亡了",
+"tokens": 1315,
+"ts": 1747281887
+},
+"M.1747292561.A.C90": {
+"amount": "",
+"confidence": 0.97,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [],
+"own_len": 1291,
+"short_links": 0
+},
+"id": "M.1747292561.A.C90",
+"kind": "reply",
+"labeled_at": "2026-11-27 12:54",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v3",
+"reason": "回文未提及作者自身虧損",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 畢業了，在期貨市場陣亡了",
+"tokens": 1783,
+"ts": 1747292561
+},
+"M.1747904254.A.69A": {
+"amount": "賠2000元",
+"confidence": 0.7,
+"counts": false,
+"evidence": "amount",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [
+"賠2000元"
+],
+"own_len": 1367,
+"short_links": 0
+},
+"id": "M.1747904254.A.69A",
+"kind": "orig",
+"labeled_at": "2026-11-27 12:54",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v3",
+"reason": "提及小額賠2000元但整體盈虧為正，未明確表示整體虧損",
+"side": "unknown",
+"status": "ok",
+"title": "[心得] 我好像...快要畢業了",
+"tokens": 2057,
+"ts": 1747904254
+},
+"M.1747971211.A.37F": {
+"amount": "",
+"confidence": 0.95,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [],
+"own_len": 1349,
+"short_links": 0
+},
+"id": "M.1747971211.A.37F",
+"kind": "reply",
+"labeled_at": "2026-11-27 12:53",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v3",
+"reason": "回文者只說賺錢，未提及自己虧損",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 我好像...快要畢業了",
+"tokens": 1907,
+"ts": 1747971211
+},
+"M.1751772807.A.B96": {
+"amount": "-33萬, -1萬, -360萬, 已實現+89.4萬, 未實現+68萬",
+"confidence": 0.97,
+"counts": false,
+"evidence": "both",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 2,
+"nums": [
+"-33萬",
+"-1萬",
+"-360萬",
+"已實現+89.4萬",
+"未實現+68萬"
+],
+"own_len": 514,
+"short_links": 0
+},
+"id": "M.1751772807.A.B96",
+"kind": "orig",
+"labeled_at": "2026-11-27 12:53",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v3",
+"reason": "作者報告整體盈餘+123.4萬，未顯示自身虧損",
+"side": "unknown",
+"status": "ok",
+"title": "[心得] 畢業一年多的韭菜半年報",
+"tokens": 1272,
+"ts": 1751772807
+},
+"M.1752864210.A.E83": {
+"amount": "",
+"confidence": 0.97,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 693,
+"short_links": 0
+},
+"id": "M.1752864210.A.E83",
+"kind": "reply",
+"labeled_at": "2026-11-27 12:53",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v3",
+"reason": "未提及本人實際虧損或出場",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 一個小散戶被世芯嘎空手的暫時畢業文",
+"tokens": 1407,
+"ts": 1752864210
+},
 "M.1752889844.A.F15": {
 "amount": "",
 "confidence": 0.95,
@@ -14,15 +271,15 @@
 },
 "id": "M.1752889844.A.F15",
 "kind": "reply",
-"labeled_at": "2026-11-27 12:22",
+"labeled_at": "2026-11-27 12:53",
 "model": "openai/gpt-oss-120b",
 "own_loss": false,
-"prompt_version": "loss-v2",
-"reason": "未提及本人實際虧損金額或出場情形",
+"prompt_version": "loss-v3",
+"reason": "未提及本人虧損或出場",
 "side": "unknown",
 "status": "ok",
 "title": "Re: [心得] 一個小散戶被世芯嘎空手的暫時畢業文",
-"tokens": 1128,
+"tokens": 1161,
 "ts": 1752889844
 },
 "M.1752908318.A.B56": {
