@@ -1,4 +1,284 @@
 {
+"M.1608072394.A.6F5": {
+"amount": "賠了7w",
+"confidence": 0.95,
+"counts": true,
+"evidence": "both",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 6,
+"nums": [
+"賠了7w"
+],
+"own_len": 254,
+"short_links": 0
+},
+"id": "M.1608072394.A.6F5",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:14",
+"model": "openai/gpt-oss-120b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "作者明確說賠了7w且附多張截圖",
+"side": "long",
+"status": "ok",
+"title": "[心得] 當沖畢業",
+"tokens": 1093,
+"ts": 1608072394
+},
+"M.1608218483.A.058": {
+"amount": "",
+"confidence": 0.99,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 148,
+"short_links": 0
+},
+"id": "M.1608218483.A.058",
+"kind": "reply",
+"labeled_at": "2026-11-27 14:14",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "未提及任何自有虧損或出場",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 論違約交割的嚴重性",
+"tokens": 1086,
+"ts": 1608218483
+},
+"M.1609339388.A.DBA": {
+"amount": "",
+"confidence": 0.97,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 3224,
+"short_links": 0
+},
+"id": "M.1609339388.A.DBA",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:14",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "未提及自己因多單虧損或出場，僅敘述違約交割事件",
+"side": "unknown",
+"status": "ok",
+"title": "[心得] 為了一千多元違約交割 請慎選券商",
+"tokens": 2464,
+"ts": 1609339388
+},
+"M.1609341355.A.921": {
+"amount": "差了六百多塊",
+"confidence": 0.78,
+"counts": true,
+"evidence": "amount",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 414,
+"short_links": 0
+},
+"id": "M.1609341355.A.921",
+"kind": "reply",
+"labeled_at": "2026-11-27 14:14",
+"model": "openai/gpt-oss-120b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "作者明確說自己差了六百多塊，屬於自認虧損",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 為了一千多元違約交割 請慎選券商",
+"tokens": 1409,
+"ts": 1609341355
+},
+"M.1609422390.A.7E7": {
+"amount": "",
+"confidence": 0.98,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": false,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 121,
+"short_links": 0
+},
+"id": "M.1609422390.A.7E7",
+"kind": "reply",
+"labeled_at": "2026-11-27 14:14",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "未提及本人虧損或出場",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 為了一千多元違約交割 請慎選券商",
+"tokens": 1082,
+"ts": 1609422390
+},
+"M.1611053365.A.118": {
+"amount": "賠了快7萬",
+"confidence": 0.97,
+"counts": true,
+"evidence": "amount",
+"hints": {
+"first": true,
+"hosts": [
+"imgur.com"
+],
+"img": 2,
+"nums": [
+"賠了快7萬"
+],
+"own_len": 533,
+"short_links": 0
+},
+"id": "M.1611053365.A.118",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:14",
+"model": "openai/gpt-oss-120b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "作者明確說自己多單認賠，提及賠了快7萬",
+"side": "long",
+"status": "ok",
+"title": "[心得] 畢業了最後還是選擇了認賠下船",
+"tokens": 1425,
+"ts": 1611053365
+},
+"M.1611098800.A.944": {
+"amount": "",
+"confidence": 0.98,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": false,
+"hosts": [
+"i.imgur.com",
+"imgur.com"
+],
+"img": 3,
+"nums": [],
+"own_len": 730,
+"short_links": 0
+},
+"id": "M.1611098800.A.944",
+"kind": "reply",
+"labeled_at": "2026-11-27 14:14",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "回文者只列出獲利數字，未提及任何虧損",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 畢業了最後還是選擇了認賠下船",
+"tokens": 1476,
+"ts": 1611098800
+},
+"M.1611383912.A.DF1": {
+"amount": "",
+"confidence": 0.97,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 965,
+"short_links": 0
+},
+"id": "M.1611383912.A.DF1",
+"kind": "reply",
+"labeled_at": "2026-11-27 14:14",
+"model": "openai/gpt-oss-120b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "未提及賠錢或出場，僅為數字列",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 畢業歌",
+"tokens": 1619,
+"ts": 1611383912
+},
+"M.1620696843.A.74A": {
+"amount": "-7萬",
+"confidence": 0.93,
+"counts": true,
+"evidence": "both",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [
+"-7萬",
+"損益從+6萬"
+],
+"own_len": 166,
+"short_links": 0
+},
+"id": "M.1620696843.A.74A",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:14",
+"model": "openai/gpt-oss-120b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "作者明確說損益從+6萬變-7萬，屬於多頭虧損，附圖證據",
+"side": "long",
+"status": "ok",
+"title": "[心得] 滷肉聯詠畢業 不要跟股票談戀愛",
+"tokens": 1110,
+"ts": 1620696843
+},
+"M.1620886791.A.A4A": {
+"amount": "賠了將近10%",
+"confidence": 0.95,
+"counts": true,
+"evidence": "both",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [
+"賠了將近10%"
+],
+"own_len": 602,
+"short_links": 0
+},
+"id": "M.1620886791.A.A4A",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:14",
+"model": "openai/gpt-oss-120b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "作者明確說自己賠近10%且附對帳單截圖",
+"side": "long",
+"status": "ok",
+"title": "[心得] 畢業了",
+"tokens": 1362,
+"ts": 1620886791
+},
 "M.1634033356.A.54B": {
 "amount": "",
 "confidence": 0.9,
