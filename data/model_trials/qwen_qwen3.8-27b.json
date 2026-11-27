@@ -1,0 +1,1707 @@
+{
+"M.1573090136.A.4C1": {
+"amount": "",
+"confidence": 0.9,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com",
+"www.youtube.com"
+],
+"img": 4,
+"nums": [],
+"own_len": 485,
+"short_links": 0
+},
+"id": "M.1573090136.A.4C1",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:05",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "內文強調績效好於大盤、獲利出場，無明確虧損描述。",
+"side": "long",
+"status": "ok",
+"title": "[心得] 一年對帳單 畢業ING",
+"tokens": 989,
+"ts": 1573090136
+},
+"M.1573130068.A.8AD": {
+"amount": "",
+"confidence": 0.95,
+"counts": true,
+"evidence": "screenshot",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [],
+"own_len": 229,
+"short_links": 0
+},
+"id": "M.1573130068.A.8AD",
+"kind": "reply",
+"labeled_at": "2026-11-27 14:05",
+"model": "qwen/qwen3.8-27b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "自述割肉斷腕或等清算，並附對帳單截圖，符合畢業文定義。",
+"side": "long",
+"status": "ok",
+"title": "Re: [心得] 一年對帳單 畢業ING",
+"tokens": 876,
+"ts": 1573130068
+},
+"M.1573133627.A.134": {
+"amount": "",
+"confidence": 1.0,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [
+"-30%"
+],
+"own_len": 362,
+"short_links": 0
+},
+"id": "M.1573133627.A.134",
+"kind": "reply",
+"labeled_at": "2026-11-27 14:05",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "回文者僅提問他人見解，未提及自身虧損",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 一年對帳單 畢業ING",
+"tokens": 924,
+"ts": 1573133627
+},
+"M.1574947878.A.1D8": {
+"amount": "",
+"confidence": 0.95,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 97,
+"short_links": 0
+},
+"id": "M.1574947878.A.1D8",
+"kind": "reply",
+"labeled_at": "2026-11-27 14:05",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "僅評論ETF淨值與清算風險，未提及個人虧損",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 00677u畢業了",
+"tokens": 782,
+"ts": 1574947878
+},
+"M.1582883510.A.A94": {
+"amount": "損失一半資產左右",
+"confidence": 0.95,
+"counts": true,
+"evidence": "amount",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 314,
+"short_links": 0
+},
+"id": "M.1582883510.A.A94",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:05",
+"model": "qwen/qwen3.8-27b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "作者明確表示滿倉重壓後損失一半資產，屬於做多認賠。",
+"side": "long",
+"status": "ok",
+"title": "[心得] 禮拜一準備畢業！提前心得文",
+"tokens": 886,
+"ts": 1582883510
+},
+"M.1583753815.A.E1D": {
+"amount": "實際淨損9萬6",
+"confidence": 0.95,
+"counts": true,
+"evidence": "both",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [
+"-10萬"
+],
+"own_len": 400,
+"short_links": 0
+},
+"id": "M.1583753815.A.E1D",
+"kind": "reply",
+"labeled_at": "2026-11-27 14:05",
+"model": "qwen/qwen3.8-27b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "作者明確表示做多元油正2後認賠出場，並寫出淨損金額及附截圖。",
+"side": "long",
+"status": "ok",
+"title": "Re: [心得] 畢業文 從此不買石油股",
+"tokens": 993,
+"ts": 1583753815
+},
+"M.1584509334.A.F35": {
+"amount": "",
+"confidence": 0.95,
+"counts": true,
+"evidence": "screenshot",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 3,
+"nums": [],
+"own_len": 199,
+"short_links": 0
+},
+"id": "M.1584509334.A.F35",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:04",
+"model": "qwen/qwen3.8-27b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "標題稱畢業，內文自述痛並附截圖，符合認賠出場定義。",
+"side": "long",
+"status": "ok",
+"title": "[心得] 雖然很痛 但還是決定先畢業了",
+"tokens": 796,
+"ts": 1584509334
+},
+"M.1585405159.A.6B1": {
+"amount": "",
+"confidence": 0.95,
+"counts": true,
+"evidence": "screenshot",
+"hints": {
+"first": true,
+"hosts": [
+"imgur.com"
+],
+"img": 1,
+"nums": [],
+"own_len": 280,
+"short_links": 0
+},
+"id": "M.1585405159.A.6B1",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:04",
+"model": "qwen/qwen3.8-27b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "自述死守美股後畢業，並附上對帳單截圖佐證虧損。",
+"side": "long",
+"status": "ok",
+"title": "[心得]美股畢業文",
+"tokens": 845,
+"ts": 1585405159
+},
+"M.1589982026.A.A45": {
+"amount": "三千美金",
+"confidence": 0.95,
+"counts": false,
+"evidence": "amount",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 212,
+"short_links": 0
+},
+"id": "M.1589982026.A.A45",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:04",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "持有Put屬於放空部位，雖有虧損金額但方向不符",
+"side": "short",
+"status": "ok",
+"title": "[心得] Firstrade 停牌後期權被歸零 慘",
+"tokens": 812,
+"ts": 1589982026
+},
+"M.1593755595.A.943": {
+"amount": "",
+"confidence": 0.95,
+"counts": false,
+"evidence": "screenshot",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [],
+"own_len": 380,
+"short_links": 0
+},
+"id": "M.1593755595.A.943",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:04",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "作者自述做空（空軍）虧損，依規則視為放空，不屬做多畢業。",
+"side": "short",
+"status": "ok",
+"title": "[心得] 畢業",
+"tokens": 857,
+"ts": 1593755595
+},
+"M.1608072394.A.6F5": {
+"amount": "7w",
+"confidence": 0.95,
+"counts": true,
+"evidence": "both",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 6,
+"nums": [
+"賠了7w"
+],
+"own_len": 254,
+"short_links": 0
+},
+"id": "M.1608072394.A.6F5",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:04",
+"model": "qwen/qwen3.8-27b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "作者明確表示當沖賠了7萬並附截圖，符合畢業文定義。",
+"side": "long",
+"status": "ok",
+"title": "[心得] 當沖畢業",
+"tokens": 815,
+"ts": 1608072394
+},
+"M.1608218483.A.058": {
+"amount": "",
+"confidence": 1.0,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 148,
+"short_links": 0
+},
+"id": "M.1608218483.A.058",
+"kind": "reply",
+"labeled_at": "2026-11-27 14:04",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "僅轉述詐騙手法提醒版友，無自身虧損",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 論違約交割的嚴重性",
+"tokens": 795,
+"ts": 1608218483
+},
+"M.1609339388.A.DBA": {
+"amount": "",
+"confidence": 0.95,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 3224,
+"short_links": 0
+},
+"id": "M.1609339388.A.DBA",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:04",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "作者遭遇違約交割罰款，但未提及股票本身虧損或認賠出場，僅為券商糾紛心得。",
+"side": "long",
+"status": "ok",
+"title": "[心得] 為了一千多元違約交割 請慎選券商",
+"tokens": 1868,
+"ts": 1609339388
+},
+"M.1609341355.A.921": {
+"amount": "",
+"confidence": 0.95,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 414,
+"short_links": 0
+},
+"id": "M.1609341355.A.921",
+"kind": "reply",
+"labeled_at": "2026-11-27 14:03",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "僅敘述違約交割風險及補款過程，未提及實際虧損金額或認賠出場。",
+"side": "long",
+"status": "ok",
+"title": "Re: [心得] 為了一千多元違約交割 請慎選券商",
+"tokens": 975,
+"ts": 1609341355
+},
+"M.1609422390.A.7E7": {
+"amount": "",
+"confidence": 1.0,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": false,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 121,
+"short_links": 0
+},
+"id": "M.1609422390.A.7E7",
+"kind": "reply",
+"labeled_at": "2026-11-27 14:03",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "僅為提問，無自身虧損敘述",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 為了一千多元違約交割 請慎選券商",
+"tokens": 803,
+"ts": 1609422390
+},
+"M.1611053365.A.118": {
+"amount": "賠了快7萬",
+"confidence": 1.0,
+"counts": true,
+"evidence": "both",
+"hints": {
+"first": true,
+"hosts": [
+"imgur.com"
+],
+"img": 2,
+"nums": [
+"賠了快7萬"
+],
+"own_len": 533,
+"short_links": 0
+},
+"id": "M.1611053365.A.118",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:03",
+"model": "qwen/qwen3.8-27b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "作者明確表示買進股票後認賠出場，並列出虧損金額與截圖。",
+"side": "long",
+"status": "ok",
+"title": "[心得] 畢業了最後還是選擇了認賠下船",
+"tokens": 1065,
+"ts": 1611053365
+},
+"M.1611098800.A.944": {
+"amount": "",
+"confidence": 0.95,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": false,
+"hosts": [
+"i.imgur.com",
+"imgur.com"
+],
+"img": 3,
+"nums": [],
+"own_len": 730,
+"short_links": 0
+},
+"id": "M.1611098800.A.944",
+"kind": "reply",
+"labeled_at": "2026-11-27 14:03",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "回文者僅分享定期定額獲利試算，未提及自身虧損",
+"side": "long",
+"status": "ok",
+"title": "Re: [心得] 畢業了最後還是選擇了認賠下船",
+"tokens": 1202,
+"ts": 1611098800
+},
+"M.1611383912.A.DF1": {
+"amount": "",
+"confidence": 0.95,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 965,
+"short_links": 0
+},
+"id": "M.1611383912.A.DF1",
+"kind": "reply",
+"labeled_at": "2026-11-27 14:03",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "僅回憶去年貼文與股價走勢，未提及自身虧損或出場。",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 畢業歌",
+"tokens": 1651,
+"ts": 1611383912
+},
+"M.1620696843.A.74A": {
+"amount": "-7萬",
+"confidence": 0.95,
+"counts": true,
+"evidence": "both",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [
+"-7萬",
+"損益從+6萬"
+],
+"own_len": 166,
+"short_links": 0
+},
+"id": "M.1620696843.A.74A",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:03",
+"model": "qwen/qwen3.8-27b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "標題畢業，內文明確寫出損益轉為負7萬並附截圖。",
+"side": "long",
+"status": "ok",
+"title": "[心得] 滷肉聯詠畢業 不要跟股票談戀愛",
+"tokens": 811,
+"ts": 1620696843
+},
+"M.1620886791.A.A4A": {
+"amount": "賠了將近10%",
+"confidence": 1.0,
+"counts": true,
+"evidence": "both",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [
+"賠了將近10%"
+],
+"own_len": 602,
+"short_links": 0
+},
+"id": "M.1620886791.A.A4A",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:03",
+"model": "qwen/qwen3.8-27b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "作者明確表示做多陽明後認賠出場，並附上對帳單及具體虧損比例。",
+"side": "long",
+"status": "ok",
+"title": "[心得] 畢業了",
+"tokens": 1030,
+"ts": 1620886791
+},
+"M.1634033356.A.54B": {
+"amount": "",
+"confidence": 0.95,
+"counts": true,
+"evidence": "screenshot",
+"hints": {
+"first": false,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [],
+"own_len": 105,
+"short_links": 0
+},
+"id": "M.1634033356.A.54B",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:03",
+"model": "qwen/qwen3.8-27b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "自述停損、忍痛出清並附截圖，符合做多認賠定義。",
+"side": "long",
+"status": "ok",
+"title": "[心得] 陽明 畢業",
+"tokens": 745,
+"ts": 1634033356
+},
+"M.1636369974.A.870": {
+"amount": "",
+"confidence": 0.95,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [],
+"own_len": 1076,
+"short_links": 0
+},
+"id": "M.1636369974.A.870",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:02",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "標題與內文明確指出是「幫朋友」畢業，作者本人僅提及小額套牢，未認賠。",
+"side": "long",
+"status": "ok",
+"title": "[心得] 幫朋友畢業",
+"tokens": 1403,
+"ts": 1636369974
+},
+"M.1646694933.A.EDA": {
+"amount": "",
+"confidence": 0.95,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": false,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 137,
+"short_links": 0
+},
+"id": "M.1646694933.A.EDA",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:02",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "作者表示準備出場，尚未實際認賠，屬套牢未出場。",
+"side": "long",
+"status": "ok",
+"title": "[心得] 準畢業文",
+"tokens": 784,
+"ts": 1646694933
+},
+"M.1646718635.A.AF9": {
+"amount": "20萬",
+"confidence": 0.95,
+"counts": true,
+"evidence": "both",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [
+"賠20萬"
+],
+"own_len": 286,
+"short_links": 0
+},
+"id": "M.1646718635.A.AF9",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:02",
+"model": "qwen/qwen3.8-27b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "作者明確表示台指期認賠殺出，並提及少賠20萬及附截圖。",
+"side": "long",
+"status": "ok",
+"title": "[心得]  台指期畢業文囉",
+"tokens": 870,
+"ts": 1646718635
+},
+"M.1649747839.A.381": {
+"amount": "虧了一萬多",
+"confidence": 0.95,
+"counts": true,
+"evidence": "both",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [
+"虧了一萬"
+],
+"own_len": 98,
+"short_links": 0
+},
+"id": "M.1649747839.A.381",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:02",
+"model": "qwen/qwen3.8-27b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "作者明確表示買進後認賠出場並虧損一萬多，附截圖。",
+"side": "long",
+"status": "ok",
+"title": "[心得] 台積畢業文",
+"tokens": 752,
+"ts": 1649747839
+},
+"M.1650506378.A.1D1": {
+"amount": "",
+"confidence": 0.95,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [
+"www.ptt.cc"
+],
+"img": 0,
+"nums": [],
+"own_len": 424,
+"short_links": 0
+},
+"id": "M.1650506378.A.1D1",
+"kind": "reply",
+"labeled_at": "2026-11-27 14:02",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "僅討論零和遊戲與投資策略，未提及個人實際虧損。",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 或許該畢業了",
+"tokens": 997,
+"ts": 1650506378
+},
+"M.1652155377.A.FFA": {
+"amount": "",
+"confidence": 0.95,
+"counts": true,
+"evidence": "screenshot",
+"hints": {
+"first": false,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [],
+"own_len": 200,
+"short_links": 0
+},
+"id": "M.1652155377.A.FFA",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:02",
+"model": "qwen/qwen3.8-27b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "標題自稱畢業文，內文提及砍倉並附對帳單截圖",
+"side": "long",
+"status": "ok",
+"title": "[心得] 畢業文 已實現虧損 金融全出",
+"tokens": 803,
+"ts": 1652155377
+},
+"M.1664675513.A.7A4": {
+"amount": "-20%",
+"confidence": 0.95,
+"counts": true,
+"evidence": "both",
+"hints": {
+"first": true,
+"hosts": [
+"imgur.com"
+],
+"img": 2,
+"nums": [
+"-20%"
+],
+"own_len": 418,
+"short_links": 0
+},
+"id": "M.1664675513.A.7A4",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:02",
+"model": "qwen/qwen3.8-27b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "作者明確表示個股畢業，虧損約20%，並附截圖。",
+"side": "long",
+"status": "ok",
+"title": "[心得] 個股畢業 + 第一次當主力心得",
+"tokens": 975,
+"ts": 1664675513
+},
+"M.1665495991.A.AD0": {
+"amount": "虧了260萬",
+"confidence": 0.95,
+"counts": true,
+"evidence": "both",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 5,
+"nums": [
+"虧了260萬"
+],
+"own_len": 301,
+"short_links": 0
+},
+"id": "M.1665495991.A.AD0",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:02",
+"model": "qwen/qwen3.8-27b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "明確提及兩年虧損260萬並附截圖，屬做多認賠。",
+"side": "long",
+"status": "ok",
+"title": "[心得] 這次台股也畢業了",
+"tokens": 862,
+"ts": 1665495991
+},
+"M.1667580875.A.98D": {
+"amount": "",
+"confidence": 1.0,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": false,
+"hosts": [
+"udn.com"
+],
+"img": 0,
+"nums": [],
+"own_len": 184,
+"short_links": 0
+},
+"id": "M.1667580875.A.98D",
+"kind": "reply",
+"labeled_at": "2026-11-27 14:01",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "僅批評專家觀點，未提及自身虧損",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 小散戶 GG已畢業……",
+"tokens": 835,
+"ts": 1667580875
+},
+"M.1670313026.A.CE8": {
+"amount": "",
+"confidence": 0.95,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [
+"imgur.com"
+],
+"img": 1,
+"nums": [],
+"own_len": 208,
+"short_links": 0
+},
+"id": "M.1670313026.A.CE8",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:01",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "內文明確表示有賺錢，非虧損。",
+"side": "long",
+"status": "ok",
+"title": "[心得] 畢業了，今晚加菜",
+"tokens": 807,
+"ts": 1670313026
+},
+"M.1699796596.A.CDC": {
+"amount": "",
+"confidence": 0.95,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 233,
+"short_links": 0
+},
+"id": "M.1699796596.A.CDC",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:01",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "作者賣出後股價上漲，屬於賣飛（少賺），非認賠出場。",
+"side": "long",
+"status": "ok",
+"title": "[心得] 畢業後漲了一千點",
+"tokens": 825,
+"ts": 1699796596
+},
+"M.1702663421.A.090": {
+"amount": "",
+"confidence": 0.95,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com",
+"www.instagram.com"
+],
+"img": 1,
+"nums": [
+"-300萬",
+"虧錢的輸家變成20%",
+"損益從累積-300萬"
+],
+"own_len": 964,
+"short_links": 0
+},
+"id": "M.1702663421.A.090",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:01",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "內文明確指出總損益從-300萬變為0，屬於賺回本金，非本次虧損。",
+"side": "long",
+"status": "ok",
+"title": "[心得] 股市第5年，我終於歸零了",
+"tokens": 1349,
+"ts": 1702663421
+},
+"M.1707968921.A.AC1": {
+"amount": "",
+"confidence": 0.95,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [
+"-15%"
+],
+"own_len": 493,
+"short_links": 0
+},
+"id": "M.1707968921.A.AC1",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:01",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "作者明確表示是放空（空軍）技嘉，屬於做空部位虧損，依規則不視為畢業。",
+"side": "short",
+"status": "ok",
+"title": "[心得] 技嘉鎖漲停，但我畢業了",
+"tokens": 1022,
+"ts": 1707968921
+},
+"M.1708791838.A.8F7": {
+"amount": "",
+"confidence": 1.0,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 3,
+"nums": [
+"損益為+75萬"
+],
+"own_len": 610,
+"short_links": 0
+},
+"id": "M.1708791838.A.8F7",
+"kind": "reply",
+"labeled_at": "2026-11-27 14:01",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "作者明確表示損益為+75萬，屬於獲利而非虧損。",
+"side": "long",
+"status": "ok",
+"title": "Re: [心得] 當沖畢業後的七個月的現在",
+"tokens": 1118,
+"ts": 1708791838
+},
+"M.1711617011.A.96C": {
+"amount": "賠了60萬",
+"confidence": 0.95,
+"counts": false,
+"evidence": "both",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 2,
+"nums": [
+"賠了60萬"
+],
+"own_len": 839,
+"short_links": 0
+},
+"id": "M.1711617011.A.96C",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:01",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "作者明確表示是「幫朋友代發」，非本人虧損。",
+"side": "short",
+"status": "ok",
+"title": "[心得] 期貨畢業文 （幫朋友代發）",
+"tokens": 1250,
+"ts": 1711617011
+},
+"M.1718272761.A.F6F": {
+"amount": "",
+"confidence": 0.95,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com",
+"www.ptt.cc"
+],
+"img": 1,
+"nums": [
+"-2%",
+"-4%"
+],
+"own_len": 1648,
+"short_links": 0
+},
+"id": "M.1718272761.A.F6F",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:00",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "作者明確表示最終是賺錢出場，整體獲利。",
+"side": "long",
+"status": "ok",
+"title": "[心得] 畢業了",
+"tokens": 1918,
+"ts": 1718272761
+},
+"M.1721616399.A.25E": {
+"amount": "美股端損益五萬多",
+"confidence": 0.95,
+"counts": true,
+"evidence": "both",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [],
+"own_len": 533,
+"short_links": 0
+},
+"id": "M.1721616399.A.25E",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:00",
+"model": "qwen/qwen3.8-27b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "作者明確表示正二、006208賠售，並附上截圖，屬於做多認賠。",
+"side": "long",
+"status": "ok",
+"title": "[心得] 生日畢業文",
+"tokens": 1080,
+"ts": 1721616399
+},
+"M.1722567578.A.50F": {
+"amount": "賠快五萬",
+"confidence": 0.95,
+"counts": true,
+"evidence": "both",
+"hints": {
+"first": false,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [
+"賠快五萬"
+],
+"own_len": 101,
+"short_links": 0
+},
+"id": "M.1722567578.A.50F",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:00",
+"model": "qwen/qwen3.8-27b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "標題畢業文，內文自述賠快五萬並附截圖",
+"side": "long",
+"status": "ok",
+"title": "[心得] 畢業文",
+"tokens": 748,
+"ts": 1722567578
+},
+"M.1722836918.A.A7C": {
+"amount": "",
+"confidence": 0.9,
+"counts": false,
+"evidence": "screenshot",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [],
+"own_len": 167,
+"short_links": 0
+},
+"id": "M.1722836918.A.A7C",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:00",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "標題雖為畢業文，但內文語氣為獲利出場或主動止盈，未提及虧損。",
+"side": "long",
+"status": "ok",
+"title": "[心得] 散戶畢業文",
+"tokens": 782,
+"ts": 1722836918
+},
+"M.1732254451.A.ADB": {
+"amount": "",
+"confidence": 1.0,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 132,
+"short_links": 0
+},
+"id": "M.1732254451.A.ADB",
+"kind": "reply",
+"labeled_at": "2026-11-27 14:00",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "僅為對他人言論的吐槽與建議，無自身虧損敘述",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 大家小心凱基證券會亂報違約交割",
+"tokens": 811,
+"ts": 1732254451
+},
+"M.1736255837.A.2D6": {
+"amount": "99美債，對折救我QQ",
+"confidence": 0.95,
+"counts": true,
+"evidence": "amount",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 220,
+"short_links": 0
+},
+"id": "M.1736255837.A.2D6",
+"kind": "reply",
+"labeled_at": "2026-11-27 14:00",
+"model": "qwen/qwen3.8-27b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "作者明確表示持有99美債並對折出場，屬於做多認賠。",
+"side": "long",
+"status": "ok",
+"title": "Re: [心得] 債蛙畢業，長天期美債",
+"tokens": 876,
+"ts": 1736255837
+},
+"M.1743995693.A.922": {
+"amount": "慘賠-45000元",
+"confidence": 0.95,
+"counts": true,
+"evidence": "both",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [
+"-45000元",
+"-14%",
+"-24%",
+"賠14%",
+"賠-45000元"
+],
+"own_len": 168,
+"short_links": 0
+},
+"id": "M.1743995693.A.922",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:00",
+"model": "qwen/qwen3.8-27b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "作者明確表示做多部位慘賠4.5萬，並附截圖佐證。",
+"side": "long",
+"status": "ok",
+"title": "[心得] 畢業了",
+"tokens": 835,
+"ts": 1743995693
+},
+"M.1744125754.A.485": {
+"amount": "",
+"confidence": 0.95,
+"counts": true,
+"evidence": "screenshot",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [],
+"own_len": 404,
+"short_links": 0
+},
+"id": "M.1744125754.A.485",
+"kind": "orig",
+"labeled_at": "2026-11-27 14:00",
+"model": "qwen/qwen3.8-27b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "作者自述因跌停鎖死且無法補保證金而被迫賣出，並附截圖。",
+"side": "long",
+"status": "ok",
+"title": "[心得] 今天只有我畢業，感覺變阿呆了",
+"tokens": 882,
+"ts": 1744125754
+},
+"M.1744128836.A.9EA": {
+"amount": "",
+"confidence": 0.95,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 153,
+"short_links": 0
+},
+"id": "M.1744128836.A.9EA",
+"kind": "reply",
+"labeled_at": "2026-11-27 13:59",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "僅提及過去舊事及心態調整，未明確表示本次有實際虧損出場。",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 今天只有我畢業，感覺變阿呆了",
+"tokens": 814,
+"ts": 1744128836
+},
+"M.1744437638.A.1C6": {
+"amount": "3個帳戶共8位數",
+"confidence": 0.95,
+"counts": true,
+"evidence": "both",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [],
+"own_len": 375,
+"short_links": 0
+},
+"id": "M.1744437638.A.1C6",
+"kind": "reply",
+"labeled_at": "2026-11-27 13:59",
+"model": "qwen/qwen3.8-27b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "自述破產、帳戶從8位數剩餘極少，附截圖",
+"side": "long",
+"status": "ok",
+"title": "Re: [心得] 畢業了,被自己心魔給打敗",
+"tokens": 982,
+"ts": 1744437638
+},
+"M.1744444721.A.0DE": {
+"amount": "",
+"confidence": 0.95,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [
+"-90%",
+"-80%"
+],
+"own_len": 205,
+"short_links": 0
+},
+"id": "M.1744444721.A.0DE",
+"kind": "reply",
+"labeled_at": "2026-11-27 13:59",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "回文者僅在勸告與質疑原文作者，未提及自身虧損。",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 畢業了,被自己心魔給打敗",
+"tokens": 863,
+"ts": 1744444721
+},
+"M.1744894380.A.BC9": {
+"amount": "賠了 2400 萬",
+"confidence": 1.0,
+"counts": true,
+"evidence": "both",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [
+"-2400W",
+"賠了 2400 萬",
+"損益有到大概 +300萬"
+],
+"own_len": 1406,
+"short_links": 0
+},
+"id": "M.1744894380.A.BC9",
+"kind": "orig",
+"labeled_at": "2026-11-27 13:59",
+"model": "qwen/qwen3.8-27b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "作者明確表示做多股票後因斷頭賠光本金及貸款，並附上對帳單截圖。",
+"side": "long",
+"status": "ok",
+"title": "[心得] 畢業了，我只是風口上的豬（-2400W）",
+"tokens": 1748,
+"ts": 1744894380
+},
+"M.1744900559.A.563": {
+"amount": "",
+"confidence": 0.95,
+"counts": true,
+"evidence": "screenshot",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 3,
+"nums": [
+"-10%",
+"-20%"
+],
+"own_len": 689,
+"short_links": 0
+},
+"id": "M.1744900559.A.563",
+"kind": "reply",
+"labeled_at": "2026-11-27 13:59",
+"model": "qwen/qwen3.8-27b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "自述凹單虧損並附截圖，屬做多認賠",
+"side": "long",
+"status": "ok",
+"title": "Re: [心得] 畢業了，我只是風口上的豬（-2400W）",
+"tokens": 1168,
+"ts": 1744900559
+},
+"M.1745040258.A.52D": {
+"amount": "",
+"confidence": 0.95,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 450,
+"short_links": 0
+},
+"id": "M.1745040258.A.52D",
+"kind": "reply",
+"labeled_at": "2026-11-27 13:59",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "回文者明確表示「其實不太算畢業」，僅是回歸原點，非重大虧損。",
+"side": "long",
+"status": "ok",
+"title": "Re: [心得] 畢業了，我只是風口上的豬（-2400W）",
+"tokens": 1038,
+"ts": 1745040258
+},
+"M.1746216844.A.2B5": {
+"amount": "",
+"confidence": 1.0,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 416,
+"short_links": 0
+},
+"id": "M.1746216844.A.2B5",
+"kind": "reply",
+"labeled_at": "2026-11-27 13:59",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "僅評論他人及市場現象，未提及自身虧損",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 準備違約畢業了",
+"tokens": 983,
+"ts": 1746216844
+},
+"M.1746246919.A.1B9": {
+"amount": "",
+"confidence": 1.0,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": false,
+"hosts": [],
+"img": 0,
+"nums": [
+"輸嬴是500元"
+],
+"own_len": 335,
+"short_links": 0
+},
+"id": "M.1746246919.A.1B9",
+"kind": "reply",
+"labeled_at": "2026-11-27 13:59",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "僅回憶童年玩麻仔台的小額輸錢，非股票投資虧損",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 準備違約畢業了",
+"tokens": 931,
+"ts": 1746246919
+},
+"M.1747292561.A.C90": {
+"amount": "",
+"confidence": 1.0,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [],
+"own_len": 1291,
+"short_links": 0
+},
+"id": "M.1747292561.A.C90",
+"kind": "reply",
+"labeled_at": "2026-11-27 13:58",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "回文者是在分析並建議原文作者，非自身虧損。",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 畢業了，在期貨市場陣亡了",
+"tokens": 1518,
+"ts": 1747292561
+},
+"M.1747904254.A.69A": {
+"amount": "",
+"confidence": 0.95,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [
+"賠2000元"
+],
+"own_len": 1367,
+"short_links": 0
+},
+"id": "M.1747904254.A.69A",
+"kind": "orig",
+"labeled_at": "2026-11-27 13:58",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "作者明確表示目前損益為正，且「畢業」指脫離賠錢階段，非認賠出場。",
+"side": "long",
+"status": "ok",
+"title": "[心得] 我好像...快要畢業了",
+"tokens": 1592,
+"ts": 1747904254
+},
+"M.1747971211.A.37F": {
+"amount": "",
+"confidence": 1.0,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [],
+"own_len": 1349,
+"short_links": 0
+},
+"id": "M.1747971211.A.37F",
+"kind": "reply",
+"labeled_at": "2026-11-27 13:58",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "回文者僅分享心得與獲利截圖，未提及自身虧損。",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 我好像...快要畢業了",
+"tokens": 1549,
+"ts": 1747971211
+},
+"M.1752889844.A.F15": {
+"amount": "",
+"confidence": 0.95,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [],
+"own_len": 382,
+"short_links": 0
+},
+"id": "M.1752889844.A.F15",
+"kind": "reply",
+"labeled_at": "2026-11-27 13:58",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "作者自述美股獲利，賣飛是少賺非虧損，無認賠或重大虧損。",
+"side": "long",
+"status": "ok",
+"title": "Re: [心得] 一個小散戶被世芯嘎空手的暫時畢業文",
+"tokens": 985,
+"ts": 1752889844
+},
+"M.1758026874.A.72F": {
+"amount": "",
+"confidence": 0.95,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [],
+"img": 0,
+"nums": [
+"賠一兩萬",
+"賠七八萬",
+"賠十五六萬"
+],
+"own_len": 1149,
+"short_links": 0
+},
+"id": "M.1758026874.A.72F",
+"kind": "reply",
+"labeled_at": "2026-11-27 13:58",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "回文者僅提供當沖建議與心態分享，未提及自己本次有重大虧損或認賠出場。",
+"side": "unknown",
+"status": "ok",
+"title": "Re: [心得] 當沖畢業文 三個月賠二十萬",
+"tokens": 1495,
+"ts": 1758026874
+},
+"M.1785297910.A.D94": {
+"amount": "",
+"confidence": 0.95,
+"counts": true,
+"evidence": "screenshot",
+"hints": {
+"first": true,
+"hosts": [
+"i.mopix.cc"
+],
+"img": 2,
+"nums": [],
+"own_len": 122,
+"short_links": 0
+},
+"id": "M.1785297910.A.D94",
+"kind": "orig",
+"labeled_at": "2026-11-27 13:58",
+"model": "qwen/qwen3.8-27b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "標題自稱畢業文，內文附損益圖連結，符合融資做多虧損定義。",
+"side": "long",
+"status": "ok",
+"title": "[心得] 融資仔先來畢業文",
+"tokens": 754,
+"ts": 1785297910
+},
+"M.1785419476.A.243": {
+"amount": "",
+"confidence": 0.95,
+"counts": false,
+"evidence": "none",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 2,
+"nums": [],
+"own_len": 187,
+"short_links": 0
+},
+"id": "M.1785419476.A.243",
+"kind": "orig",
+"labeled_at": "2026-11-27 13:58",
+"model": "qwen/qwen3.8-27b",
+"own_loss": false,
+"prompt_version": "loss-v4",
+"reason": "內文明確表示最高賺300萬，未提及虧損或認賠，僅為獲利回吐。",
+"side": "long",
+"status": "ok",
+"title": "[心得] 融資貪狗畢業文",
+"tokens": 809,
+"ts": 1785419476
+},
+"M.1795586984.A.D42": {
+"amount": "-22.5%",
+"confidence": 1.0,
+"counts": true,
+"evidence": "both",
+"hints": {
+"first": true,
+"hosts": [
+"i.imgur.com"
+],
+"img": 1,
+"nums": [
+"-22.5%",
+"報酬率大概在 -22.5%"
+],
+"own_len": 375,
+"short_links": 0
+},
+"id": "M.1795586984.A.D42",
+"kind": "orig",
+"labeled_at": "2026-11-27 13:58",
+"model": "qwen/qwen3.8-27b",
+"own_loss": true,
+"prompt_version": "loss-v4",
+"reason": "作者明確表示買進槓桿ETF後停損出場，並列出虧損比例與截圖。",
+"side": "long",
+"status": "ok",
+"title": "[心得] 正二畢業",
+"tokens": 962,
+"ts": 1795586984
+}
+}
