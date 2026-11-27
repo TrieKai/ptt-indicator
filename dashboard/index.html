@@ -124,6 +124,15 @@
   .lb-lamprow li { display: grid; justify-items: center; gap: 5px; text-align: center; font-size: 0.75rem; line-height: 1.25; color: var(--ink-3); cursor: default; }
   .lb-lamprow li[data-s="on"], .lb-lamprow li[data-s="recent"] { color: var(--ink); font-weight: 500; }
   .lb-lamprow .lamp { --ls: 26px; border-width: 3px; }
+  .lb-lampbtn { all: unset; box-sizing: border-box; display: grid; justify-items: center; gap: 5px; width: 100%; padding: 2px 0 4px; border-radius: 4px;
+                cursor: pointer; color: inherit; font: inherit; text-align: center; -webkit-tap-highlight-color: transparent; }
+  .lb-lampbtn:hover span { text-decoration: underline dotted; text-underline-offset: 3px; }
+  .lb-lampbtn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .lb-lampbtn[aria-expanded="true"] { background: var(--panel-2); }
+  .lb-ltip { pointer-events: auto; max-width: min(300px, calc(100vw - 16px)); }
+  .lb-ltip b { display: block; margin-bottom: 2px; }
+  .lb-ltip-s { color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .lb-ltip p { margin: 6px 0 0; color: var(--ink-2); }
   .lb-fam .lb-cap { max-width: 52em; }
   .lb-key { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; padding: 9px 12px; margin-bottom: 4px; background: var(--panel-2); border-radius: 3px; font-size: var(--fs-cap); color: var(--ink-2); }
   .lb-key-h { font-weight: 700; color: var(--ink); }
@@ -278,6 +287,7 @@
     .lb-lamprow li { font-size: 0.6875rem; }
     .lb-lamprow .lamp { --ls: 20px; border-width: 2.5px; }
     .lb-lamprow li { gap: 3px; }
+    .lb-lampbtn { gap: 3px; padding: 0 0 2px; }
     .lb-main { gap: 12px; padding-top: 12px; }
     .lb-sec { padding: 18px 14px 16px; margin: 0 -8px; }
     .lb-notes { margin: 0 -8px; padding: 16px 14px; }
@@ -348,6 +358,7 @@
           <span><i class="lamp lamp--bottom" data-s="on"></i>藍＝落底</span>
           <span><i class="lamp lamp--top" data-s="on"></i>紅＝過熱</span>
           <span><i class="lamp lamp--warn" data-s="on"></i>黃藍＝偏空</span>
+          <span class="lb-key-tip"><em class="lb-lg">點任一個燈看白話說明</em><em class="lb-sm">點燈看說明</em></span>
         </div>
         <div class="lb-fam">
           <div class="lb-fam-h"><h3>落底分數</h3><span class="lb-chip" data-draw="fam-chip" data-fam="bottom">—</span><p class="lb-fam-n"><b class="lb-num" data-draw="sc-score" data-source="status" data-field="value" data-where="signal=score">—</b> / 7</p></div>
@@ -807,6 +818,53 @@ const UNIT = { foreign: LB.pct, foreign_buy: LB.pct, margin: LB.pct, margin_up: 
 // 燈號狀態：今天亮 → on；近 5 日亮過（計入分數）→ recent；其餘 off
 const lampState = (sig, dl) => { const r = statusRow(sig); if (!r) return 'off'; if (dl && dl['f_' + sig] === 1) return 'on'; return r.lit5 === 1 ? 'recent' : 'off'; };
 const STATE_TXT = { on: '今天亮燈', recent: '近 5 日亮過，計入分數', off: '未亮燈' };
+// 點燈看的白話說明（門檻都是跟過去 250 個交易日比，約一年）
+const EXPLAIN = {
+  vix_high: '美國 VIX 是美股的「恐慌指數」，從 S&P 500 選擇權價格算出市場預期的波動。高到過去一年最高的 5%，代表美股很恐慌。',
+  vix_low: '美國 VIX 是美股的「恐慌指數」。低到過去一年最低的 5%，代表美股很安逸、大家不怕跌。',
+  pc_high: 'P/C＝台指選擇權「賣權」成交量 ÷「買權」成交量。賣權像跌價保險，比值高到過去一年最高的 5%，代表大家搶買保險、很恐慌。這裡用成交量比，跟常聽到的「未平倉量比」解讀方向相反。',
+  pc_low: 'P/C＝台指選擇權「賣權」成交量 ÷「買權」成交量。比值低到過去一年最低的 5%，代表幾乎都在買看漲的買權、很少人避險，市場偏樂觀。這裡用成交量比，跟常聽到的「未平倉量比」解讀方向相反。',
+  foreign: '外資最近 5 天合計賣超，佔同期成交金額的比例，賣得比過去一年 95% 的日子都兇。',
+  foreign_buy: '外資最近 5 天合計買超，佔同期成交金額的比例，買得比過去一年 95% 的日子都多。',
+  margin: '上市融資張數 5 天內大減，減幅是過去一年最大的 5%。常見於斷頭、追繳後被迫賣出。',
+  margin_up: '融資金額 20 天內大增，增幅是過去一年最大的 5%，代表借錢買股的人變多。',
+  default: '投資人違約交割（買了股票付不出錢）的金額佔成交金額的比例，高到過去一年最高的 5%。',
+  loss: 'PTT 股票版有人發〔心得〕文說自己做多賠錢「畢業」，而且附對帳單或寫出金額；5 個交易日內 3 篇以上。由 AI 讀內文判斷。',
+  creative: 'PTT 股票版〔創作〕文（打油詩、梗圖之類，大跌時常爆量）當天 5 篇以上，而且是前 60 個交易日平均的 4 倍以上。',
+  fut_long: '外資在台指期貨的淨多單（多單減空單）口數，多到過去一年最多的 5%。',
+  turnover: '最近 5 天平均成交金額比前 120 天平均放大，放大幅度是過去一年最大的 5%。',
+  hot_ptt: 'PTT 股票版標題有財富自由、歐印、噴、翻倍、創新高、賺爛、上車這類字的文章，5 天內 5 篇以上，而且是平常的 3 倍以上。',
+  stretch: '加權指數比 120 日均線高出的幅度（乖離），大到過去一年最大的 5%，代表短期漲太快。',
+  fut_short: '外資在台指期貨的淨空單口數，多到過去一年最多的 5%。只當警示，不算進分數。',
+  fut_ratio_short: '外資淨空單佔全市場台指期未平倉的比例，高到過去一年最高的 5%。只當警示，不算進分數。',
+  fut_chg_short: '外資 5 天內增加的台指期空單，多到過去一年最多的 5%。只當警示，不算進分數。',
+};
+const lampTip = (() => {
+  let tip = null, owner = null, y0 = 0;
+  const close = (refocus) => {
+    if (!owner) return;
+    tip.hidden = true; owner.setAttribute('aria-expanded', 'false'); owner.removeAttribute('aria-describedby');
+    if (refocus) owner.focus();
+    owner = null;
+  };
+  const open = (btn, parts) => {
+    if (owner === btn) { close(); return; }
+    close();
+    if (!tip) { tip = document.createElement('div'); tip.id = 'lb-ltip'; tip.className = 'lb-tip lb-tip--fixed lb-ltip'; tip.setAttribute('role', 'tooltip'); tip.hidden = true; document.body.append(tip); }
+    owner = btn; y0 = window.scrollY;
+    tip.replaceChildren(...parts); tip.hidden = false;
+    btn.setAttribute('aria-expanded', 'true'); btn.setAttribute('aria-describedby', 'lb-ltip');
+    const c = btn.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight;
+    const x = Math.max(8, Math.min(c.left + c.width / 2 - w / 2, window.innerWidth - w - 8));
+    let y = c.bottom + 6; if (y + h > window.innerHeight - 8) y = Math.max(8, c.top - h - 6);
+    tip.style.left = x + 'px'; tip.style.top = y + 'px';
+  };
+  document.addEventListener('click', (e) => { if (owner && !owner.contains(e.target) && !tip.contains(e.target)) close(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(true); });
+  window.addEventListener('scroll', () => { if (owner && Math.abs(window.scrollY - y0) > 40) close(); }, { passive: true });
+  window.addEventListener('resize', () => close());
+  return { open };
+})();
 
 dash.draw('fam-lamps', (el) => {
   const fam = el.dataset.fam, dl = lastDaily(); el.replaceChildren();
@@ -816,10 +874,17 @@ dash.draw('fam-lamps', (el) => {
     const li = document.createElement('li'); li.dataset.s = s;
     const i = document.createElement('i'); i.className = 'lamp lamp--' + fam; i.dataset.s = s; i.setAttribute('aria-hidden', 'true');
     const t = document.createElement('span'); t.textContent = short;
-    li.append(i, t);
+    const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'lb-lampbtn'; btn.setAttribute('aria-expanded', 'false');
+    btn.append(i, t); li.append(btn);
     const full = r ? r.name : short;
-    li.title = full + '：' + STATE_TXT[s] + (r && r.value != null ? '（今日 ' + UNIT[sig](r.value) + '，門檻 ' + r.rule + ' ' + UNIT[sig](r.threshold) + '）' : '');
-    li.setAttribute('aria-label', full + '，' + STATE_TXT[s]);
+    const val = r && r.value != null ? '今日 ' + UNIT[sig](r.value) + '，門檻 ' + r.rule + ' ' + UNIT[sig](r.threshold) : '';
+    btn.setAttribute('aria-label', full + '，' + STATE_TXT[s] + '。點一下看說明');
+    btn.addEventListener('click', () => {
+      const h = document.createElement('b'); h.textContent = full;
+      const st = document.createElement('div'); st.className = 'lb-ltip-s'; st.textContent = STATE_TXT[s] + (val ? '・' + val : '');
+      const p = document.createElement('p'); p.textContent = EXPLAIN[sig] || '';
+      lampTip.open(btn, [h, st, p]);
+    });
     el.append(li);
   });
 });
@@ -934,7 +999,7 @@ dash.draw('matrix', (el) => {
       const fl = document.createElement('span'); fl.className = 'lb-full'; fl.textContent = label || r.name;
       const sl = document.createElement('span'); sl.className = 'lb-short'; sl.textContent = label || LB.SHORT[sig] || r.name;
       b.append(fl, sl);
-      b.title = '看「' + (label || r.name) + '」歷史上每一次亮燈'; b.addEventListener('click', () => LB.goEvents(evsig || sig));
+      b.title = (EXPLAIN[sig] ? EXPLAIN[sig] + '\n' : '') + '點一下看「' + (label || r.name) + '」歷史上每一次亮燈'; b.addEventListener('click', () => LB.goEvents(evsig || sig));
       const sm = document.createElement('small'); sm.textContent = '門檻 ' + (r.rule === '=' ? '成立' : r.rule + ' ' + UNIT[sig](r.threshold));
       nh.append(b, sm); tr.append(nh);
       days.forEach((dr, i) => {
