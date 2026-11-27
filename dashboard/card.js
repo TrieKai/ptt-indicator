@@ -6,7 +6,8 @@
     top: [['vix_low', 'VIX 低'], ['pc_low', 'P/C 低'], ['fut_long', '期貨多單'], ['foreign_buy', '外資買'], ['margin_up', '融資增'], ['turnover', '量能'], ['hot_ptt', '過熱文'], ['stretch', '乖離']],
     warn: [['fut_short', '淨空單'], ['fut_ratio_short', '空單佔比'], ['fut_chg_short', '增空單']],
   };
-  const FAM_INFO = { bottom: ['落底分數', 'score', 7], top: ['過熱分數', 'gscore', 8], warn: ['偏空警示', 'wscore', 3] };
+  // 落底面、過熱面只當參考（分數回測不顯著，2026/11/27 起不顯示分數）；偏空警示照舊
+  const FAM_INFO = { bottom: ['落底面', 'score', 7], top: ['過熱面', 'gscore', 8], warn: ['偏空警示', 'wscore', 3] };
   const LEVELS = [[0, '平常', '<80'], [80, '留意', '80–85'], [85, '偏恐慌', '85–90'], [90, '恐慌', '90–95'], [95, '極度恐慌', '≥95']];
   const C = {
     ground: '#e8eaee', panel: '#ffffff', ink: '#1c1f24', ink2: '#464d58', ink3: '#5f6671', rule: '#d2d5db', rule2: '#e4e6eb',
@@ -29,7 +30,8 @@
     const fams = Object.keys(FAM).map((key) => {
       const [name, scoreSig, of] = FAM_INFO[key], sc = st(scoreSig), v = sc ? sc.value : 0;
       const on = key === 'warn' ? v >= 1 : v >= 3;
-      return { key, name, score: v, of, on, chip: key === 'warn' ? (on ? '警示亮燈' : '未亮燈') : (on ? '亮燈（≥3）' : '未達 3'),
+      const ref = key !== 'warn';
+      return { key, name, score: v, of, on: ref ? false : on, ref, chip: ref ? '參考' : (on ? '警示亮燈' : '未亮燈'),
         lamps: FAM[key].map(([sig, label]) => ({ sig, label, s: lamp(sig) })) };
     });
     const d = st('dual'), s95 = sm('thermo95');
@@ -43,15 +45,15 @@
   };
 
   // 分享時附的文字
-  const text = (m) => '鄉民恐慌溫度 ' + m.thermo.toFixed(1) + '（' + m.level + '）・' + m.fams.map((f) => f.name.slice(0, 2) + ' ' + f.score + '/' + f.of).join('・')
-    + (m.dual && m.dual.s === 'on' ? '・雙重確認今天亮燈' : '') + '（資料日 ' + m.asof + '）';
+  const text = (m) => '鄉民恐慌溫度 ' + m.thermo.toFixed(1) + '（' + m.level + '）'
+    + (m.dual ? '・雙重確認' + m.dual.text : '') + '（資料日 ' + m.asof + '）';
 
   // 圖卡上出現的字（先載入字型的對應字集）
   const glyphs = (m) => ['台股落底訊號回測資料日鄉民恐慌溫度/100（）≥平常留意偏恐慌極度0123456789.+-–%<>',
     '2019 年以來第一次衝到 95 以上共次，低點落在前後 5 天內比例是之後 20 日平均還會再跌。數很少請保守看待',
     '雙重確認：畢業文＋創作文同時亮燈今天近日過未亮燈藍紅黃＝落底過熱偏空實心圈點',
     'triekai.github.io/ptt-indicator歷史統計不代表未來，也不是投資建議', m ? m.fams.map((f) => f.name + f.chip + f.lamps.map((l) => l.label).join('')).join('') : '',
-    'VIXP/C高低外資賣買融資減增違約期貨多單量能乖離淨空佔比警示亮燈未達'].join('');
+    'VIXP/C高低外資賣買融資減增違約期貨多單量能乖離淨空佔比警示亮燈未達參考面'].join('');
   const fontsReady = async (m) => {
     if (!document.fonts || !document.fonts.load) return;
     const t = glyphs(m);
@@ -142,11 +144,13 @@
       g.fillStyle = C.ink; g.font = '700 23px ' + FONT; g.fillText(f.name, R, top + 32);
       const nmw = g.measureText(f.name).width;
       chip(g, R + nmw + 12, top + 24, f.chip, f.on ? f.key : null, 17);
-      g.textAlign = 'right';
-      g.fillStyle = C.ink3; g.font = '500 21px ' + FONT; g.fillText('/ ' + f.of, W - 48, top + 36);
-      const ow = g.measureText('/ ' + f.of).width;
-      g.fillStyle = C.ink; g.font = '900 44px ' + FONT; g.fillText(String(f.score), W - 48 - ow - 6, top + 38);
-      g.textAlign = 'left';
+      if (!f.ref) {   // 參考燈號不畫分數
+        g.textAlign = 'right';
+        g.fillStyle = C.ink3; g.font = '500 21px ' + FONT; g.fillText('/ ' + f.of, W - 48, top + 36);
+        const ow = g.measureText('/ ' + f.of).width;
+        g.fillStyle = C.ink; g.font = '900 44px ' + FONT; g.fillText(String(f.score), W - 48 - ow - 6, top + 38);
+        g.textAlign = 'left';
+      }
       const slot = RW / 8;
       f.lamps.forEach((l, i) => {
         const cx = R + slot * i + slot / 2;

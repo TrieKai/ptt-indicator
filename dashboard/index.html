@@ -85,7 +85,11 @@
   /* 今天 */
   .lb-today { background: var(--panel); border-bottom: 1px solid var(--rule); padding: 32px 0 28px; }
   .lb-today-in { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 32px 56px; }
-  .lb-reading h2, .lb-fam h3 { margin: 0; font-size: var(--fs-h3); font-weight: 700; }
+  .lb-reading h2, .lb-fam h3, .lb-fams-h h3 { margin: 0; font-size: var(--fs-h3); font-weight: 700; }
+  .lb-fams-h { display: grid; gap: 4px; margin-bottom: 10px; }
+  .lb-fams-h h3 { display: flex; align-items: center; gap: 8px; }
+  .lb-fams-h p { margin: 0; max-width: 46em; }
+  .lb-ref { font-size: var(--fs-cap); font-weight: 500; color: var(--ink-3); border: 1px solid var(--rule); border-radius: 3px; padding: 0 6px; line-height: 1.6; }
   .lb-reading-num { display: flex; align-items: baseline; gap: 10px; margin: 2px 0 16px; line-height: 1; }
   .lb-reading-num b { font-size: 5.5rem; font-weight: 900; letter-spacing: -0.035em; }
   .lb-reading-num small { font-size: 1.25rem; font-weight: 500; color: var(--ink-3); }
@@ -349,10 +353,14 @@
       </div>
 
       <div class="lb-fams">
+        <div class="lb-fams-h">
+          <h3>其他市場訊號 <span class="lb-ref">參考</span></h3>
+          <p class="lb-cap">PTT 以外的市場數據，用來看現在市場在發生什麼。把這些燈加總成分數，回測沒有明顯效果，所以不計分；判斷以恐慌溫度和雙重確認為主。</p>
+        </div>
         <div class="lb-key" role="note" aria-label="燈號怎麼看">
           <b class="lb-key-h">燈號怎麼看</b>
           <span><i class="lamp lamp--bottom" data-s="on"></i><em class="lb-lg">實心＝今天亮燈</em><em class="lb-sm">今天亮</em></span>
-          <span><i class="lamp lamp--bottom" data-s="recent"></i><em class="lb-lg">圈中有點＝近 5 日亮過，算進分數</em><em class="lb-sm">5 日內亮過（計分）</em></span>
+          <span><i class="lamp lamp--bottom" data-s="recent"></i><em class="lb-lg">圈中有點＝近 5 日亮過</em><em class="lb-sm">5 日內亮過</em></span>
           <span><i class="lamp" data-s="off"></i><em class="lb-lg">空心＝沒亮</em><em class="lb-sm">沒亮</em></span>
           <span class="lb-key-br" aria-hidden="true"></span>
           <span><i class="lamp lamp--bottom" data-s="on"></i>藍＝落底</span>
@@ -361,19 +369,19 @@
           <span class="lb-key-tip"><em class="lb-lg">點任一個燈看白話說明</em><em class="lb-sm">點燈看說明</em></span>
         </div>
         <div class="lb-fam">
-          <div class="lb-fam-h"><h3>落底分數</h3><span class="lb-chip" data-draw="fam-chip" data-fam="bottom">—</span><p class="lb-fam-n"><b class="lb-num" data-draw="sc-score" data-source="status" data-field="value" data-where="signal=score">—</b> / 7</p></div>
+          <div class="lb-fam-h"><h3>落底面</h3></div>
           <ol class="lb-lamprow" data-draw="fam-lamps" data-fam="bottom" data-source="status daily" aria-label="落底訊號燈號"></ol>
-          <p class="lb-cap lb-fam-cap">2019 年以來達到 4 以上 <span class="lb-num" data-draw="combo-n" data-source="summary" data-field="n" data-where="signal=combo4&amp;index=TAIEX">—</span> 次，之後 20 個交易日加權平均 <span class="lb-num" data-draw="combo-ret" data-source="summary" data-field="ret20" data-where="signal=combo4&amp;index=TAIEX">—</span>，扣掉跌深反彈後超額 <span class="lb-num" data-draw="combo-exc" data-source="summary" data-field="excess20" data-where="signal=combo4&amp;index=TAIEX">—</span>。分數是近 5 個交易日亮過燈的訊號數，3 以上算亮燈。</p>
+          <p class="lb-cap lb-fam-cap">這 7 個燈在 5 日內亮 4 個以上，2019 年以來 <span class="lb-num" data-draw="combo-n" data-source="summary" data-field="n" data-where="signal=combo4&amp;index=TAIEX">—</span> 次，之後 20 個交易日加權平均 <span class="lb-num" data-draw="combo-ret" data-source="summary" data-field="ret20" data-where="signal=combo4&amp;index=TAIEX">—</span>，扣掉跌深反彈後超額 <span class="lb-num" data-draw="combo-exc" data-source="summary" data-field="excess20" data-where="signal=combo4&amp;index=TAIEX">—</span>，跟平常差不多，所以只當參考。</p>
         </div>
         <div class="lb-fam">
-          <div class="lb-fam-h"><h3>過熱分數</h3><span class="lb-chip" data-draw="fam-chip" data-fam="top">—</span><p class="lb-fam-n"><b class="lb-num" data-draw="sc-gscore" data-source="status" data-field="value" data-where="signal=gscore">—</b> / 8</p></div>
+          <div class="lb-fam-h"><h3>過熱面</h3></div>
           <ol class="lb-lamprow" data-draw="fam-lamps" data-fam="top" data-source="status daily" aria-label="過熱訊號燈號"></ol>
-          <p class="lb-cap lb-fam-cap">2019 年以來達到 4 以上 <span class="lb-num" data-draw="g-n">—</span> 次，之後 20 日扣掉價格因素後超額 <span class="lb-num" data-draw="g-exc">—</span>。算法同落底分數；過熱要看的是之後會不會比較差。</p>
+          <p class="lb-cap lb-fam-cap">這 8 個燈在 5 日內亮 4 個以上，2019 年以來 <span class="lb-num" data-draw="g-n">—</span> 次，之後 20 日扣掉價格因素後超額 <span class="lb-num" data-draw="g-exc">—</span>，看不出之後會比較差，所以只當參考。</p>
         </div>
         <div class="lb-fam">
           <div class="lb-fam-h"><h3>偏空警示</h3><span class="lb-chip" data-draw="fam-chip" data-fam="warn">—</span><p class="lb-fam-n"><b class="lb-num" data-draw="sc-wscore" data-source="status" data-field="value" data-where="signal=wscore">—</b> / 3</p></div>
           <ol class="lb-lamprow" data-draw="fam-lamps" data-fam="warn" data-source="status daily" aria-label="偏空警示燈號"></ol>
-          <p class="lb-cap lb-fam-cap">淨空單極端 2019 年以來亮燈 <span class="lb-num" data-draw="w-n">—</span> 次，之後 20 日扣掉價格因素後超額 <span class="lb-num" data-draw="w-exc">—</span>。外資臺股期貨空單到極端時，歷史上之後通常繼續偏弱，所以不算進落底分數，單獨列為警示。</p>
+          <p class="lb-cap lb-fam-cap">淨空單極端 2019 年以來亮燈 <span class="lb-num" data-draw="w-n">—</span> 次，之後 20 日扣掉價格因素後超額 <span class="lb-num" data-draw="w-exc">—</span>。外資臺股期貨空單到極端時，歷史上之後通常繼續偏弱，所以跟落底面分開，單獨列為警示。</p>
         </div>
         <div class="lb-share">
           <button type="button" class="lb-btn lb-btn--primary" id="lb-share-btn" aria-expanded="false" aria-controls="lb-share-panel">
@@ -671,7 +679,7 @@
         <li>畢業文＋創作文同時亮燈（雙重確認）：畢業／虧損文 5 日累計 ≥3 篇，同時創作文 5 日篇數的熱度 ≥90（比過去 250 個交易日中 90% 的日子多），而且加權指數距 60 日高點至少跌 5%。大盤條件是看到 2020/7/20 合一重挫的反例後加上的，門檻用 5% 或 8% 結果相同。隔天開盤進場。檢查過前後兩段（2019–2022、2023–2026）與相鄰門檻（畢業文 2–4 篇 × 創作文熱度 80–95），結果都一致。</li>
         <li>事件說明：PTT 訊號的事件，會從當時 5 日內畢業文與創作文的標題，用關鍵字計算最常出現的主題（例如合一、航運、關稅／川普、被動元件、輝達／AI），並列出畢業文標題。2020/3、2021/5、2024/7、2024/8、2025/4 另有人工註記的事件名稱，是依公開資訊整理，請自行查證。</li>
         <li>鄉民恐慌溫度：創作文與畢業／虧損文的 5 日篇數，各自跟過去 250 個交易日比，算出比今天少的天數比例，兩者平均乘以 100。沒有相關文章時是 0。≥80、≥85、≥90、≥95 四個等級各自當作事件，用隔天開盤進場回測。門檻 95 是同時測過 90 與 95 後的結果，樣本只有個位數，請保守看待。</li>
-        <li>落底分數／過熱分數：過去 5 個交易日內，各自 8 個訊號有幾個亮過燈（落底 0–7、過熱 0–8），分數 ≥3、≥4 當作事件。「原 5 訊號」是加入選擇權、期貨與 VIX 之前的版本，留著對照。單日跌 3% 只當對照，不算進分數。同一個訊號 10 個交易日內重複亮燈只算第一次。</li>
+        <li>落底分數／過熱分數：過去 5 個交易日內，各自 8 個訊號有幾個亮過燈（落底 0–7、過熱 0–8），分數 ≥3、≥4 當作事件。「原 5 訊號」是加入選擇權、期貨與 VIX 之前的版本，留著對照。單日跌 3% 只當對照，不算進分數。同一個訊號 10 個交易日內重複亮燈只算第一次。兩個分數的回測效果都不明顯（20 日超額接近 0，p 值遠大於 0.05），2026/11/27 起網站首頁只當參考燈號、不顯示分數；回測表與指數走勢圖仍保留，方便對照。</li>
         <li>燈號顏色借用國發會景氣對策信號的配色習慣：藍燈代表偏冷（落底訊號），紅燈代表偏熱（過熱訊號），黃藍燈代表轉弱（偏空警示）。只是顏色慣例，跟國發會的景氣分數無關。</li>
         <li>指數：證交所發行量加權股價指數、櫃買中心櫃買指數。</li>
         <li>限制：PTT 只看得到沒被刪的文章；落底分數用的訊號是看過單一訊號回測後挑的，同一段資料再回測會偏樂觀；事件數少且測試組合多；2019 年以來多為多頭市場。</li>
@@ -815,9 +823,9 @@ const UNIT = { foreign: LB.pct, foreign_buy: LB.pct, margin: LB.pct, margin_up: 
   vix_high: (v) => v.toFixed(2), vix_low: (v) => v.toFixed(2), score: (v) => String(v), gscore: (v) => String(v), wscore: (v) => String(v),
   fut_ratio_short: (v) => (v > 0 ? '+' : '') + v.toFixed(1) + '%', fut_chg_short: (v) => (v > 0 ? '+' : '') + LB.num(v) + ' 口',
   thermo: (v) => v.toFixed(1), dual: (v) => (v === 1 ? '成立' : '未成立') };
-// 燈號狀態：今天亮 → on；近 5 日亮過（計入分數）→ recent；其餘 off
+// 燈號狀態：今天亮 → on；近 5 日亮過 → recent；其餘 off
 const lampState = (sig, dl) => { const r = statusRow(sig); if (!r) return 'off'; if (dl && dl['f_' + sig] === 1) return 'on'; return r.lit5 === 1 ? 'recent' : 'off'; };
-const STATE_TXT = { on: '今天亮燈', recent: '近 5 日亮過，計入分數', off: '未亮燈' };
+const STATE_TXT = { on: '今天亮燈', recent: '近 5 日亮過', off: '未亮燈' };
 // 點燈看的白話說明（門檻都是跟過去 250 個交易日比，約一年）
 const EXPLAIN = {
   vix_high: '美國 VIX 是美股的「恐慌指數」，從 S&P 500 選擇權價格算出市場預期的波動。高到過去一年最高的 5%，代表美股很恐慌。',
@@ -835,9 +843,9 @@ const EXPLAIN = {
   turnover: '最近 5 天平均成交金額比前 120 天平均放大，放大幅度是過去一年最大的 5%。',
   hot_ptt: 'PTT 股票版標題有財富自由、歐印、噴、翻倍、創新高、賺爛、上車這類字的文章，5 天內 5 篇以上，而且是平常的 3 倍以上。',
   stretch: '加權指數比 120 日均線高出的幅度（乖離），大到過去一年最大的 5%，代表短期漲太快。',
-  fut_short: '外資在台指期貨的淨空單口數，多到過去一年最多的 5%。只當警示，不算進分數。',
-  fut_ratio_short: '外資淨空單佔全市場台指期未平倉的比例，高到過去一年最高的 5%。只當警示，不算進分數。',
-  fut_chg_short: '外資 5 天內增加的台指期空單，多到過去一年最多的 5%。只當警示，不算進分數。',
+  fut_short: '外資在台指期貨的淨空單口數，多到過去一年最多的 5%。只當警示。',
+  fut_ratio_short: '外資淨空單佔全市場台指期未平倉的比例，高到過去一年最高的 5%。只當警示。',
+  fut_chg_short: '外資 5 天內增加的台指期空單，多到過去一年最多的 5%。只當警示。',
 };
 const lampTip = (() => {
   let tip = null, owner = null, y0 = 0;
@@ -979,8 +987,8 @@ dash.draw('matrix', (el) => {
   const fear = (r) => (r.fear != null && r.fear >= 95 ? 1 : 0);
   const groups = [
     ['鄉民恐慌', 'bottom', [['thermo', '恐慌溫度 ≥95', fear, 'thermo95'], ['dual', '雙重確認', (r) => r.f_dual, 'dual']]],
-    ['落底訊號', 'bottom', LB.FAM.bottom.map(([k]) => [k]).concat([['bigdrop', null, null, 'bigdrop', true]]), 'score', 7],
-    ['過熱訊號', 'top', LB.FAM.top.map(([k]) => [k]), 'gscore', 8],
+    ['落底訊號（參考）', 'bottom', LB.FAM.bottom.map(([k]) => [k]).concat([['bigdrop', null, null, 'bigdrop', true]]), null, 7],
+    ['過熱訊號（參考）', 'top', LB.FAM.top.map(([k]) => [k]), null, 8],
     ['偏空警示', 'warn', LB.FAM.warn.map(([k]) => [k]), 'wscore', 3],
   ];
   groups.forEach(([gname, fam, sigs, scoreSig, of]) => {
