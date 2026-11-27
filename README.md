@@ -136,8 +136,11 @@ python3 -I scripts/build_dashboard_data.py data dashboard/data               # �
 畢業文只算〔心得〕分類，而且內文要有依據（對帳單截圖或具體虧損金額）。
 - 歷史文章：由 Claude 逐篇判斷並複核，存在 `data/loss_labels_ref.json`（裡面記著 cutoff）。
 - cutoff 之後的新文章：負責抓 PTT 的電腦在每輪抓完列表後，交給 Groq 判斷，結果存在 `data/loss_labels.json`，跟 `ptt_latest.json` 一起推上 GitHub。
-- `data/loss_overlap.json` 是 120 篇對照樣本，也交給 Groq 判斷，用來量 Groq 跟參考標記的一致率。
-- **目前只存結果、不影響分數**；一致率確認後才改用內文判斷算分。
+- `data/loss_overlap.json` 是 60 篇對照樣本（歷史文章），也交給 Groq 判斷，用來量 Groq 跟參考標記的一致率。
+- 網站算分（2026/11/27 起）：cutoff 以前用參考標記，之後用 Groq 的判斷；還沒判斷到的新文章暫時照標題計算，網站上會註明。
+
+換模型試跑（結果存在 `data/model_trials/`，不影響網站分數）：在有金鑰的電腦執行 `bash scripts/try_model.sh qwen/qwen3.8-27b`，
+會用同一套提示詞判斷這 60 篇樣本並推上 GitHub；額度用完會先停，再執行一次會接著跑。
 
 在負責抓 PTT 的 Mac 上設定 Groq 金鑰（用個人帳號在 console.groq.com 建立；只存在本機，不進 repo），之後的排程就會自動判斷：
 

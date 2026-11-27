@@ -6,6 +6,8 @@ Groq 只判斷 cutoff 之後的新文章，以及 data/loss_overlap.json 列的�
 用法: python3 -I scripts/analyze_loss_groq.py data [--max N] [--dry-run] [--ids id1,id2]
   --max N     這一輪最多判斷幾篇（預設 20；免費額度有每日 token 上限，舊文章會分好幾天補完）
   --dry-run   不呼叫 Groq，只印出要送的內容（測試用）
+  --overlap-only  只判斷對照樣本（換模型試跑用，搭配 --out 另存，見 scripts/try_model.sh）
+  --out PATH  結果存到別的檔案（預設 data/loss_labels.json，網站算分用的就是這個檔）
 金鑰：環境變數 GROQ_API_KEY，或 ~/.config/ptt-indicator/groq.env 裡的 GROQ_API_KEY=...（不要放進 repo）
 模型：環境變數 GROQ_MODEL；沒有設定時從 PREFER 依序挑帳號裡有的第一個，並記在每筆結果裡。
 新文章優先；遇到 429（額度用完）就停，下一輪再繼續。PTT 會擋雲端主機，要在一般網路的電腦上跑。
@@ -76,9 +78,11 @@ def call(path, k, body=None):
         raise RuntimeError(f"Groq HTTP {e.code}: {msg}")
 
 def pick_model(k):
-    m = os.environ.get("GROQ_MODEL")
-    if m: return m
     have = {x["id"] for x in call("/models", k).get("data", [])}
+    m = os.environ.get("GROQ_MODEL")
+    if m:
+        if m in have: return m
+        sys.exit(f"帳號裡沒有 {m}；可用的模型：" + ", ".join(sorted(have)))
     for p in PREFER:
         if p in have: return p
     sys.exit("帳號裡沒有預設的模型，請用 GROQ_MODEL 指定（可用的模型：" + ", ".join(sorted(have)[:12]) + "…）")
@@ -87,13 +91,15 @@ def judge(k, model, post, kind, own, h):
     body = {"model": model, "temperature": 0, "max_tokens": 1024, "messages": [{"role": "system", "content": SYSTEM}, {"role": "user", "content": user_msg(post, kind, own, h)}],
             "response_format": {"type": "json_object"}}
     if "gpt-oss" in model: body["reasoning_effort"] = "low"   # 推理模型：思考少一點，避免 token 用完卻沒有答案
+    if "qwen" in model: body["reasoning_format"] = "hidden"   # Qwen 會先思考：只回答案，思考過程不放進內容
     def ask(b):
         try:
             return call("/chat/completions", k, b)
         except RuntimeError as e:
             low = str(e).lower()
-            if "reasoning_effort" in low and "reasoning_effort" in b:
-                b = dict(b); b.pop("reasoning_effort"); return ask(b)
+            for f in ("reasoning_effort", "reasoning_format"):
+                if f in low and f in b:
+                    b = dict(b); b.pop(f); return ask(b)
             if ("response_format" in low or "json" in low) and "response_format" in b:
                 b = dict(b); b.pop("response_format"); return ask(b)   # 有些模型不支援 JSON 模式
             raise
@@ -101,6 +107,7 @@ def judge(k, model, post, kind, own, h):
     txt = (r["choices"][0]["message"].get("content") or "").strip()
     if not txt:   # 推理模型偶爾把 token 都花在思考上：放寬上限再問一次
         r = ask(dict(body, max_tokens=2048)); txt = (r["choices"][0]["message"].get("content") or "").strip()
+    txt = re.sub(r"<think>.*?</think>", "", txt, flags=re.S).strip()   # 有些模型把思考過程放在 <think> 裡
     m = re.search(r"\{.*\}", txt, re.S)
     out = json.loads(m.group(0) if m else txt)
     ev = out.get("evidence") if out.get("evidence") in ("screenshot", "amount", "both", "none") else "none"
@@ -116,15 +123,16 @@ def counts(lab):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("data"); ap.add_argument("--max", type=int, default=20); ap.add_argument("--dry-run", action="store_true"); ap.add_argument("--ids", default="")
+    ap.add_argument("--overlap-only", action="store_true"); ap.add_argument("--out", default="")
     a = ap.parse_args()
-    out_path = os.path.join(a.data, "loss_labels.json")
+    out_path = a.out or os.path.join(a.data, "loss_labels.json")
     labels = json.load(open(out_path, encoding="utf-8")) if os.path.exists(out_path) else {}
     cands = candidates(load_posts(a.data))
     ref_path, ov_path = os.path.join(a.data, "loss_labels_ref.json"), os.path.join(a.data, "loss_overlap.json")
     if os.path.exists(ref_path):   # 歷史交給參考標記：只判斷新文章與對照樣本
         cutoff = json.load(open(ref_path, encoding="utf-8")).get("cutoff") or 0
         overlap = set(json.load(open(ov_path, encoding="utf-8"))) if os.path.exists(ov_path) else set()
-        cands = [c for c in cands if c[0]["ts"] >= cutoff or c[0]["id"] in overlap]
+        cands = [c for c in cands if (c[0]["ts"] >= cutoff and not a.overlap_only) or c[0]["id"] in overlap]
     if a.ids: cands = [c for c in cands if c[0]["id"] in set(a.ids.split(","))]
     todo = [(p, kind) for p, kind in cands if p["id"] not in labels or labels[p["id"]].get("prompt_version") != PROMPT_VERSION]
     print(f"候選 {len(cands)} 篇，已判斷 {len(cands) - len(todo)} 篇，這一輪最多判斷 {min(a.max, len(todo))} 篇", flush=True)
