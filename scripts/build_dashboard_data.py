@@ -134,10 +134,13 @@ for r in csv.DictReader(open(f"{D}/foreign_inst.csv")):            # 外資（�
 pcv = {dt.date.fromisoformat(r["date"]): (float(r["pc_vol"]), float(r["pc_oi"])) for r in csv.DictReader(open(f"{D}/taifex_pc.csv")) if r["pc_vol"] and r["pc_oi"]}
 futn = {dt.date.fromisoformat(r["date"]): float(r["foreign_net_oi"]) for r in csv.DictReader(open(f"{D}/futures_foreign.csv"))}
 usvix = [None] * N                                   # 美股日 t 的 VIX 收盤 → 對到 <= t 的最後一個台股交易日
+usvix_dates = [None] * N
 for r in csv.DictReader(open(f"{D}/cboe_vix.csv")):
     t = dt.datetime.strptime(r["DATE"], "%m/%d/%Y").date()
     i = bisect.bisect_right(days, t) - 1
-    if 0 <= i < N: usvix[i] = float(r["CLOSE"])
+    if 0 <= i < N:
+        usvix[i] = float(r["CLOSE"])
+        usvix_dates[i] = t.isoformat()
 
 BOT = ["creative", "loss", "margin", "default", "foreign", "pc_high", "vix_high"]
 WARN = ["fut_short", "fut_ratio_short", "fut_chg_short"]   # 偏空警示：外資期貨空單極端之後通常續弱，不算進落底分數
@@ -221,7 +224,7 @@ ENTRY = {k: "open1" for k in ALL + ["combo3", "combo4", "combo5_3", "gcombo3", "
 ENTRY.update({f"thermo{t}": "open1" for t in (95, 90, 85, 80)}); ENTRY["dual"] = "open1"
 ENTRY.update({"stretch": "close0", "bigdrop": "close0"})          # PTT 訊號（創作文、畢業文、過熱文、溫度）用隔天開盤
 NAMES = {"creative": "PTT 創作文爆量", "loss": "PTT 畢業／虧損文", "margin": "融資張數 5 日大減", "default": "違約金額爆量（佔成交額）",
-         "foreign": "外資 5 日大賣超（佔成交額）", "bigdrop": "加權單日跌 ≥3%（對照）", "dual": "畢業文＋創作文同時亮燈", "thermo95": "鄉民恐慌溫度 ≥95", "thermo90": "鄉民恐慌溫度 ≥90", "thermo85": "鄉民恐慌溫度 ≥85", "thermo80": "鄉民恐慌溫度 ≥80", "combo3": "落底分數 ≥3", "combo4": "落底分數 ≥4", "combo5_3": "原 5 訊號落底分數 ≥3（對照）",
+         "foreign": "外資 5 日大賣超（佔成交額）", "bigdrop": "加權單日跌 ≥3%（對照）", "dual": "雙重確認", "thermo95": "鄉民恐慌溫度 ≥95", "thermo90": "鄉民恐慌溫度 ≥90", "thermo85": "鄉民恐慌溫度 ≥85", "thermo80": "鄉民恐慌溫度 ≥80", "combo3": "落底分數 ≥3", "combo4": "落底分數 ≥4", "combo5_3": "原 5 訊號落底分數 ≥3（對照）",
          "hot_ptt": "PTT 過熱文爆量", "turnover": "成交金額爆量", "margin_up": "融資金額 20 日大增", "foreign_buy": "外資 5 日大買超（佔成交額）",
          "stretch": "加權乖離 120 日線", "gcombo3": "過熱分數 ≥3", "gcombo4": "過熱分數 ≥4",
          "pc_high": "選擇權 P/C 成交量比偏高", "pc_low": "選擇權 P/C 成交量比偏低", "fut_short": "外資期貨淨空單極端", "fut_long": "外資期貨淨多單極端",
@@ -277,6 +280,7 @@ def summarize(k, ix):
     row = {"signal": k, "name": NAMES[k], "side": SIDE[k], "index": ix, "entry": "當天收盤" if e == "close0" else "隔天開盤", "n": len(events[k])}
     for h in H:
         ev = [i for i in events[k] if fwd(ix, i, h, e) is not None]
+        row[f"n{h}"] = len(ev)
         if len(ev) < 3: continue
         r = [fwd(ix, i, h, e) for i in ev]; m = st.mean(r)
         pools = [[j for j in by_year[days[i].year] if fwd(ix, j, h, e) is not None] for i in ev]
@@ -288,13 +292,14 @@ def summarize(k, ix):
         exc = [a - b for a, b in zip(r, ctrl)]
         row.update({f"ret{h}": r2(m), f"win{h}": r2(sum(x > 0 for x in r) / len(r), 0), f"rand{h}": r2(st.mean(sims)),
                     f"p{h}": round(sum((s <= m) if neg else (s >= m) for s in sims) / len(sims), 3),
-                    f"excess{h}": r2(st.mean(exc)), f"beat{h}": r2(sum((x < 0) if neg else (x > 0) for x in exc) / len(exc), 0), f"n{h}": len(r)})
+                    f"excess{h}": r2(st.mean(exc)), f"beat{h}": r2(sum((x < 0) if neg else (x > 0) for x in exc) / len(exc), 0)})
     offs = [turn_off(ix, i, max if top else min) for i in events[k]]; offs = [x for x in offs if x is not None]
     further = [ext20(ix, i, e, max if top else min) for i in events[k]]; further = [x for x in further if x is not None]
-    row.update({"ext_median": st.median(offs) if offs else None,
-                "ext_within5": r2(sum(abs(x) <= 5 for x in offs) / len(offs), 0) if offs else None,
+    within5 = sum(abs(x) <= 5 for x in offs)
+    row.update({"ext_median": st.median(offs) if offs else None, "ext_n": len(offs), "ext_within5_n": within5,
+                "ext_within5": r2(within5 / len(offs), 0) if offs else None,
                 "ext_after": r2(sum(x > 5 for x in offs) / len(offs), 0) if offs else None,
-                "further_mean": r2(st.mean(further)) if further else None,
+                "further_mean": r2(st.mean(further)) if further else None, "further_n": len(further),
                 "further_big": r2(sum((x >= 0.05) if top else (x <= -0.05) for x in further) / len(further), 0) if further else None,
                 "off_ext": r2(st.mean(off_ext(ix, i, top) for i in events[k])) if events[k] else None})
     return row
@@ -342,7 +347,7 @@ for k in BORDER + TORDER + WORDER:
     e, top = ENTRY[k], SIDE[k] == "top"
     keys = TOP if k.startswith("g") and k[1:5] == "comb" else (BOT[:5] if k == "combo5_3" else BOT)
     for i in events[k]:
-        row = {"signal": k, "name": NAMES[k], "side": SIDE[k], "date": days[i].isoformat(), "value": vtext(k, i),
+        row = {"signal": k, "name": NAMES[k], "side": SIDE[k], "date": days[i].isoformat(), "value": vtext(k, i), "pending20": i + 20 >= N,
                "lit": "、".join(NAMES[s] for s in keys if any(flag[s][j] for j in range(i - 4, i + 1))) if "combo" in k else ""}
         if k in CTX: row.update(context(i))
         for ix, tag in [("TAIEX", "tw"), ("TPEx", "tp")]:
@@ -394,6 +399,7 @@ for k in BOT + TOP + WARN + ["bigdrop"]:
     else:
         recent = [[days[i].isoformat(), disp(k, val[k][i]), disp(k, thr[k][i])] for i in range(N - 20, N)]
     status.append({"signal": k, "name": NAMES[k], "side": "top" if k in TOP else ("warn" if k in WARN else "bottom"), "asof": days[li].isoformat(), "value": v,
+                   **({"source_asof": usvix_dates[li]} if k in ("vix_high", "vix_low") else {}),
                    "threshold": t, "unit": UNIT[k], "rule": rule, "lit5": int(any(flag[k][j] for j in range(N - 5, N))),
                    "last_lit": days[last_i].isoformat() if last_i is not None else None, "recent": recent})
 for k, s, name, side, th, unit in [("score", score, "落底分數", "bottom", 3, "/7"), ("gscore", gscore, "過熱分數", "top", 3, "/8"),
@@ -402,7 +408,7 @@ for k, s, name, side, th, unit in [("score", score, "落底分數", "bottom", 3,
                    "rule": "≥", "lit5": int(s[-1] >= th), "last_lit": max((days[i].isoformat() for i in range(N) if s[i] >= th), default=None)})
 
 d_last = max((i for i in range(N) if flag["dual"][i]), default=None)
-status.append({"signal": "dual", "name": "畢業文＋創作文同時亮燈", "side": "bottom", "asof": days[-1].isoformat(), "value": int(flag["dual"][-1]),
+status.append({"signal": "dual", "name": NAMES["dual"], "side": "bottom", "asof": days[-1].isoformat(), "value": int(flag["dual"][-1]),
                "threshold": 1, "unit": "", "rule": "=", "lit5": int(any(flag["dual"][j] for j in range(N - 5, N))),
                "last_lit": days[d_last].isoformat() if d_last is not None else None, "l5": l5c[-1], "creative_heat": round(ch5[-1] * 100, 1),
                "dd60": round(dd60[-1] * 100, 1)})

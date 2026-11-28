@@ -26,32 +26,45 @@
     const t = st('thermo'); if (!t) return null;
     const li = [...LEVELS].reverse().findIndex(([lv]) => t.value >= lv);
     const level = LEVELS[LEVELS.length - 1 - li];
-    const lamp = (sig) => { const r = st(sig); if (!r) return 'off'; if (dailyLast && dailyLast['f_' + sig] === 1) return 'on'; return r.lit5 === 1 ? 'recent' : 'off'; };
+    const lamp = (sig) => {
+      const r = st(sig);
+      if (!r || !dailyLast || r.asof !== dailyLast.date || r.threshold == null) return 'missing';
+      if (dailyLast['f_' + sig] === 1) return 'on';
+      return r.lit5 === 1 ? 'recent' : 'off';
+    };
     const fams = ['bottom', 'warn'].map((key) => {   // 過熱面回測沒有效果，2026/11/27 起圖卡不畫
       const [name, scoreSig, of] = FAM_INFO[key], sc = st(scoreSig), v = sc ? sc.value : 0;
       const on = key === 'warn' ? v >= 1 : v >= 3;
       const ref = key !== 'warn';
-      return { key, name, score: v, of, on: ref ? false : on, ref, chip: ref ? '參考' : (on ? '警示亮燈' : '未亮燈'),
+      return { key, name, score: v, of, on: ref ? false : on, ref, chip: ref ? '參考' : (on ? '近 5 日有警示' : '近 5 日未見警示'),
         lamps: FAM[key].map(([sig, label]) => ({ sig, label, s: lamp(sig) })) };
     });
     const d = st('dual'), s95 = sm('thermo95');
     return {
       asof: ymd(t.asof), ptt: t.ptt_asof ? t.ptt_asof.slice(5).replace('-', '/') : null,
       thermo: t.value, level: level[1], levelRange: level[2], levelIdx: LEVELS.indexOf(level),
-      t95: s95 ? { n: s95.n, low: Math.round(s95.ext_within5) + '%', ret: pct(s95.ret20), dd: pct(s95.further_mean) } : null,
-      dual: d ? { s: d.value === 1 ? 'on' : d.lit5 === 1 ? 'recent' : 'off', text: d.value === 1 ? '今天亮燈' : d.lit5 === 1 ? '近 5 日亮過燈' : '未亮燈' } : null,
+      t95: s95 ? {
+        n: s95.n, n20: s95.n20, nDrawdown: s95.further_n,
+        low: s95.ext_n ? s95.ext_within5_n + '/' + s95.ext_n + ' 次' : s95.ext_within5 == null ? '—' : Math.round(s95.ext_within5) + '%',
+        ret: pct(s95.ret20), dd: pct(s95.further_mean),
+      } : null,
+      dual: d ? {
+        s: d.value === 1 ? 'on' : d.lit5 === 1 ? 'recent' : 'off',
+        text: d.value === 1 ? '本交易日成立' : '本交易日未成立',
+        recent: d.value === 0 && d.lit5 === 1,
+      } : null,
       fams,
     };
   };
 
   // 分享時附的文字
   const text = (m) => '鄉民恐慌溫度 ' + m.thermo.toFixed(1) + '（' + m.level + '）'
-    + (m.dual ? '・雙重確認' + m.dual.text : '') + '（資料日 ' + m.asof + '）';
+    + (m.dual ? '・雙重確認' + m.dual.text + (m.dual.recent ? '（近 5 個交易日曾亮燈）' : '') : '') + '（收盤資料日 ' + m.asof + '）';
 
   // 圖卡上出現的字（先載入字型的對應字集）
   const glyphs = (m) => ['台股落底訊號回測資料日鄉民恐慌溫度/100（）≥平常留意偏恐慌極度0123456789.+-–%<>',
-    '2019 年以來第一次衝到 95 以上共次，低點落在前後 5 天內比例是之後 20 日平均還會再跌。數很少請保守看待',
-    '雙重確認：畢業文＋創作文同時亮燈今天近日過未亮燈藍紅黃＝落底過熱偏空實心圈點',
+    '2019 年起達 95 共次，低點在亮燈前後 5 個交易日內。20 日平均報酬最大再跌筆樣本少請保守看待',
+    '雙重確認本交易日成立未近5個交易日曾亮燈畢業文創作文達門檻加權距高點跌至少藍黃＝落底偏空虛線待資料收盤',
     'triekai.github.io/ptt-indicator歷史統計不代表未來，也不是投資建議', m ? m.fams.map((f) => f.name + f.chip + f.lamps.map((l) => l.label).join('')).join('') : '',
     'VIXP/C高低外資賣買融資減增違約期貨多單量能乖離淨空佔比警示亮燈未達參考面'].join('');
   const fontsReady = async (m) => {
@@ -63,6 +76,11 @@
 
   const lampAt = (g, x, y, r, fam, s) => {
     const col = fam ? FAMC[fam] : C.off, lw = Math.max(1.5, r * 0.2);
+    if (s === 'missing') {
+      g.save(); g.setLineDash([3, 3]); g.lineWidth = lw; g.strokeStyle = C.ink3;
+      g.beginPath(); g.arc(x, y, r - lw / 2, 0, Math.PI * 2); g.stroke(); g.restore();
+      return;
+    }
     const split = fam === 'warn' && s !== 'off';
     const fillSplit = (rr) => {
       g.save(); g.beginPath(); g.arc(x, y, rr, 0, Math.PI * 2); g.clip();
@@ -114,7 +132,7 @@
     });
     g.fillStyle = C.ink; g.font = '900 27px ' + FONT; g.fillText('台股落底訊號回測', 148, 46);
     g.textAlign = 'right'; g.fillStyle = C.ink3; g.font = '500 19px ' + FONT;
-    g.fillText('資料日 ' + m.asof + (m.ptt ? '・PTT 文章至 ' + m.ptt : ''), W - 48, 44); g.textAlign = 'left';
+    g.fillText('收盤資料日 ' + m.asof + (m.ptt ? '・PTT 文章至 ' + m.ptt : ''), W - 48, 44); g.textAlign = 'left';
 
     // 左：鄉民恐慌溫度
     const L = 48, LW = 520;
@@ -132,9 +150,14 @@
       g.fillStyle = C.ink3; g.font = '400 15px ' + FONT; g.fillText(lv[2], x, 434);
     });
     if (m.t95) {
-      g.font = '400 19px ' + FONT; g.fillStyle = C.ink2;
-      const cav = '2019 年以來第一次衝到 95 以上共 ' + m.t95.n + ' 次，低點落在前後 5 天內的比例 ' + m.t95.low + '，之後 20 日平均 ' + m.t95.ret + '，平均還會再跌 ' + m.t95.dd + '。次數很少，請保守看待。';
-      wrap(g, cav, LW).slice(0, 3).forEach((ln, i) => g.fillText(ln, L, 476 + i * 28));
+      const count = (n) => n == null ? '' : '（' + n + ' 筆）';
+      g.font = '400 18px ' + FONT; g.fillStyle = C.ink2;
+      const cav = [
+        '2019 年起達 95 共 ' + m.t95.n + ' 次。低點在亮燈前後 5 個交易日內 ' + m.t95.low + '。',
+        '20 日平均報酬 ' + m.t95.ret + count(m.t95.n20) + '，最大再跌 ' + m.t95.dd + count(m.t95.nDrawdown) + '。',
+        '樣本少，請保守看待。',
+      ];
+      cav.flatMap((line) => wrap(g, line, LW)).forEach((ln, i) => g.fillText(ln, L, 464 + i * 20));
     }
 
     // 右：落底面與偏空警示兩排燈、雙重確認
@@ -164,17 +187,18 @@
       const y = 92 + m.fams.length * 132 + 40;
       lampAt(g, R + 12, y, 12, m.dual.s === 'off' ? null : 'bottom', m.dual.s);
       g.fillStyle = C.ink; g.font = '700 20px ' + FONT; g.fillText('雙重確認', R + 34, y + 7);
-      const a = g.measureText('雙重確認').width;
-      g.font = '400 20px ' + FONT; g.fillStyle = C.ink2; g.fillText('：畢業文＋創作文同時亮燈', R + 34 + a, y + 7);
-      const b = g.measureText('：畢業文＋創作文同時亮燈').width;
-      chip(g, R + 34 + a + b + 10, y, m.dual.text, m.dual.s === 'off' ? null : 'bottom', 16);
+      const sx = R + 34 + g.measureText('雙重確認').width + 10;
+      const sw = chip(g, sx, y, m.dual.text, m.dual.s === 'on' ? 'bottom' : null, 16);
+      g.font = '400 16px ' + FONT; g.fillStyle = C.ink2;
+      if (m.dual.recent) g.fillText('近 5 個交易日曾亮燈', sx + sw + 12, y + 6);
+      g.fillText('畢業文與創作文達門檻，加權距 60 日高點跌至少 5%。', R + 34, y + 37);
     }
 
     // 頁尾：網址、燈號說明、免責
     g.fillStyle = C.rule; g.fillRect(48, 556, W - 96, 1);
     g.fillStyle = C.ink; g.font = '700 18px ' + FONT; g.fillText('triekai.github.io/ptt-indicator', 48, 594);
     let x = 400; g.font = '400 15px ' + FONT;
-    [['bottom', 'on', '藍＝落底'], ['warn', 'on', '黃藍＝偏空'], ['bottom', 'recent', '近 5 日亮過']].forEach(([fam, st, t]) => {
+    [['bottom', 'on', '藍＝落底'], ['warn', 'on', '黃藍＝偏空'], ['bottom', 'recent', '近 5 日亮過'], [null, 'missing', '待資料']].forEach(([fam, st, t]) => {
       lampAt(g, x + 7, 588, 7, fam, st); g.fillStyle = C.ink3; g.fillText(t, x + 19, 594); x += 19 + g.measureText(t).width + 16;
     });
     g.textAlign = 'right'; g.fillStyle = C.ink3; g.font = '400 15px ' + FONT;

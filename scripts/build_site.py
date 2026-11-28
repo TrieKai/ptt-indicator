@@ -28,9 +28,11 @@ st = {r["signal"]: r for r in status}
 t = st["thermo"]["value"]
 level = "極度恐慌" if t >= 95 else "恐慌" if t >= 90 else "偏恐慌" if t >= 85 else "留意" if t >= 80 else "平常"
 og_title = f"鄉民恐慌溫度 {t:.1f}（{level}）｜台股落底訊號回測"
-og_desc = (f"落底 {st['score']['value']}/7・過熱 {st['gscore']['value']}/8・偏空 {st['wscore']['value']}/3"
-           + ("・雙重確認今天亮燈" if st["dual"]["value"] == 1 else "")
-           + f"（資料日 {st['thermo']['asof'].replace('-', '/')}）。PTT 股票版恐慌溫度與落底訊號的歷史回測；歷史統計不代表未來，也不是投資建議。")
+dual = st["dual"]
+dual_today = "成立" if dual["value"] == 1 else "未成立"
+dual_recent = "（近 5 個交易日曾亮燈）" if dual["value"] == 0 and dual["lit5"] == 1 else ""
+og_desc = (f"雙重確認本交易日{dual_today}{dual_recent}・偏空警示近 5 個交易日 {st['wscore']['value']}/3 項。"
+           f"收盤資料日 {st['thermo']['asof'].replace('-', '/')}。歷史統計不代表未來，也不是投資建議。")
 e = lambda x: html.escape(x, quote=True)
 OG = f"""<meta property="og:type" content="website">
 <meta property="og:site_name" content="台股落底訊號回測">
@@ -97,28 +99,55 @@ HEAD = """<!doctype html>
 </style>
 <script>
 (() => {
-  const NAMES = %NAMES%, store = {}, fns = {};
+  const NAMES = %NAMES%, store = {}, fns = {}, requests = {};
+  let domReady = false;
   NAMES.forEach((n) => { store[n] = { status: 'loading' }; });
-  const redraw = (n) => {
+  const redraw = (n, source, force = false) => {
     const f = fns[n]; if (!f) return;
-    document.querySelectorAll('[data-draw="' + n + '"]').forEach((el) => { try { f(el); } catch (e) { console.error('draw ' + n, e); } });
+    document.querySelectorAll('[data-draw="' + n + '"]').forEach((el) => {
+      const deps = (el.dataset.source || '').split(' ');
+      if (source && !deps.includes(source)) return;
+      if (!force && deps.some((dep) => store[dep]?.status === 'loading')) return;
+      try { f(el); } catch (e) { console.error('draw ' + n, e); }
+    });
+  };
+  const updateFooter = () => {
+    const t = (store.daily.meta || []).find((m) => m.label === '產生時間');
+    const el = document.getElementById('site-updated');
+    if (el && t) el.textContent = t.value;
+  };
+  const load = (n) => {
+    if (!NAMES.includes(n) || requests[n]) return requests[n];
+    store[n] = { status: 'loading' };
+    if (domReady) Object.keys(fns).forEach((name) => redraw(name, n, true));
+    requests[n] = fetch('data/' + n + '.json', { cache: 'no-cache' })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(n + ' ' + r.status))))
+      .then((j) => {
+        if (!Array.isArray(j.rows)) throw new Error(n + ' data is missing rows');
+        store[n] = { status: 'ok', data: j.rows, meta: j.meta };
+      })
+      .catch((e) => { console.error(e); store[n] = { status: 'error' }; })
+      .finally(() => {
+        delete requests[n];
+        if (!domReady) return;
+        Object.keys(fns).forEach((name) => redraw(name, n));
+        if (n === 'daily') updateFooter();
+      });
+    return requests[n];
   };
   window.dash = {
     colors: ['#3b6fd0', '#7a5bd6', '#d0553b', '#2a9d8f', '#e9a23b', '#8a8a8a', '#b5477d', '#5c8a2a', '#4aa0c9'],
     data: (n) => store[n] || { status: 'error' },
-    draw(n, fn) { if (fn) fns[n] = fn; if (document.readyState !== 'loading' || !fn) redraw(n); },
+    draw(n, fn) { if (fn) fns[n] = fn; if (domReady) redraw(n); },
+    reload: load,
   };
-  const load = (n) => fetch('data/' + n + '.json', { cache: 'no-cache' })
-    .then((r) => (r.ok ? r.json() : Promise.reject(new Error(n + ' ' + r.status))))
-    .then((j) => { store[n] = { status: 'ok', data: j.rows, meta: j.meta }; })
-    .catch((e) => { console.error(e); store[n] = { status: 'error' }; });
-  const ready = new Promise((res) => (document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', res) : res()));
-  Promise.all([ready, ...NAMES.map(load)]).then(() => {
-    Object.keys(fns).forEach(redraw);
-    let t = (store.daily.meta || []).find((m) => m.label === '產生時間');
-    const el = document.getElementById('site-updated'); if (el && t) el.textContent = t.value;
-  });
-  window.addEventListener('resize', (() => { let h, w = window.innerWidth; return () => { if (window.innerWidth === w) return; w = window.innerWidth; clearTimeout(h); h = setTimeout(() => ['chart', 'thermo-chart', 'excess-bars', 'timing'].forEach(redraw), 200); }; })());
+  document.addEventListener('DOMContentLoaded', () => {
+    domReady = true;
+    Object.keys(fns).forEach((name) => redraw(name));
+    updateFooter();
+  }, { once: true });
+  NAMES.forEach(load);
+  window.addEventListener('resize', (() => { let h, w = window.innerWidth; return () => { if (window.innerWidth === w) return; w = window.innerWidth; clearTimeout(h); h = setTimeout(() => ['chart', 'thermo-chart', 'excess-bars', 'timing'].forEach((name) => redraw(name)), 200); }; })());
 })();
 </script>
 </head>
@@ -128,7 +157,7 @@ HEAD = """<!doctype html>
 FOOT = """
 <footer class="site-foot">
   資料產生時間：<span id="site-updated">—</span>（台灣時間）。收盤資料每天 15:40（平日）、22:10 自動更新；PTT 文章的更新時間見頁首。<br>
-  資料來源：證交所、櫃買中心、期交所、FinMind、CBOE、PTT 股票版（只看標題）。程式自動計算，可能有誤；歷史統計不代表未來，也不是投資建議。
+  資料來源：證交所、櫃買中心、期交所、FinMind、CBOE、PTT 股票版。畢業／虧損文另由 AI 讀內文確認。程式自動計算，可能有誤；歷史統計不代表未來，也不是投資建議。
 </footer>
 </body>
 </html>
