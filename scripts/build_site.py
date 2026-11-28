@@ -2,7 +2,7 @@
 編譯 TypeScript、驗證資料並建立 GitHub Pages 靜態頁。
 
 用法: python3 -I scripts/build_site.py dashboard site
-輸出: site/index.html、site/data/{daily,events,summary,status,posts,post_days,report}.json、
+輸出: site/index.html、site/data/{daily,events,summary,status,posts,post_days,report}.json、版本化資料檔、
       site/assets/、site/card.js、site/card.html、site/og/.target
 """
 import sys, os, shutil, json, hashlib, html, re, subprocess
@@ -25,12 +25,26 @@ def load(name):
     with open(os.path.join(SRC, "data", f"{name}.json"), encoding="utf-8") as f:
         return json.load(f)
 
-status_data = load("status")
-status, summary, daily = status_data["rows"], load("summary")["rows"], load("daily")["rows"]
+def content_version(contents):
+    return hashlib.sha256(contents).hexdigest()[:16]
+
+payloads = {n: load(n) for n in NAMES}
+data_files = {n: Path(SRC, "data", f"{n}.json") for n in NAMES}
+# 互動區段只用資料內容，同一份內容可跨次部署沿用快取。建置時間另外隨首頁提供。
+versioned_data = {n: json.dumps({k: v for k, v in payload.items() if k != "meta"},
+                                ensure_ascii=False, separators=(",", ":")).encode()
+                  for n, payload in payloads.items()}
+data_versions = {n: content_version(contents) for n, contents in versioned_data.items()}
+asset_versions = {name: content_version((BUILD / "assets" / filename).read_bytes())
+                  for name, filename in {"charts": "d3.min.js", "card": "card-view.js"}.items()}
+dashboard_version = content_version((BUILD / "assets" / "dashboard.js").read_bytes())
+status_data = payloads["status"]
+status, summary, daily = status_data["rows"], payloads["summary"]["rows"], payloads["daily"]["rows"]
 generated = next((item["value"] for item in status_data.get("meta", []) if item["label"] == "產生時間"), None)
 CARD = {"status": status, "daily": daily[-1], "summary": [r for r in summary if r["signal"] == "thermo95" and r["index"] == "TAIEX"]}
 card_json = json.dumps(CARD, ensure_ascii=False, separators=(",", ":"))
-today_json = json.dumps({**CARD, "previous_daily": daily[-2] if len(daily) > 1 else None, "generated_at": generated},
+today_json = json.dumps({**CARD, "previous_daily": daily[-2] if len(daily) > 1 else None, "generated_at": generated,
+                         "data_versions": data_versions, "asset_versions": asset_versions},
                         ensure_ascii=False, separators=(",", ":"))
 # 圖檔固定叫 og/today.png，網址後面加 ?v=（跟著「資料＋畫法」變）：社群網站的預覽快取會換新圖，
 # 以前分享出去的連結指向的檔案也一直存在，不會變成破圖
@@ -152,7 +166,7 @@ HEAD = """<!doctype html>
   .dash-skeleton { min-height: 120px; }
 </style>
 <script type="application/json" id="dashboard-today">%TODAY%</script>
-<script type="module" src="assets/dashboard.js"></script>
+<script type="module" src="assets/dashboard.js?v=%DASHBOARD%"></script>
 </head>
 <body>
 """
@@ -172,6 +186,7 @@ with open(os.path.join(OUT, "index.html"), "w", encoding="utf-8") as f:
                if GOATCOUNTER else "")
     gc_note = "本站用 GoatCounter 統計瀏覽次數，不使用 cookie、不收集個人資料。<br>\n  " if GOATCOUNTER else ""
     f.write(HEAD.replace("%OG%", OG).replace("%FONTS%", FONTS)
+            .replace("%DASHBOARD%", dashboard_version)
             .replace("%TODAY%", today_json.replace("</", "<\\/")).replace("</head>", gc_head + "</head>")
             + seed_today(page) + FOOT.replace("  資料來源：", "  " + gc_note + "資料來源：", 1)
             .replace('<span id="site-updated">—</span>', f'<span id="site-updated">{e(generated or "—")}</span>'))
@@ -182,7 +197,8 @@ shutil.copyfile(BUILD / "card.js", os.path.join(OUT, "card.js"))
 open(os.path.join(OUT, "card.html"), "w", encoding="utf-8").write(CARD_HTML)
 os.makedirs(os.path.join(OUT, "og"), exist_ok=True)
 open(os.path.join(OUT, "og", ".target"), "w").write(OG_NAME)
-for n in NAMES:
-    shutil.copyfile(os.path.join(SRC, "data", f"{n}.json"), os.path.join(OUT, "data", f"{n}.json"))
+for n, path in data_files.items():
+    shutil.copyfile(path, Path(OUT, "data", f"{n}.json"))
+    Path(OUT, "data", f"{n}.{data_versions[n]}.json").write_bytes(versioned_data[n])
 open(os.path.join(OUT, ".nojekyll"), "w").close()
 print("site written:", OUT, sum(os.path.getsize(os.path.join(OUT, "data", f"{n}.json")) for n in NAMES) // 1024, "KB data")

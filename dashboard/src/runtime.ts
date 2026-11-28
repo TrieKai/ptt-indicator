@@ -22,7 +22,7 @@ export interface Dashboard {
   loadCard?(): Promise<Card>;
 }
 
-function loadScript<T>(file: string, getValue: () => T | undefined): Promise<T> {
+function loadScript<T>(file: string, version: string | undefined, getValue: () => T | undefined): Promise<T> {
   return new Promise((resolve, reject) => {
     const script = document.createElement('script');
     const fail = () => {
@@ -35,7 +35,9 @@ function loadScript<T>(file: string, getValue: () => T | undefined): Promise<T> 
       else fail();
     };
     script.onerror = fail;
-    script.src = new URL(file, import.meta.url).href;
+    const url = new URL(file, import.meta.url);
+    if (version) url.searchParams.set('v', version);
+    script.src = url.href;
     document.head.append(script);
   });
 }
@@ -53,6 +55,7 @@ export function createDashboard(today: Today) {
   const bindings: Binding[] = [];
   const groups = new Map<Element | null, Group>();
   const requests = new Map<DataName, Promise<void>>();
+  const unavailableForPage = new Set<DataName>();
   let chartState: 'idle' | 'loading' | 'error' | 'ok' = 'idle';
   let d3: Charts | undefined;
   let cardRequest: Promise<Card> | undefined;
@@ -75,6 +78,13 @@ export function createDashboard(today: Today) {
     if (loading) { group.status.textContent = '正在載入這個區段…'; return; }
     if (!failed.length && !chartFailed) return;
     group.status.textContent = chartFailed ? '圖表程式暫時無法載入。' : '這個區段有資料暫時無法載入。';
+    if (failed.some((name) => unavailableForPage.has(name))) {
+      group.status.textContent = '這個區段的資料可能已更新。';
+      const update = document.createElement('a');
+      update.href = '#lb-report-times';
+      update.textContent = '查看資料時間與更新';
+      group.status.append(' ', update);
+    }
     const retry = document.createElement('button');
     retry.type = 'button'; retry.className = 'lb-btn'; retry.textContent = '重試載入';
     retry.addEventListener('click', () => {
@@ -92,10 +102,15 @@ export function createDashboard(today: Today) {
   const load = <K extends DataName>(name: K) => {
     const pending = requests.get(name);
     if (pending) return pending;
+    const version = today.data_versions?.[name];
+    const file = version ? `${name}.${version}.json` : `${name}.json`;
+    const retry = store[name].status === 'error';
+    unavailableForPage.delete(name);
     store[name] = { status: 'loading' };
     notify(name);
-    const request = fetch('data/' + name + '.json', { cache: 'no-cache' })
+    const request = fetch('data/' + file, { cache: version && !retry ? 'default' : 'no-cache' })
       .then((response) => {
+        if (version && response.status === 404) unavailableForPage.add(name);
         if (!response.ok) throw new Error(name + ' ' + response.status);
         return response.json() as Promise<unknown>;
       })
@@ -109,7 +124,7 @@ export function createDashboard(today: Today) {
     if (chartState === 'loading' || chartState === 'ok') return;
     chartState = 'loading';
     notify('charts');
-    void loadScript('d3.min.js', () => window.d3)
+    void loadScript('d3.min.js', today.asset_versions?.charts, () => window.d3)
       .then((module) => { d3 = module; chartState = 'ok'; })
       .catch((error) => { console.error(error); chartState = 'error'; })
       .finally(() => notify('charts'));
@@ -137,7 +152,7 @@ export function createDashboard(today: Today) {
     },
     openSection, reload: load,
     loadCard() {
-      return cardRequest ??= loadScript('card-view.js', () => window.LBCard).catch((error) => {
+      return cardRequest ??= loadScript('card-view.js', today.asset_versions?.card, () => window.LBCard).catch((error) => {
         cardRequest = undefined;
         throw error;
       });

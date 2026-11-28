@@ -34,8 +34,9 @@ export function registerReportStatus(today: Today | undefined) {
     panel.open = true;
   };
   const restore = () => { if (location.hash === '#lb-report-times') open(); };
-  document.querySelectorAll<HTMLAnchorElement>('a[href="#lb-report-times"]').forEach((link) => {
-    link.addEventListener('click', (event) => { if (!event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) open(); });
+  document.addEventListener('click', (event) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.defaultPrevented) return;
+    if (event.target instanceof Element && event.target.closest('a[href="#lb-report-times"]')) open();
   });
   window.addEventListener('hashchange', restore);
   restore();

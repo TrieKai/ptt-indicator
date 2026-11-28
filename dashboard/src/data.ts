@@ -155,11 +155,14 @@ type LoadedByName = { [K in DataName]: {
 export type DataStore = { [K in DataName]: LoadedByName[K] | { status: 'idle' | 'loading' | 'error' } };
 export type LoadState<K extends DataName> = DataStore[K];
 
+const version = v.pipe(v.string(), v.regex(/^[0-9a-f]{16}$/));
 const todaySchema = v.object({
   status: statusRows,
   daily: dailyRow,
   previous_daily: v.nullish(dailyRow),
   generated_at: v.nullish(v.string()),
+  data_versions: v.optional(v.record(v.picklist(dataNames), version)),
+  asset_versions: v.optional(v.object({ charts: version, card: version })),
   summary: v.array(summaryRow),
 });
 export type Today = v.InferOutput<typeof todaySchema>;
