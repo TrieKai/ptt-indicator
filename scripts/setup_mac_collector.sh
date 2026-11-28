@@ -3,7 +3,7 @@
 #   1. 建立只限這個 repo 的 deploy key（第一次會請你把公鑰貼到 GitHub）
 #   2. 把 repo clone 到 ~/ptt-indicator
 #   3. 先抓一次 PTT 並推上去
-#   4. 安裝 launchd 排程，每 15 分鐘自動執行 scripts/collect_ptt.sh
+#   4. 安裝 launchd 排程，每 30 分鐘自動執行 scripts/collect_ptt.sh
 # 不需要帳號密碼；推送只靠 deploy key，它只能存取這一個 repo。
 set -euo pipefail
 REPO="${REPO:-TrieKai/ptt-indicator}"
@@ -54,7 +54,7 @@ fi
 mkdir -p "$DIR/logs"
 bash scripts/collect_ptt.sh
 
-# 4) launchd：每 15 分鐘一次；Mac 睡眠時不會執行，醒來後會補跑
+# 4) launchd：每 30 分鐘一次；Mac 睡眠時不會執行，醒來後會補跑
 mkdir -p "$HOME/Library/LaunchAgents"
 cat > "$PLIST" <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -64,7 +64,7 @@ cat > "$PLIST" <<EOF
   <key>Label</key><string>$LABEL</string>
   <key>ProgramArguments</key>
   <array><string>/bin/bash</string><string>$DIR/scripts/collect_ptt.sh</string></array>
-  <key>StartInterval</key><integer>900</integer>
+  <key>StartInterval</key><integer>1800</integer>
   <key>RunAtLoad</key><true/>
   <key>StandardOutPath</key><string>$DIR/logs/collect.log</string>
   <key>StandardErrorPath</key><string>$DIR/logs/collect.log</string>
@@ -74,6 +74,6 @@ EOF
 launchctl bootout "gui/$(id -u)/$LABEL" >/dev/null 2>&1 || true
 launchctl bootstrap "gui/$(id -u)" "$PLIST"
 echo
-echo "完成：這台 Mac 會每 15 分鐘抓一次 PTT 並推上 GitHub，GitHub 收到後自動更新網站。"
+echo "完成：這台 Mac 會每 30 分鐘抓一次 PTT 並推上 GitHub，GitHub 收到後自動更新網站。"
 echo "  記錄檔：$DIR/logs/collect.log"
 echo "  停止排程：launchctl bootout gui/$(id -u)/$LABEL"

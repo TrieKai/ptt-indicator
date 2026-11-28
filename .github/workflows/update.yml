@@ -7,7 +7,7 @@ on:
     branches: [main]
     paths: ['scripts/close_data_missing.sh', 'data/ptt_latest.json', 'data/loss_labels.json', 'data/loss_labels_ref.json', 'dashboard/index.html', 'dashboard/card.js', 'scripts/build_site.py', 'scripts/build_dashboard_data.py']
   schedule:
-    # PTT 會擋 GitHub 的主機（2026/11/26 實測 HTTP 403），所以雲端不排每 15 分鐘的 PTT 更新；PTT 要從可連線的電腦更新後推上來
+    # PTT 會擋 GitHub 的主機（2026/11/26 實測 HTTP 403），所以 PTT 要從可連線的電腦更新後推上來
     # GitHub 的排程在尖峰時段可能延遲或被跳過（2026/11/26、11/27 的 15:40 都沒跑），所以平日收盤後多排幾次備援；
     # 另外，平日 15:35–19:00 抓 PTT 的電腦推文章時，若還沒有今天的收盤資料也會順便完整更新（scripts/close_data_missing.sh）。
     # 更新只補缺的資料，重複跑沒有影響；沒有新資料時不會 commit。

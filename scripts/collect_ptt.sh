@@ -1,5 +1,5 @@
 #!/bin/bash
-# 負責抓 PTT 的電腦執行（Mac 由 launchd 每 15 分鐘呼叫）：
+# 負責抓 PTT 的電腦執行（Mac 由 launchd 每 30 分鐘呼叫）：
 # 抓 PTT 最新文章 → 併進 data/ptt_latest.json →（有 Groq 金鑰時）判斷新的畢業文候選內文 → commit → push。
 # GitHub 收到後會自動重算並更新網站。PTT 會擋雲端主機，所以這一段要在一般網路（家用、公司）上的電腦跑。
 # Groq 金鑰放在 ~/.config/ptt-indicator/groq.env（GROQ_API_KEY=...，不進 repo）；沒有金鑰就只抓文章。
