@@ -1,6 +1,8 @@
 # 產出（排程每次重算，不存進 repo）
 dashboard/data/
 dashboard/index_doc.json
+dashboard/.build/
+node_modules/
 site/
 _preview/
 logs/

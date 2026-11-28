@@ -5,7 +5,20 @@ name: 更新鄉民指標
 on:
   push:                            # 負責抓 PTT 的電腦推上新文章或畢業文判斷結果，或改了網頁／重算程式 → 重算並更新網站
     branches: [main]
-    paths: ['scripts/close_data_missing.sh', 'data/ptt_latest.json', 'data/loss_labels.json', 'data/loss_labels_ref.json', 'dashboard/index.html', 'dashboard/card.js', 'scripts/build_site.py', 'scripts/build_dashboard_data.py']
+    paths:
+      - '.github/workflows/update.yml'
+      - 'data/ptt_latest.json'
+      - 'data/loss_labels.json'
+      - 'data/loss_labels_ref.json'
+      - 'dashboard/**'
+      - 'scripts/close_data_missing.sh'
+      - 'scripts/build_site.py'
+      - 'scripts/build_dashboard_data.py'
+      - 'scripts/build-dashboard.mjs'
+      - 'scripts/validate-dashboard-data.mjs'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.json'
   schedule:
     # PTT 會擋 GitHub 的主機（2026/11/26 實測 HTTP 403），所以 PTT 要從可連線的電腦更新後推上來
     # GitHub 的排程在尖峰時段可能延遲或被跳過（2026/11/26、11/27 的 15:40 都沒跑），所以平日收盤後多排幾次備援；
@@ -49,6 +62,13 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: '3.13'
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci --include=dev
 
       - name: 抓資料並重算
         env:

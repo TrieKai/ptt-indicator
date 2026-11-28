@@ -1,0 +1,20 @@
+{
+  "name": "ptt-indicator",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "npm run typecheck && node scripts/build-dashboard.mjs",
+    "build:fragment": "npm run typecheck && node scripts/build-dashboard.mjs --fragment"
+  },
+  "devDependencies": {
+    "@types/d3": "7.4.3",
+    "d3": "7.9.0",
+    "esbuild": "0.25.12",
+    "typescript": "5.9.3",
+    "valibot": "1.5.0"
+  }
+}

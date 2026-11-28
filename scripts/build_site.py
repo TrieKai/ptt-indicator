@@ -1,14 +1,19 @@
 """
-把儀表板頁面（dashboard/index.html，原本給 claude.ai 用）包成一般網站可以直接開的靜態頁：
-補上它需要的執行環境（dash.data / dash.draw / dash.colors）、配色變數（含深色模式）與 d3，資料改成讀 data/*.json。
+編譯 TypeScript、驗證資料並建立 GitHub Pages 靜態頁。
 
 用法: python3 -I scripts/build_site.py dashboard site
 輸出: site/index.html、site/data/{daily,events,summary,status,posts}.json、
-      site/card.js、site/card.html（產生連結預覽圖用）、site/og/.target（預覽圖檔名，排程用 Chrome 截圖後刪掉）
+      site/assets/、site/card.js、site/card.html、site/og/.target
 """
-import sys, os, shutil, json, hashlib, html, re
+import sys, os, shutil, json, hashlib, html, re, subprocess
+from pathlib import Path
 
 SRC, OUT = sys.argv[1], sys.argv[2]
+ROOT = Path(__file__).resolve().parents[1]
+BUILD = ROOT / "dashboard" / ".build"
+subprocess.run(["node", "scripts/validate-dashboard-data.mjs", str(Path(SRC, "data").resolve())], cwd=ROOT, check=True)
+subprocess.run(["npm", "run", "build"], cwd=ROOT, check=True)
+
 NAMES = ["daily", "events", "summary", "status", "posts"]
 page = open(os.path.join(SRC, "index.html"), encoding="utf-8").read()
 SITE_URL = os.environ.get("SITE_URL", "https://triekai.github.io/ptt-indicator/")
@@ -27,7 +32,7 @@ card_json = json.dumps(CARD, ensure_ascii=False, separators=(",", ":"))
 # 圖檔固定叫 og/today.png，網址後面加 ?v=（跟著「資料＋畫法」變）：社群網站的預覽快取會換新圖，
 # 以前分享出去的連結指向的檔案也一直存在，不會變成破圖
 OG_NAME = "og/today.png"
-OG_VER = hashlib.sha1((card_json + open(os.path.join(SRC, "card.js"), encoding="utf-8").read()).encode()).hexdigest()[:10]
+OG_VER = hashlib.sha1(card_json.encode() + (BUILD / "card.js").read_bytes()).hexdigest()[:10]
 st = {r["signal"]: r for r in status}
 t = st["thermo"]["value"]
 levels = [(0, "平常", "<80"), (80, "留意", "80–85"), (85, "偏恐慌", "85–90"), (90, "恐慌", "90–95"), (95, "極度恐慌", "≥95")]
@@ -109,19 +114,11 @@ CARD_HTML = f"""<!doctype html>
 <title>今日圖卡</title>
 {FONTS}
 <style>html, body {{ margin: 0; background: #fff; }} canvas {{ display: block; width: 1200px; height: 630px; }}</style>
-<script src="card.js"></script>
 </head>
 <body>
 <canvas id="c" width="1200" height="630"></canvas>
-<script>
-const D = {card_js};
-(async () => {{
-  const m = LBCard.model(D.status, D.daily, D.summary);
-  await LBCard.fontsReady(m);
-  LBCard.draw(document.getElementById('c'), m, 1);
-  document.title = 'ready';
-}})();
-</script>
+<script type="application/json" id="dashboard-today">{card_js}</script>
+<script src="card.js"></script>
 </body>
 </html>
 """
@@ -143,147 +140,8 @@ HEAD = """<!doctype html>
   @media (prefers-color-scheme: dark) { html, body { background: #0f1113; color: #e8eaed; } }
   .dash-skeleton { min-height: 120px; }
 </style>
-<script>
-(() => {
-  const NAMES = %NAMES%, today = %TODAY%;
-  const store = Object.fromEntries(NAMES.map((name) => [name, { status: 'idle' }]));
-  store.status = { status: 'ok', data: today.status };
-  const renderers = new Map(), bindings = [], groups = new Map();
-  const requests = new Map(), scripts = new Map();
-  let chartState = 'idle';
-
-  const render = (binding) => {
-    if (!binding.group.active || (binding.chart && chartState !== 'ok')) return;
-    if (binding.name !== 'reading-status' && binding.sources.some((n) => ['idle', 'loading'].includes(store[n].status))) return;
-    try { renderers.get(binding.name)?.(binding.el); }
-    catch (error) { console.error('draw ' + binding.name, error); }
-  };
-  const drawNamed = (name) => bindings.filter((binding) => binding.name === name).forEach(render);
-  const showGroupStatus = (group) => {
-    if (!group.status || !group.active) return;
-    const loading = [...group.sources].some((n) => ['idle', 'loading'].includes(store[n].status)) || (group.charts && chartState === 'loading');
-    const failed = [...group.sources].filter((n) => store[n].status === 'error');
-    const chartFailed = group.charts && chartState === 'error';
-    group.status.hidden = !loading && !failed.length && !chartFailed;
-    group.status.classList.toggle('lb-err', !!failed.length || chartFailed);
-    group.status.replaceChildren();
-    if (loading) { group.status.textContent = '正在載入這個區段…'; return; }
-    if (!failed.length && !chartFailed) return;
-    group.status.textContent = chartFailed ? '圖表程式暫時無法載入。' : '這個區段有資料暫時無法載入。';
-    const retry = document.createElement('button');
-    retry.type = 'button'; retry.className = 'lb-btn'; retry.textContent = '重試載入';
-    retry.addEventListener('click', () => {
-      failed.forEach(load);
-      if (chartFailed) loadCharts();
-    });
-    group.status.append(retry);
-  };
-  const notify = (source) => {
-    bindings.filter((binding) => source === 'charts' ? binding.chart : binding.sources.includes(source)).forEach(render);
-    groups.forEach((group) => {
-      if (source === 'charts' ? group.charts : group.sources.has(source)) showGroupStatus(group);
-    });
-  };
-  const load = (n) => {
-    if (!NAMES.includes(n)) return;
-    if (requests.has(n)) return requests.get(n);
-    store[n] = { status: 'loading' };
-    notify(n);
-    const request = fetch('data/' + n + '.json', { cache: 'no-cache' })
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(n + ' ' + r.status))))
-      .then((j) => {
-        if (!Array.isArray(j.rows)) throw new Error(n + ' data is missing rows');
-        store[n] = { status: 'ok', data: j.rows, meta: j.meta, windows: j.windows };
-      })
-      .catch((e) => { console.error(e); store[n] = { status: 'error' }; })
-      .finally(() => { requests.delete(n); notify(n); });
-    requests.set(n, request);
-    return request;
-  };
-  const loadScript = (src, ready) => {
-    if (!scripts.has(src)) {
-      const script = document.createElement('script');
-      script.src = src;
-      const pending = new Promise((resolve, reject) => {
-        const fail = () => {
-          script.remove(); scripts.delete(src);
-          reject(new Error('程式載入失敗，請稍候再試'));
-        };
-        script.onload = () => ready() ? resolve() : fail();
-        script.onerror = fail;
-      });
-      scripts.set(src, pending);
-      document.head.append(script);
-    }
-    return scripts.get(src);
-  };
-  const loadCharts = () => {
-    if (chartState === 'loading' || chartState === 'ok') return;
-    chartState = 'loading';
-    notify('charts');
-    loadScript('https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js', () => window.d3)
-      .then(() => { chartState = 'ok'; }, () => { chartState = 'error'; })
-      .finally(() => notify('charts'));
-  };
-  const activate = (root) => {
-    const group = groups.get(root);
-    if (!group || group.active) return;
-    group.active = true;
-    group.sources.forEach((n) => { if (store[n].status === 'idle') load(n); });
-    if (group.charts && chartState === 'idle') loadCharts();
-    group.bindings.forEach(render);
-    showGroupStatus(group);
-  };
-  const openSection = (id) => {
-    const target = document.getElementById(id);
-    if (target) activate(target.closest('section') || target);
-  };
-  const openAnchor = () => openSection(location.hash.slice(1));
-  window.dash = {
-    colors: ['#3b6fd0', '#7a5bd6', '#d0553b', '#2a9d8f', '#e9a23b', '#8a8a8a', '#b5477d', '#5c8a2a', '#4aa0c9'],
-    today,
-    data: (n) => store[n] || { status: 'error' },
-    draw(n, fn) { if (fn) renderers.set(n, fn); drawNamed(n); },
-    openSection, reload: load,
-    loadCard: () => window.LBCard ? Promise.resolve() : loadScript('card.js', () => window.LBCard),
-  };
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('[data-draw]').forEach((el) => {
-      const section = el.closest('section');
-      const root = el.closest('details') || (section?.id !== 'lb-today' ? section : null);
-      if (!groups.has(root)) groups.set(root, { active: false, charts: false, sources: new Set(), bindings: [] });
-      const group = groups.get(root);
-      const sources = el.dataset.source.split(' ').filter((name) => NAMES.includes(name));
-      const chart = el.classList.contains('lb-chart');
-      const binding = { el, group, sources, chart, name: el.dataset.draw };
-      sources.forEach((name) => group.sources.add(name));
-      group.charts ||= chart;
-      group.bindings.push(binding);
-      bindings.push(binding);
-    });
-    activate(null);
-    const observer = 'IntersectionObserver' in window ? new IntersectionObserver((entries) => entries.forEach((entry) => {
-      if (entry.isIntersecting) { observer.unobserve(entry.target); activate(entry.target); }
-    }), { rootMargin: '96px 0px' }) : null;
-    groups.forEach((group, root) => {
-      if (!root) return;
-      group.status = document.createElement('p');
-      group.status.className = 'lb-cap lb-load-state';
-      group.status.setAttribute('role', 'status');
-      group.status.hidden = true;
-      root.firstElementChild.after(group.status);
-      if (root.tagName === 'DETAILS') {
-        root.addEventListener('toggle', () => { if (root.open) activate(root); });
-        if (root.open) activate(root);
-      } else if (observer) observer.observe(root);
-      else activate(root);
-    });
-    openAnchor();
-  }, { once: true });
-  window.addEventListener('hashchange', openAnchor);
-  window.addEventListener('resize', (() => { let h, w = window.innerWidth; return () => { if (window.innerWidth === w) return; w = window.innerWidth; clearTimeout(h); h = setTimeout(() => bindings.filter((binding) => binding.chart).forEach(render), 200); }; })());
-})();
-</script>
+<script type="application/json" id="dashboard-today">%TODAY%</script>
+<script type="module" src="assets/dashboard.js"></script>
 </head>
 <body>
 """
@@ -303,11 +161,12 @@ with open(os.path.join(OUT, "index.html"), "w", encoding="utf-8") as f:
                if GOATCOUNTER else "")
     gc_note = "本站用 GoatCounter 統計瀏覽次數，不使用 cookie、不收集個人資料。<br>\n  " if GOATCOUNTER else ""
     generated = next((item["value"] for item in status_data.get("meta", []) if item["label"] == "產生時間"), "—")
-    f.write(HEAD.replace("%NAMES%", json.dumps(NAMES)).replace("%OG%", OG).replace("%FONTS%", FONTS)
+    f.write(HEAD.replace("%OG%", OG).replace("%FONTS%", FONTS)
             .replace("%TODAY%", card_js).replace("</head>", gc_head + "</head>")
             + seed_today(page) + FOOT.replace("  資料來源：", "  " + gc_note + "資料來源：", 1)
             .replace('<span id="site-updated">—</span>', f'<span id="site-updated">{e(generated)}</span>'))
-shutil.copyfile(os.path.join(SRC, "card.js"), os.path.join(OUT, "card.js"))
+shutil.copytree(BUILD / "assets", Path(OUT, "assets"), dirs_exist_ok=True)
+shutil.copyfile(BUILD / "card.js", os.path.join(OUT, "card.js"))
 open(os.path.join(OUT, "card.html"), "w", encoding="utf-8").write(CARD_HTML)
 os.makedirs(os.path.join(OUT, "og"), exist_ok=True)
 open(os.path.join(OUT, "og", ".target"), "w").write(OG_NAME)

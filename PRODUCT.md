@@ -28,7 +28,7 @@ The crowd itself is the instrument. The thermometer counts capitulation in PTT è
 
 ## Capabilities and Constraints
 
-- Static page: `dashboard/index.html` is wrapped by `scripts/build_site.py`, which supplies tokens, a small `dash` data shim, and d3 7.9.0 from cdnjs.
+- Static page: `scripts/build_site.py` combines `dashboard/index.html` with the TypeScript build in `dashboard/src/`. The site validates its JSON data and loads D3 when a chart comes into view.
 - Data comes from `data/{daily,events,summary,status,posts}.json`. There is no server.
 - Interactive charts:
   - main price chart with signal markers and event labels

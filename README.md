@@ -88,11 +88,15 @@ curl -fsSL https://raw.githubusercontent.com/TrieKai/ptt-indicator/main/scripts/
 
 ```bash
 python3 -I scripts/fetch_tpex.py 2019-06 2026-11 data/tpex.csv                 # 櫃買中心官方櫃買指數（約 5 分鐘）
-python3 -I scripts/build_dashboard_data.py data dashboard/data               # 產生 daily/events/summary/status.json
+python3 -I scripts/build_dashboard_data.py data dashboard/data               # 產生 daily/events/summary/status/posts.json
+npm ci                                                                       # 需 Node.js 22.18+
+npm run typecheck                                                            # 開發時可單獨檢查 TypeScript
+python3 -I scripts/build_site.py dashboard site                              # 驗證 JSON、檢查型別並編譯靜態網站
+python3 -m http.server 8000 --directory site                                   # 本機預覽 http://localhost:8000/
 ```
 
-- 頁面原始碼：`dashboard/index.html`（claude.ai 私人版與 GitHub Pages 公開版共用同一份；公開版由 `scripts/build_site.py` 包成一般網頁）
-- 更新資料：重抓資料、重跑上面兩行，再把 4 個 JSON 換掉（在儀表板的「來源」面板替換檔案，或請 Claude 代為上傳）
+- 頁面版型在 `dashboard/index.html`，前端程式在 `dashboard/src/`。建置和瀏覽器使用 `dashboard/src/data.ts` 驗證 JSON。
+- claude.ai 私人版用 `npm run build:fragment` 產生 `dashboard/.build/fragment.html`，在原本提供 `dash` 與 `d3` 的環境使用。資料更新後，可在「來源」面板替換 5 個 JSON。
 - 落底分數 = 過去 5 個交易日內，外資大賣超、融資大減、違約爆量、畢業文、創作文 5 個訊號有幾個亮燈
 - 過熱分數 = 外資大買超、融資金額大增、成交金額爆量、PTT 過熱文、乖離 120 日線 5 個訊號同理
 - 目前版本：落底分數 7 個訊號（創作文、畢業文、融資大減、違約、外資大賣、P/C 成交量比偏高、美國 VIX 恐慌）；過熱分數 8 個；
