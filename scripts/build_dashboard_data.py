@@ -4,7 +4,7 @@
   events.json   每個訊號事件：日期、當時數值、兩個指數的後續報酬、再跌／再漲幅度、距波段低點／高點天數
   summary.json  每個訊號 × 指數：後 1/5/20/60 日報酬、同年度隨機對照、價格配對超額、精準度
   status.json   最新一天每個訊號的數值、門檻、最近亮燈日
-  posts.json    PTT 訊號（創作文、畢業文、過熱文）每次事件與最近 5 日的文章標題與連結
+  posts.json    PTT 訊號（創作文、畢業文、過熱文）每次事件與最近 5 日的文章標題與連結；另有每個交易日計入的畢業文（event = "day-日期"）
 
 用法: python3 -I build_dashboard_data.py data out_dir
 
@@ -458,6 +458,10 @@ for k, plist, win in [("creative", creative_posts, 1), ("loss", loss_posts, 5), 
     for j in range(N - win, N):                  # 最近一天往回 win 個交易日
         for p in sorted(idx.get(j, []), key=lambda p: p["ts"]): posts.append(post_row(k, "latest", p))
     for p in PENDING[k]: posts.append({**post_row(k, "latest", p), "pending": True})
+# 每個交易日計入恐慌溫度的畢業文（event = "day-日期"）：圖表上點某一天，列出那天往前 5 個交易日的文章
+for i in sorted(loss_idx):
+    if start - 4 <= i < N:                       # i == N 是還沒收盤的那天，不計分，所以不列
+        for p in sorted(loss_idx[i], key=lambda p: p["ts"]): posts.append(post_row("loss", "day-" + days[i].isoformat(), p))
 add_temperature_window("window-latest", N - 1)
 for i in sorted(set().union(*(events[k] for k in ("thermo80", "thermo85", "thermo90", "thermo95", "dual")))):
     add_temperature_window("window-" + days[i].isoformat(), i)

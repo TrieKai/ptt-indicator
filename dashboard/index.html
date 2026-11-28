@@ -249,6 +249,17 @@
   .lb-chart-events { min-width: 0; }
   .lb-chart-events select { max-width: 100%; }
   .lb-chart-event { margin: 8px 0 0; }
+  .lb-chart .lb-pick { stroke: var(--ink-2); stroke-width: 1; stroke-dasharray: 3 3; }
+  .lb-tip .lb-tip-hint { color: var(--ink-3); }
+  .lb-day-posts { margin: 10px 0 0; padding-top: 10px; border-top: 1px solid var(--rule); }
+  .lb-day-posts-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 2px; }
+  .lb-day-posts ol { list-style: none; margin: 6px 0 0; padding: 0; }
+  .lb-day-posts li { display: grid; grid-template-columns: 9.5em minmax(0, 1fr) auto; gap: 2px 12px; align-items: baseline; padding: 7px 0; border-top: 1px solid var(--rule); font-size: var(--fs-sm); }
+  .lb-day-when, .lb-day-rec { font-size: var(--fs-cap); color: var(--ink-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  @media (max-width: 560px) {
+    .lb-day-posts li { grid-template-columns: minmax(0, 1fr) auto; }
+    .lb-day-when { grid-column: 1 / -1; }
+  }
   .lb-chart.dash-skeleton { min-height: 260px; }
   .lb-chart svg { display: block; width: 100%; height: auto; overflow: visible; }
   .lb-chart text { font-size: 12px; fill: var(--ink-3); font-family: var(--font); }
@@ -257,6 +268,7 @@
   .lb-tip { position: absolute; pointer-events: none; background: var(--panel); color: var(--ink); border: 1px solid var(--rule); box-shadow: var(--shadow-tip); border-radius: 4px;
             padding: 8px 10px; font-size: var(--fs-cap); line-height: 1.55; max-width: 280px; z-index: 3; }
   .lb-tip b { font-weight: 700; }
+  .lb-tip div { text-wrap: pretty; }
   .lb-tip--fixed { position: fixed; z-index: 20; }
   .lb-matrix td.lb-d { cursor: default; }
   .lb-matrix td.lb-d:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
@@ -385,11 +397,11 @@
         <h2>鄉民恐慌溫度</h2>
         <p class="lb-cap" data-draw="reading-status" data-source="status" role="status">正在載入恐慌溫度…</p>
         <p class="lb-reading-num"><b class="lb-num" data-draw="thermo-val" data-source="status" data-field="value" data-where="signal=thermo">—</b><small>/ 100</small><span class="lb-chip lb-level" data-draw="thermo-chip" data-source="status">—</span></p>
-        <p class="lb-what">用 PTT 股票版的恐慌文篇數衡量市場情緒。</p>
+        <p class="lb-what">用 PTT 股票版畢業文與創作文的篇數衡量市場情緒。</p>
         <ol class="lb-scale lb-scale-desktop" data-draw="thermo-scale" data-source="status" aria-label="溫度等級"></ol>
         <div class="lb-dual" id="lb-dual">
           <i class="lamp lamp--bottom" data-draw="dual-lamp" data-source="status" data-s="missing" aria-hidden="true"></i>
-          <p><b class="lb-dual-name">PTT 恐慌文與大盤跌幅</b><span class="lb-chip" data-draw="dual-pill" data-source="status">—</span> <span class="lb-cap" data-draw="dual-recent" data-source="status"></span></p>
+          <p><b class="lb-dual-name">PTT 畢業文、創作文與大盤跌幅</b><span class="lb-chip" data-draw="dual-pill" data-source="status">—</span> <span class="lb-cap" data-draw="dual-recent" data-source="status"></span></p>
           <details class="lb-more" id="lb-dual-conditions">
             <summary>查看達標條件</summary>
             <p>下面三項全部達標才亮燈：前兩項看 PTT 鄉民有沒有恐慌，第三項看大盤是不是真的跌了。兩邊互相確認，所以圖表和回測叫它「雙重確認」。</p>
@@ -498,7 +510,7 @@
       </div>
       <div class="lb-legend">
         <span><i class="lamp lamp--bottom" data-s="on"></i>溫度第一次衝到 95 以上</span>
-        <span><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 0.5 11.5 6 6 11.5 0.5 6Z" fill="var(--ink)"/></svg>雙重確認（PTT 恐慌文＋大盤跌幅）</span>
+        <span><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 0.5 11.5 6 6 11.5 0.5 6Z" fill="var(--ink)"/></svg>雙重確認（畢業文＋創作文＋大盤跌幅）</span>
         <span><i class="lamp" data-s="on" style="--c:var(--ink-3)"></i>人工註記的事件、溫度未達 95</span>
       </div>
       <div class="lb-chart dash-skeleton" data-draw="thermo-chart" data-source="daily events"></div>
@@ -506,7 +518,8 @@
         <summary>查看圖上事件</summary>
         <div class="lb-chart-event"></div>
       </details>
-      <p class="lb-cap">上圖是加權指數，下圖是恐慌溫度；虛線是 90 與 95。標記都是 10 個交易日內不重複的第一次。標記上方的文字是事件說明：有人工註記的重大事件用註記，其他的用當時標題裡最常出現的主題（例如「合一」）；指向標記可以看畢業文標題。灰點的例子是 2022/10：人工註記的事件低點，但 PTT 訊號沒抓到。指向圖表可以看當天的篇數；按住滑鼠左右拖曳可以放大某一段，也可以輸入起訖日期，按「重設範圍」回到原本的期間。</p>
+      <div class="lb-day-posts" data-draw="day-posts" data-chart="thermo-chart" data-source="daily posts" aria-live="polite" hidden></div>
+      <p class="lb-cap">上圖是加權指數，下圖是恐慌溫度；虛線是 90 與 95。標記都是 10 個交易日內不重複的第一次。標記上方的文字是事件說明：有人工註記的重大事件用註記，其他的用當時標題裡最常出現的主題（例如「合一」）；指向標記可以看畢業文標題。灰點的例子是 2022/10：人工註記的事件低點，但 PTT 訊號沒抓到。指向圖表可以看當天的篇數，點一下會在圖下列出那幾篇畢業文；按住滑鼠左右拖曳可以放大某一段，也可以輸入起訖日期，按「重設範圍」回到原本的期間。</p>
     </section>
 
     <section class="lb-sec" id="lb-chart-sec">
@@ -535,14 +548,15 @@
       <div class="lb-legend">
         <span><i class="lamp lamp--bottom" data-s="recent"></i>恐慌溫度 ≥90</span>
         <span><i class="lamp lamp--bottom" data-s="on"></i>恐慌溫度 ≥95</span>
-        <span><i class="lamp lamp--bottom lb-ring" data-s="on"></i>雙重確認（PTT 恐慌文＋大盤跌幅）</span>
+        <span><i class="lamp lamp--bottom lb-ring" data-s="on"></i>雙重確認（畢業文＋創作文＋大盤跌幅）</span>
       </div>
       <div class="lb-chart dash-skeleton" id="lb-main-chart" data-draw="chart" data-source="daily events"></div>
       <details class="lb-more lb-chart-events" hidden>
         <summary>查看圖上事件</summary>
         <div class="lb-chart-event"></div>
       </details>
-      <p class="lb-cap">標記是鄉民恐慌溫度第一次到 90、95 以上，以及雙重確認亮燈的日子（10 個交易日內不重複），外面多一圈的是雙重確認。標記旁的文字是事件說明：有人工註記的重大事件用註記，其次用當時 PTT 標題最常出現的主題。灰點是人工註記的事件低點、但恐慌溫度沒有到 90 的時候（例如 2022/10）。文字重疊時只留一個，指向標記可以看完整說明。價格軸是對數刻度。在圖上按住滑鼠左右拖曳可以放大某一段，也可以直接輸入起訖日期，按「重設範圍」回到原本的期間。下方每一列是一個訊號亮燈的日子；最底三列是恐慌溫度（80 以上才上色，越深越高）、雙重確認與偏空警示。</p>
+      <div class="lb-day-posts" data-draw="day-posts" data-chart="chart" data-source="daily posts" aria-live="polite" hidden></div>
+      <p class="lb-cap">標記是鄉民恐慌溫度第一次到 90、95 以上，以及雙重確認亮燈的日子（10 個交易日內不重複），外面多一圈的是雙重確認。標記旁的文字是事件說明：有人工註記的重大事件用註記，其次用當時 PTT 標題最常出現的主題。灰點是人工註記的事件低點、但恐慌溫度沒有到 90 的時候（例如 2022/10）。文字重疊時只留一個，指向標記可以看完整說明。點圖上某一天，會在圖下列出那天往前 5 個交易日的畢業文。價格軸是對數刻度。在圖上按住滑鼠左右拖曳可以放大某一段，也可以直接輸入起訖日期，按「重設範圍」回到原本的期間。下方每一列是一個訊號亮燈的日子；最底三列是恐慌溫度（80 以上才上色，越深越高）、雙重確認與偏空警示。</p>
     </section>
 
     <section class="lb-sec" id="lb-lamps">

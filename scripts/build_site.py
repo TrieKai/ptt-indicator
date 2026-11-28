@@ -41,7 +41,7 @@ og_title = f"鄉民恐慌溫度 {t:.1f}（{level}）｜台股落底訊號回測"
 dual = st["dual"]
 dual_today = "本交易日已同時達標" if dual["value"] == 1 else "本交易日未同時達標"
 dual_recent = "近 5 個交易日曾達標" if dual["value"] == 0 and dual["lit5"] == 1 else ""
-og_desc = (f"PTT 恐慌文與大盤跌幅，{dual_today}"
+og_desc = (f"PTT 畢業文、創作文與大盤跌幅，{dual_today}"
            + (f"（{dual_recent}）" if dual_recent else "")
            + f"。偏空警示近 5 個交易日 {st['wscore']['value']}/3 項。"
            f"收盤資料日 {st['thermo']['asof'].replace('-', '/')}。歷史統計不代表未來，也不是投資建議。")
@@ -136,7 +136,7 @@ HEAD = """<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>台股落底訊號回測</title>
-<meta name="description" content="查看 PTT 股票版鄉民恐慌溫度、恐慌文與大盤跌幅是否達標、偏空警示和歷史回測。">
+<meta name="description" content="查看 PTT 股票版鄉民恐慌溫度，畢業文、創作文與大盤跌幅是否同時達標，以及偏空警示和歷史回測。">
 %OG%<meta name="theme-color" content="#e8eaee" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0f1113" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%232456ad'/%3E%3Ccircle cx='16' cy='16' r='5.5' fill='%23fff'/%3E%3C/svg%3E">
