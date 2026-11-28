@@ -163,6 +163,8 @@
   .lb-btn:disabled { opacity: 0.55; cursor: progress; }
   .lb-share-panel { flex-basis: 100%; display: grid; gap: 10px; padding-top: 4px; }
   .lb-share-panel[hidden] { display: none; }
+  .lb-share-to a.lb-btn { display: inline-flex; align-items: center; text-decoration: none; color: var(--ink); }
+  .lb-share-to .lb-cap { margin-right: 2px; }
   .lb-share-panel #lb-share-prev img { display: block; width: 100%; max-width: 640px; height: auto; border: 1px solid var(--rule); border-radius: 3px; background: var(--panel-2); }
 
   /* 區塊 */
@@ -476,17 +478,24 @@
         <div class="lb-share">
           <button type="button" class="lb-btn lb-btn--primary" id="lb-share-btn" aria-expanded="false" aria-controls="lb-share-panel">
             <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5v8.5M4.8 4.6 8 1.5l3.2 3.1M3 8.5v5h10v-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            分享今天的圖卡
+            分享
           </button>
           <div class="lb-share-panel" id="lb-share-panel" hidden>
             <div id="lb-share-prev"></div>
+            <div class="lb-bar lb-share-to" role="group" aria-labelledby="lb-share-to-h">
+              <span class="lb-cap" id="lb-share-to-h">分享到</span>
+              <button type="button" class="lb-btn lb-btn--primary" id="lb-share-go" hidden>分享圖卡</button>
+              <a class="lb-btn" id="lb-share-line" href="#" target="_blank" rel="noopener">LINE</a>
+              <a class="lb-btn" id="lb-share-facebook" href="#" target="_blank" rel="noopener">Facebook</a>
+              <a class="lb-btn" id="lb-share-threads" href="#" target="_blank" rel="noopener">Threads</a>
+              <a class="lb-btn" id="lb-share-x" href="#" target="_blank" rel="noopener">X</a>
+            </div>
             <div class="lb-bar">
-              <button type="button" class="lb-btn lb-btn--primary" id="lb-share-go" hidden>分享</button>
-              <button type="button" class="lb-btn" id="lb-share-dl">下載 PNG</button>
-              <button type="button" class="lb-btn" id="lb-share-copy">複製連結</button>
+              <button type="button" class="lb-btn" id="lb-share-copy">複製文字和連結</button>
+              <button type="button" class="lb-btn" id="lb-share-dl">下載圖卡</button>
               <span class="lb-cap" id="lb-share-msg" role="status" aria-live="polite"></span>
             </div>
-            <p class="lb-cap">圖上印有資料日與免責聲明；轉貼到 PTT 可以先下載再上傳到圖床。</p>
+            <p class="lb-cap">LINE、Threads、X 會帶上今天的溫度文字和網頁連結；連結預覽會顯示這張圖卡。圖上印有資料日與免責聲明。轉貼到 PTT 可以先複製文字，圖卡下載後上傳到圖床。</p>
           </div>
         </div>
       </div>

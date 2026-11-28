@@ -415,6 +415,18 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
     const prev = byId('lb-share-prev', HTMLElement), go = byId('lb-share-go', HTMLButtonElement);
     const dl = byId('lb-share-dl', HTMLElement), cp = byId('lb-share-copy', HTMLElement), msg = byId('lb-share-msg', HTMLElement);
     const pageUrl = () => location.origin + location.pathname;
+    // 分享到社群：各平台的分享網址只帶文字與連結；圖卡由連結預覽（og:image，同一張圖）顯示
+    const FALLBACK = '台股落底訊號回測：PTT 股票版鄉民恐慌溫度與歷史回測';
+    const targets: Record<string, (text: string, url: string) => string> = {
+      line: (text, url) => 'https://line.me/R/share?text=' + encodeURIComponent(text + '\n' + url),
+      facebook: (_text, url) => 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url),
+      threads: (text, url) => 'https://www.threads.net/intent/post?text=' + encodeURIComponent(text + '\n' + url),
+      x: (text, url) => 'https://x.com/intent/post?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url),
+    };
+    const setLinks = (text: string) => Object.entries(targets).forEach(([key, link]) => {
+      const a = document.getElementById('lb-share-' + key);
+      if (a instanceof HTMLAnchorElement) a.href = link(text, pageUrl());
+    });
     let card: Awaited<ReturnType<typeof make>> | null = null;
     const say = (t: string) => { msg.textContent = t; };
     const make = async () => {
@@ -437,14 +449,18 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
         card = await make();
         const img = new Image(1200, 630); img.src = card.url; img.alt = '今日圖卡：' + card.description; prev.replaceChildren(img);
         go.hidden = !(navigator.canShare && navigator.canShare({ files: [card.file] }));
+        setLinks(card.description); dl.hidden = false;
         panel.hidden = false; btn.setAttribute('aria-expanded', 'true');
-      } catch (e) { say('產生圖卡失敗：' + (e instanceof Error ? e.message : String(e))); panel.hidden = false; btn.setAttribute('aria-expanded', 'true'); }
+      } catch (e) {
+        card = null; prev.replaceChildren(); go.hidden = true; dl.hidden = true; setLinks(FALLBACK);
+        say('產生圖卡失敗：' + (e instanceof Error ? e.message : String(e)) + '。仍可分享連結。'); panel.hidden = false; btn.setAttribute('aria-expanded', 'true');
+      }
       finally { btn.disabled = false; }
     });
     go.addEventListener('click', async () => {
       if (!card) return;
       try { await navigator.share({ files: [card.file], title: '台股落底訊號回測', text: card.description + ' ' + pageUrl() }); say('已開啟分享'); }
-      catch (e) { if (!(e instanceof DOMException && e.name === 'AbortError')) say('分享失敗，可以改用「下載 PNG」'); }
+      catch (e) { if (!(e instanceof DOMException && e.name === 'AbortError')) say('分享失敗，可以改用「下載圖卡」'); }
     });
     dl.addEventListener('click', () => {
       if (!card) return;
@@ -452,7 +468,8 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
       say('已下載 ' + card.name);
     });
     cp.addEventListener('click', async () => {
-      try { await navigator.clipboard.writeText(pageUrl()); say('已複製連結'); } catch (e) { say('無法複製，請手動複製網址列'); }
+      try { await navigator.clipboard.writeText((card?.description ?? FALLBACK) + '\n' + pageUrl()); say('已複製文字和連結'); }
+      catch (e) { say('無法複製，請手動複製網址列'); }
     });
   })();
 
