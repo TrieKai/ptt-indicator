@@ -2,7 +2,7 @@ import type { BaseType, Selection } from 'd3';
 import { backtestSignals, eventColumnNames, families, isOption, markets, postSignals, statusSignals, validDate } from './data.ts';
 import type { BacktestEvent, BacktestSignal, DailyRow, EventField, EventRow, Family, LampSignal, LampState, Market, PostSignal, StatusRow, StatusSignal, SummaryRow } from './data.ts';
 import type { Dashboard } from './runtime.ts';
-import { FAM, temperatureLevels as T_LEVELS } from './signals.ts';
+import { dualStatus, FAM, temperatureLevels as T_LEVELS } from './signals.ts';
 
 type MaybeNumber = number | null | undefined;
 type Zoom = [Date, Date] | null;
@@ -91,6 +91,9 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
   const postSelect = byId('lb-psig', HTMLSelectElement);
   const notes = byId('lb-notes', HTMLDetailsElement);
   const navMenu = requireElement(document.querySelector('.lb-nav-menu'), HTMLDetailsElement);
+  const lampDetails = byId('lb-current-lamps', HTMLDetailsElement);
+  const dualDetails = byId('lb-dual-conditions', HTMLDetailsElement);
+  const mobileLayout = matchMedia('(max-width: 720px)');
   let pendingEventReveal: 'scroll' | 'focus' | null = null;
   const selectedOption = <T extends string>(select: HTMLSelectElement, options: readonly T[], value: string | null, fallback: T) =>
     isOption(options, value) && [...select.options].some((o) => o.value === value) ? value : fallback;
@@ -112,9 +115,17 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
     LB.psig = postSelect.value = sig; LB.pevent = date;
     dash.draw('pevent'); dash.draw('post-body'); dash.draw('post-window');
   };
-  const openNotes = () => {
+  const openDisclosures = () => {
     if (location.hash === '#lb-notes') notes.open = true;
+    if (location.hash === '#lb-warnings-now') lampDetails.open = true;
+    if (location.hash === '#lb-dual-conditions') dualDetails.open = true;
   };
+  const setLampLayout = () => { lampDetails.open = !mobileLayout.matches; openDisclosures(); };
+  setLampLayout();
+  mobileLayout.addEventListener('change', setLampLayout);
+  document.querySelector<HTMLAnchorElement>('.lb-quick-warn')?.addEventListener('click', (event) => {
+    if (!nativeClick(event)) lampDetails.open = true;
+  });
   const syncSectionUrl = () => {
     const query = new URLSearchParams(location.search);
     const eventDate = query.get('event');
@@ -125,7 +136,7 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
     const date = query.get('date');
     const post = selectedOption(postSelect, postSignals, query.get('post'), 'creative');
     setPosts(post, validDate(date) || (post !== 'hot_ptt' && isPostWindow(date)) ? date : null);
-    openNotes();
+    openDisclosures();
   };
   const jumpToSection = (id: string, url: URL, prepare: () => void) => {
     if (url.href !== location.href) history.pushState(null, '', url);
@@ -151,7 +162,7 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
   }));
   syncSectionUrl();
   window.addEventListener('popstate', syncSectionUrl);
-  window.addEventListener('hashchange', openNotes);
+  window.addEventListener('hashchange', openDisclosures);
 
   document.querySelectorAll<HTMLSelectElement>('select[data-ix]').forEach((s) => s.addEventListener('change', () => {
     if (!isOption(markets, s.value)) return;
@@ -824,7 +835,9 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
     wrap.id = (t.id || t.closest('section')?.id || 'lb-table') + '-columns';
     b.setAttribute('aria-controls', wrap.id);
     b.addEventListener('click', () => { const on = t.classList.toggle('lb-compact'); b.textContent = on ? '顯示全部欄位' : '只看重點欄位'; b.setAttribute('aria-expanded', String(!on)); });
-    wrap.before(b);
+    const controls = t.id === 'lb-levels' ? document.getElementById('lb-levels-controls') : null;
+    if (controls) controls.append(b);
+    else wrap.before(b);
   });
   const writeCells = (tr: HTMLTableRowElement, headers: ArrayLike<HTMLTableCellElement>, fields: Cell[]) => fields.forEach(([text, value, note], i) => {
     const cell = tr.insertCell();
@@ -1138,19 +1151,24 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
     el.textContent = '上次 ≥95：' + (r.last_lit ? LB.date(LB.parse(r.last_lit)) : '無');
   });
   const LEVELS = [['dual', '雙重確認', null], ['thermo95', '≥95 極度恐慌', 95], ['thermo90', '≥90 恐慌', 90], ['thermo85', '≥85 偏恐慌', 85], ['thermo80', '≥80 留意', 80]] as const;
-  const dRow = () => statusRow('dual');
-  const dualState = (r: StatusRow | null | undefined) => !r ? '' : r.value === 1 ? '本交易日成立' : '本交易日未成立';
+  const dRow = () => { const r = statusRow('dual'); return r?.signal === 'dual' ? r : null; };
   dash.draw('dual-pill', (el) => {
     const r = dRow();
-    el.textContent = dualState(r) || '待資料';
+    el.textContent = r ? dualStatus(r.value) : '待資料';
     if (r?.value === 1) el.dataset.tone = 'bottom'; else delete el.dataset.tone;
   });
-  dash.draw('dual-recent', (el) => { const r = dRow(); el.textContent = r?.value === 0 && r.lit5 === 1 ? '近 5 個交易日曾亮燈' : ''; });
+  dash.draw('dual-recent', (el) => { const r = dRow(); el.textContent = r?.value === 0 && r.lit5 === 1 ? '近 5 個交易日曾達標' : ''; });
   dash.draw('dual-lamp', (el) => { const r = dRow(); el.dataset.s = !r ? 'missing' : r.value === 1 ? 'on' : r.lit5 === 1 ? 'recent' : 'off'; });
   dash.draw('dual-l5', (el) => { const r = dRow(); el.textContent = r ? String(r.l5) : '—'; });
   dash.draw('dual-ch', (el) => { const r = dRow(); el.textContent = r?.creative_heat?.toFixed(1) ?? '—'; });
   dash.draw('dual-dd', (el) => { const r = dRow(); el.textContent = r && r.dd60 != null ? LB.pct(r.dd60) : '—'; });
-  dash.draw('dual-last', (el) => { const r = dRow(); el.textContent = r ? '上次亮燈 ' + (r.last_lit ? LB.date(LB.parse(r.last_lit)) : '無') : '—'; });
+  dash.draw('dual-last', (el) => { const r = dRow(); el.textContent = r ? '上次達標 ' + (r.last_lit ? LB.date(LB.parse(r.last_lit)) : '無') : '—'; });
+  for (const condition of ['loss', 'creative', 'drawdown'] as const) {
+    dash.draw('dual-check-' + condition, (el) => {
+      const passed = dRow()?.checks?.[condition];
+      el.textContent = passed == null ? '' : passed ? '達標' : '未達標';
+    });
+  }
   dash.draw('headline-backtest', (el) => {
     const signal = el.dataset.signal;
     const r = isOption(backtestSignals, signal) ? sumRow(signal, 'TAIEX') : null;
@@ -1173,14 +1191,22 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
     LEVELS.forEach(([k, label]) => {
       const r = s.data.find((x) => x.signal === k && x.index === LB.tix); if (!r) return;
       const now_ = k === 'dual' ? dr?.value === 1 : k === cur;
-      const state = k === 'dual' ? [dualState(dr), dr?.value === 0 && dr.lit5 === 1 ? '近 5 日曾亮' : ''].filter(Boolean).join('\n') : now_ ? '目前等級' : '';
       const tr = el.insertRow(); tr.dataset.key = k + ',' + LB.tix; if (now_) tr.className = 'lb-now';
       writeCells(tr, headers, [
-        [label, null, state], [String(r.n), null, sample20Note(r)],
-        [LB.pct(r.ret20), r.ret20], [LB.pct0(r.win20)], [LB.pct(r.excess20), r.excess20],
+        [label, null, k !== 'dual' && now_ ? '目前等級' : ''],
+        [LB.pct(r.ret20), r.ret20], [sampleNote(r.n20) || '—', null, '共 ' + r.n + ' 次事件'],
+        [LB.pct0(r.win20)], [LB.pct(r.excess20), r.excess20],
         [LB.pct0(r.beat20)], [LB.within5(r)], [LB.pct(r.further_mean), r.further_mean, sampleNote(r.further_n)],
         [LB.pct(r.ret60), r.ret60, sampleNote(r.n60)],
       ]);
+      tr.cells[2].classList.add('lb-levels-sample');
+      if (k === 'dual') {
+        const link = document.createElement('a');
+        link.href = '#lb-dual-conditions'; link.textContent = label;
+        link.setAttribute('aria-label', label + '，查看達標條件');
+        link.addEventListener('click', (event) => { if (!nativeClick(event)) dualDetails.open = true; });
+        tr.cells[0].replaceChildren(link);
+      }
     });
   });
 

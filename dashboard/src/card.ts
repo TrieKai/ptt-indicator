@@ -1,6 +1,6 @@
 // 今日圖卡：網頁上的「分享今天」與連結預覽圖（og:image）共用這一份畫法。
 // 圖卡一律用淺色，1200 × 630（連結預覽的標準比例）；scale 2 給分享用的高解析度版本。
-import { FAM, temperatureLevels as LEVELS } from './signals.ts';
+import { dualStatus, dualTitle, FAM, temperatureLevels as LEVELS } from './signals.ts';
 import type { DailyRow, Family, LampSignal, LampState, StatusRow, SummaryRow } from './data.ts';
 
 // 落底面、過熱面只當參考（分數回測不顯著，2026/11/27 起不顯示分數）；偏空警示照舊
@@ -35,7 +35,7 @@ export const model = (status: StatusRow[], dailyLast: DailyRow | null, summary: 
       lamps: FAM[key].map(([sig, label]) => ({ sig, label, s: lamp(sig) })) };
   });
   const dualLamp = (d: StatusRow): LampState => d.value === 1 ? 'on' : d.lit5 === 1 ? 'recent' : 'off';
-  const d = st('dual'), s95 = sm('thermo95');
+  const d = status.find((r) => r.signal === 'dual'), s95 = sm('thermo95');
   return {
     asof: ymd(t.asof), ptt: t.ptt_asof ? t.ptt_asof.slice(5).replace('-', '/') : null,
     thermo: t.value, level: level[1], levelRange: level[2], levelIdx: LEVELS.indexOf(level),
@@ -46,7 +46,7 @@ export const model = (status: StatusRow[], dailyLast: DailyRow | null, summary: 
     } : null,
     dual: d ? {
       s: dualLamp(d),
-      text: d.value === 1 ? '本交易日成立' : '本交易日未成立',
+      text: dualStatus(d.value),
       recent: d.value === 0 && d.lit5 === 1,
     } : null,
     fams,
@@ -57,12 +57,12 @@ export const model = (status: StatusRow[], dailyLast: DailyRow | null, summary: 
 type CardModel = NonNullable<ReturnType<typeof model>>;
 
 export const text = (m: CardModel) => '鄉民恐慌溫度 ' + m.thermo.toFixed(1) + '（' + m.level + '）'
-  + (m.dual ? '・雙重確認' + m.dual.text + (m.dual.recent ? '（近 5 個交易日曾亮燈）' : '') : '') + '（收盤資料日 ' + m.asof + '）';
+  + (m.dual ? '・' + dualTitle + '，' + m.dual.text + (m.dual.recent ? '（近 5 個交易日曾達標）' : '') : '') + '（收盤資料日 ' + m.asof + '）';
 
 // 圖卡上出現的字（先載入字型的對應字集）
 const glyphs = (m: CardModel) => ['台股落底訊號回測資料日鄉民恐慌溫度/100（）≥平常留意偏恐慌極度0123456789.+-–%<>',
   '2019 年起達 95 共次，低點在亮燈前後 5 個交易日內。20 日平均報酬平均最低收盤筆樣本少請保守看待',
-  '雙重確認本交易日成立未近5個交易日曾亮燈畢業文創作文達門檻加權距高點跌至少藍黃＝落底偏空虛線待資料收盤',
+  dualTitle + '本交易日已未同時達標近5個交易日曾亮燈畢業文創作文達門檻加權距高點跌至少藍黃＝落底偏空虛線待資料收盤',
   'triekai.github.io/ptt-indicator歷史統計不代表未來，也不是投資建議', m ? m.fams.map((f) => f.name + f.chip + f.lamps.map((l) => l.label).join('')).join('') : '',
   'VIXP/C高低外資賣買融資減增違約期貨多單量能乖離淨空佔比警示亮燈未達參考面'].join('');
 export const fontsReady = async (m: CardModel) => {
@@ -160,7 +160,7 @@ export const draw = (canvas: HTMLCanvasElement, m: CardModel, scale: number) => 
     cav.flatMap((line) => wrap(g, line, LW)).forEach((ln, i) => g.fillText(ln, L, 464 + i * 20));
   }
 
-  // 右：落底面與偏空警示兩排燈、雙重確認
+  // 右：落底面、偏空警示、PTT 文章與大盤跌幅是否達標
   const R = 628, RW = W - 48 - R;
   m.fams.forEach((f, k) => {
     const top = 92 + k * 132;
@@ -186,12 +186,12 @@ export const draw = (canvas: HTMLCanvasElement, m: CardModel, scale: number) => 
   if (m.dual) {
     const y = 92 + m.fams.length * 132 + 40;
     lampAt(g, R + 12, y, 12, m.dual.s === 'off' ? null : 'bottom', m.dual.s);
-    g.fillStyle = C.ink; g.font = '700 20px ' + FONT; g.fillText('雙重確認', R + 34, y + 7);
-    const sx = R + 34 + g.measureText('雙重確認').width + 10;
-    const sw = chip(g, sx, y, m.dual.text, m.dual.s === 'on' ? 'bottom' : null, 16);
+    const sx = R + 34;
+    g.fillStyle = C.ink; g.font = '700 20px ' + FONT; g.fillText(dualTitle, sx, y + 7);
+    const sw = chip(g, sx, y + 32, m.dual.text, m.dual.s === 'on' ? 'bottom' : null, 16);
     g.font = '400 16px ' + FONT; g.fillStyle = C.ink2;
-    if (m.dual.recent) g.fillText('近 5 個交易日曾亮燈', sx + sw + 12, y + 6);
-    g.fillText('畢業文與創作文達門檻，加權距 60 日高點跌至少 5%。', R + 34, y + 37);
+    if (m.dual.recent) g.fillText('近 5 個交易日曾達標', sx + sw + 12, y + 38);
+    g.fillText('畢業文與創作文達門檻，加權距 60 日高點跌至少 5%。', sx, y + 65);
   }
 
   // 頁尾：網址、燈號說明、免責

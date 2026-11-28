@@ -7,3 +7,6 @@ export const FAM: Record<Family, readonly (readonly [LampSignal, string])[]> = {
 };
 
 export const temperatureLevels = [[0, '平常', '<80'], [80, '留意', '80–85'], [85, '偏恐慌', '85–90'], [90, '恐慌', '90–95'], [95, '極度恐慌', '≥95']] as const;
+
+export const dualTitle = 'PTT 恐慌文與大盤跌幅';
+export const dualStatus = (value: 0 | 1) => value === 1 ? '本交易日已同時達標' : '本交易日未同時達標';

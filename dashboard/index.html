@@ -79,7 +79,7 @@
   .lb-nav a { flex: none; padding: 6px 10px; border-radius: 4px; font-size: var(--fs-sm); font-weight: 500; color: var(--ink-2); text-decoration: none; transition: background-color 150ms ease-out, color 150ms ease-out; }
   .lb-nav a:hover { background: var(--panel-2); color: var(--ink); }
   .lb-nav a[aria-current="true"] { background: var(--ink); color: var(--panel); }
-  .lb-nav-mobile, .lb-quick-warn { display: none; }
+  .lb-nav-mobile, .lb-quick-warn, .lb-reading-trend, .lb-current-lamps > summary { display: none; }
   .lb-top .lb-stamp { margin: 0; max-width: 17rem; font-size: var(--fs-cap); color: var(--ink-3); text-align: right; }
   .lb-stamp-note { display: block; color: var(--warn); font: inherit; font-weight: 500; }
 
@@ -96,6 +96,7 @@
   .lb-reading-num small { font-size: 1.25rem; font-weight: 500; color: var(--ink-3); white-space: nowrap; }
   .lb-level { align-self: center; margin-left: 6px; font-size: var(--fs-sm); padding: 1px 10px; }
   .lb-scale { list-style: none; display: grid; grid-template-columns: repeat(5, 1fr); margin: 0 0 18px; padding: 10px 0 0; border-top: 2px solid var(--rule-ink); }
+  .lb-scale-mobile { display: none; }
   .lb-scale li { display: grid; justify-items: start; gap: 4px; font-size: var(--fs-cap); color: var(--ink-3); line-height: 1.3; }
   .lb-scale .lamp { --ls: 20px; }
   .lb-scale li b { color: var(--ink-2); font-weight: 500; }
@@ -103,8 +104,14 @@
   .lb-what { margin: -6px 0 14px; font-size: var(--fs-sm); color: var(--ink-2); max-width: 40em; }
   .lb-dual { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--rule); }
   .lb-dual .lamp { --ls: 20px; margin-top: 2px; }
-  .lb-dual p { margin: 0; }
+  .lb-dual > p { margin: 0; }
   .lb-dual > :not(.lamp) { grid-column: 2; }
+  .lb-dual-name { display: block; margin-bottom: 4px; }
+  .lb-dual-conditions { list-style: none; margin: 8px 0; padding: 0; }
+  .lb-dual-conditions li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; padding: 6px 0; border-top: 1px solid var(--rule); }
+  .lb-dual-conditions li p { margin: 0; }
+  .lb-dual-conditions li b { color: var(--ink); }
+  .lb-reading-links { display: grid; justify-items: start; gap: 6px; margin-top: 12px; }
   .lb-history { margin: 12px 0 8px; }
   .lb-history p { margin: 0 0 8px; }
   .lb-history p:last-child { margin-bottom: 0; }
@@ -121,7 +128,7 @@
   .lb-more { font-size: var(--fs-sm); color: var(--ink-2); }
   .lb-more p { margin: 0 0 6px; max-width: 46em; }
 
-  .lb-fams { display: grid; gap: 0; align-content: start; }
+  .lb-fams { min-width: 0; }
   .lb-fam { display: grid; gap: 10px; padding: 16px 0; border-bottom: 1px solid var(--rule); }
   .lb-key + .lb-fam { padding-top: 12px; }
   .lb-fam-h { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
@@ -198,7 +205,8 @@
   .lb-table tr.lb-click:hover td, .lb-table tr.lb-click:focus-visible td { background: var(--panel-2); }
   .lb-table tr.lb-now td { background: var(--wash-blue); font-weight: 700; }
   .lb-cell-note { display: block; color: var(--ink-3); font-size: 0.75rem; font-weight: 400; }
-  #lb-levels td:first-child .lb-cell-note { white-space: pre-line; }
+  #lb-levels .lb-levels-sample .lb-cell-note { white-space: nowrap; }
+  #lb-levels th span { white-space: nowrap; }
   .lb-row-link { display: block; width: fit-content; font-size: var(--fs-cap); color: var(--lamp-blue); }
   .lb-table tr.lb-event-match td { background: var(--wash-blue); }
   .lb-table tr.lb-event-match:focus { outline: 2px solid var(--focus); outline-offset: -2px; }
@@ -286,11 +294,17 @@
     .lb-reading-num { flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
     .lb-what { margin: 0 0 8px; font-size: var(--fs-cap); }
     .lb-scale { margin-bottom: 10px; padding-top: 8px; }
-    .lb-fams { padding-top: 12px; border-top: 1px solid var(--rule); }
+    .lb-scale-desktop { display: none; }
+    .lb-scale-mobile { display: grid; margin-top: 10px; }
+    .lb-fams { padding-top: 8px; border-top: 1px solid var(--rule); }
+    .lb-current-lamps > summary { display: flex; min-height: 36px; }
     .lb-dual { margin-top: 10px; padding-top: 10px; }
     .lb-quick-warn { display: flex; align-items: center; gap: 6px; width: fit-content; margin-top: 10px; font-size: var(--fs-sm); }
     .lb-quick-warn .lamp { --ls: 16px; margin-inline: 2px; }
-    .lb-reading > .lb-more { margin-top: 8px; }
+    .lb-reading-trend { display: inline-flex; align-items: center; min-height: 40px; text-decoration: none; }
+    .lb-share { padding-top: 4px; }
+    .lb-share > .lb-btn--primary { background: transparent; border-color: var(--rule); color: var(--ink-2); font-weight: 500; }
+    .lb-share > .lb-btn--primary:hover { background: var(--panel-2); }
     .lb-fam { padding: 10px 0; gap: 6px; }
     .lb-fam:first-child { padding-top: 10px; }
     .lb-fam-n b { font-size: 1.625rem; }
@@ -323,6 +337,7 @@
     .lb-table.lb-compact th, .lb-table.lb-compact td { padding-inline: 4px; }
     .lb-table.lb-compact th { min-width: 0; }
     .lb-table.lb-compact th:first-child, .lb-table.lb-compact td:first-child { min-width: 0; white-space: normal; }
+    #lb-levels.lb-compact th:first-child { width: 40%; }
     .lb-table.lb-compact td.lb-l { white-space: normal; }
     .lb-table.lb-compact .lb-cell-note { white-space: normal; }
     #lb-ev-table.lb-compact td:nth-child(2) { white-space: normal; }
@@ -338,12 +353,6 @@
   @media (max-width: 360px) {
     .lb-reading-num b { font-size: 3.25rem; }
     .lb-level { margin-left: 0; padding-inline: 6px; }
-    #lb-levels.lb-compact { table-layout: fixed; font-size: var(--fs-cap); }
-    #lb-levels.lb-compact th, #lb-levels.lb-compact td { box-sizing: border-box; padding-inline: 3px; }
-    #lb-levels.lb-compact th:first-child { width: 27%; }
-    #lb-levels.lb-compact th:nth-child(2) { width: 16%; }
-    #lb-levels.lb-compact td:nth-child(n+3) { font-size: 0.75rem; }
-    #lb-levels.lb-compact .lb-cell-note { font-size: 0.6875rem; }
   }
   @media print { .lb-top { position: static; } .lb-bar select { display: none; } }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
@@ -376,72 +385,87 @@
         <h2>鄉民恐慌溫度</h2>
         <p class="lb-cap" data-draw="reading-status" data-source="status" role="status">正在載入恐慌溫度…</p>
         <p class="lb-reading-num"><b class="lb-num" data-draw="thermo-val" data-source="status" data-field="value" data-where="signal=thermo">—</b><small>/ 100</small><span class="lb-chip lb-level" data-draw="thermo-chip" data-source="status">—</span></p>
-        <p class="lb-what"><span class="lb-lg">PTT 股票版創作文與畢業文的熱度；100 代表比過去一年每一天都恐慌。</span><span class="lb-sm">PTT 恐慌文的熱度；100＝比過去一年每天都恐慌</span></p>
-        <ol class="lb-scale" data-draw="thermo-scale" data-source="status" aria-label="溫度等級"></ol>
+        <p class="lb-what">用 PTT 股票版的恐慌文篇數衡量市場情緒。</p>
+        <ol class="lb-scale lb-scale-desktop" data-draw="thermo-scale" data-source="status" aria-label="溫度等級"></ol>
         <div class="lb-dual" id="lb-dual">
           <i class="lamp lamp--bottom" data-draw="dual-lamp" data-source="status" data-s="missing" aria-hidden="true"></i>
-          <p><b>雙重確認</b> <span class="lb-chip" data-draw="dual-pill" data-source="status">—</span> <span class="lb-cap" data-draw="dual-recent" data-source="status"></span></p>
-          <p class="lb-cap">畢業文與創作文達門檻，且加權指數距 60 日高點跌至少 5%。</p>
-          <details class="lb-more">
-            <summary>條件與目前數值</summary>
-            <p>條件：畢業文 5 日 ≥3 篇，同時創作文熱度 ≥90，且加權距 60 日高點跌 5% 以上。目前：畢業文 5 日 <span class="lb-num" data-draw="dual-l5" data-source="status" data-field="l5" data-where="signal=dual">—</span> 篇・創作文熱度 <span class="lb-num" data-draw="dual-ch" data-source="status" data-field="creative_heat" data-where="signal=dual">—</span>・加權距 60 日高點 <span class="lb-num" data-draw="dual-dd" data-source="status" data-field="dd60" data-where="signal=dual">—</span>・<span data-draw="dual-last" data-source="status">—</span>。</p>
-            <p>創作文代表「大家正在恐慌」，畢業文代表「有人認賠出場」，兩個同時出現、而且大盤真的有跌，才是投降式賣壓。大盤條件用來排除單一個股事件，例如 2020/7/20 合一重挫，當時加權只比高點低 0.3%。前後兩段（2019–2022、2023–2026）都成立，把門檻換成相鄰的數字也都成立；只有畢業文、沒有創作文恐慌時反而不準。</p>
+          <p><b class="lb-dual-name">PTT 恐慌文與大盤跌幅</b><span class="lb-chip" data-draw="dual-pill" data-source="status">—</span> <span class="lb-cap" data-draw="dual-recent" data-source="status"></span></p>
+          <details class="lb-more" id="lb-dual-conditions">
+            <summary>查看達標條件</summary>
+            <p>三項條件同時達標時亮燈，回測中稱為「雙重確認」。</p>
+            <ul class="lb-dual-conditions">
+              <li><div><b>畢業／虧損文</b><p>近 5 個交易日有 <span class="lb-num" data-draw="dual-l5" data-source="status">—</span> 篇，門檻是 3 篇。</p></div><b data-draw="dual-check-loss" data-source="status"></b></li>
+              <li><div><b>創作文熱度</b><p>目前 <span class="lb-num" data-draw="dual-ch" data-source="status">—</span>，門檻是 90。比較過去一年，每次都用 5 個交易日的篇數。</p></div><b data-draw="dual-check-creative" data-source="status"></b></li>
+              <li><div><b>加權指數距高點</b><p>較近 60 日高點 <span class="lb-num" data-draw="dual-dd" data-source="status">—</span>，門檻是下跌至少 5%。</p></div><b data-draw="dual-check-drawdown" data-source="status"></b></li>
+            </ul>
+            <p class="lb-cap" data-draw="dual-last" data-source="status">—</p>
+            <a href="#lb-notes">訊號定義與回測期間</a>
           </details>
         </div>
-        <a href="#lb-warnings-now" class="lb-quick-warn"><i class="lamp lamp--warn" data-draw="warn-lamp" data-source="status" data-s="missing" aria-hidden="true"></i><b>偏空警示</b><span class="lb-cap">近 5 日 <b class="lb-num" data-draw="sc-wscore" data-source="status">—</b>／3 項</span></a>
-        <p class="lb-cap lb-history">近 5 個交易日　<a href="?post=creative&amp;date=window-latest#lb-posts" data-post-window="creative">創作文 <span class="lb-num" data-draw="thermo-c5" data-source="status">—</span> 篇</a>・<a href="?post=loss&amp;date=window-latest#lb-posts" data-post-window="loss">畢業／虧損文 <span class="lb-num" data-draw="thermo-l5" data-source="status">—</span> 篇</a>・<span data-draw="thermo-asof" data-source="status">—</span></p>
-        <details class="lb-more">
-          <summary>這些訊號的歷史回測</summary>
-          <div class="lb-history">
-            <p data-draw="headline-backtest" data-source="summary" data-signal="thermo95">正在載入溫度 ≥95 的回測…</p>
-            <p data-draw="headline-backtest" data-source="summary" data-signal="dual">正在載入雙重確認的回測…</p>
-          </div>
-          <p>回測自 2019 年起，樣本數少，請保守看待。</p>
-        </details>
-        <details class="lb-more">
-          <summary>溫度怎麼算</summary>
-          <p>只用 PTT 恐慌面的文章（當天 09:00 到下一個交易日 09:00 前發的算當天）：創作文、畢業／虧損文的 5 日篇數，各自跟過去 250 個交易日比，算出「比今天少的天數比例」，兩者平均換成 0–100。100 代表比過去一年任何一天都恐慌。溫度看的是「現在有多恐慌」，不保證接下來不會再跌。</p>
-        </details>
+        <a href="#lb-warnings-now" class="lb-quick-warn"><i class="lamp lamp--warn" data-draw="warn-lamp" data-source="status" data-s="missing" aria-hidden="true"></i><b>偏空警示</b><span class="lb-cap">近 5 個交易日 <b class="lb-num" data-draw="sc-wscore" data-source="status">—</b>／3 項</span></a>
+        <div class="lb-reading-links">
+          <a class="lb-btn lb-reading-trend" href="#lb-thermo">看恐慌溫度走勢</a>
+          <details class="lb-more">
+            <summary>看近 5 個交易日文章</summary>
+            <p><a href="?post=creative&amp;date=window-latest#lb-posts" data-post-window="creative">創作文 <span class="lb-num" data-draw="thermo-c5" data-source="status">—</span> 篇</a>・<a href="?post=loss&amp;date=window-latest#lb-posts" data-post-window="loss">畢業／虧損文 <span class="lb-num" data-draw="thermo-l5" data-source="status">—</span> 篇</a></p>
+          </details>
+          <details class="lb-more">
+            <summary>溫度刻度與算法</summary>
+            <ol class="lb-scale lb-scale-mobile" data-draw="thermo-scale" data-source="status" aria-label="溫度等級"></ol>
+            <p class="lb-cap" data-draw="thermo-asof" data-source="status">—</p>
+            <p>把創作文與畢業／虧損文的近 5 日篇數，分別和過去 250 個交易日比。算出比本次篇數少的天數比例，再將兩個比例平均並換成 0–100。發文從當天 09:00 算到下一個交易日 09:00 前。</p>
+          </details>
+          <details class="lb-more">
+            <summary>這些訊號的歷史回測</summary>
+            <div class="lb-history">
+              <p data-draw="headline-backtest" data-source="summary" data-signal="thermo95">正在載入溫度 ≥95 的回測…</p>
+              <p data-draw="headline-backtest" data-source="summary" data-signal="dual">正在載入雙重確認的回測…</p>
+            </div>
+            <p>回測自 2019 年起，樣本數少，請保守看待。</p>
+          </details>
+        </div>
       </div>
 
       <div class="lb-fams">
-        <div class="lb-fams-h">
-          <h3>其他訊號</h3>
-          <p class="lb-cap">落底面包含 PTT 與市場數據，個別燈號供參考。偏空警示顯示近 5 個交易日亮過的項目數。</p>
-        </div>
-        <div class="lb-key" role="note" aria-label="燈號怎麼看">
-          <b class="lb-key-h">燈號怎麼看</b>
-          <span><i class="lamp lamp--bottom" data-s="on"></i><em class="lb-lg">實心＝本交易日亮燈</em><em class="lb-sm">本交易日亮</em></span>
-          <span><i class="lamp lamp--bottom" data-s="recent"></i><em class="lb-lg">圈中有點＝近 5 日亮過</em><em class="lb-sm">5 日內亮過</em></span>
-          <span><i class="lamp" data-s="off"></i><em class="lb-lg">空心＝沒亮</em><em class="lb-sm">沒亮</em></span>
-          <span><i class="lamp" data-s="missing"></i><em class="lb-lg">虛線＝待資料</em><em class="lb-sm">待資料</em></span>
-          <span class="lb-key-br" aria-hidden="true"></span>
-          <span><i class="lamp lamp--bottom" data-s="on"></i>藍＝落底</span>
-          <span><i class="lamp lamp--warn" data-s="on"></i>黃藍＝偏空</span>
-          <span class="lb-key-tip"><em class="lb-lg">點任一個燈看白話說明</em><em class="lb-sm">點燈看說明</em></span>
-        </div>
-        <div class="lb-fam">
-          <div class="lb-fam-h"><h3>落底面</h3><span class="lb-ref">參考</span></div>
-          <ol class="lb-lamprow" data-draw="fam-lamps" data-fam="bottom" data-source="status" aria-label="落底訊號燈號"></ol>
-          <details class="lb-more">
-            <summary>看落底面回測</summary>
-            <p class="lb-cap" data-draw="reference-backtest" data-source="summary" data-signal="combo4">正在載入落底面回測…</p>
-          </details>
-        </div>
-        <div class="lb-fam" id="lb-warnings-now">
-          <div class="lb-fam-h"><h3>偏空警示</h3><span class="lb-chip" data-draw="fam-chip" data-source="status" data-fam="warn">—</span><p class="lb-fam-n"><b class="lb-num" data-draw="sc-wscore" data-source="status" data-field="value" data-where="signal=wscore">—</b> / 3</p></div>
-          <ol class="lb-lamprow" data-draw="fam-lamps" data-fam="warn" data-source="status" aria-label="偏空警示燈號"></ol>
-          <details class="lb-more">
-            <summary>看偏空警示回測</summary>
-            <p class="lb-cap" data-draw="reference-backtest" data-source="summary" data-signal="fut_short">正在載入偏空警示回測…</p>
-          </details>
-        </div>
+        <details class="lb-current-lamps" id="lb-current-lamps" open>
+          <summary>查看今日燈號</summary>
+          <div class="lb-fams-h">
+            <h3>其他訊號</h3>
+            <p class="lb-cap">落底面包含 PTT 與市場數據，個別燈號供參考。偏空警示顯示近 5 個交易日亮過的項目數。</p>
+          </div>
+          <div class="lb-key" role="note" aria-label="燈號怎麼看">
+            <b class="lb-key-h">燈號怎麼看</b>
+            <span><i class="lamp lamp--bottom" data-s="on"></i><em class="lb-lg">實心＝本交易日亮燈</em><em class="lb-sm">本交易日亮</em></span>
+            <span><i class="lamp lamp--bottom" data-s="recent"></i><em class="lb-lg">圈中有點＝近 5 日亮過</em><em class="lb-sm">5 日內亮過</em></span>
+            <span><i class="lamp" data-s="off"></i><em class="lb-lg">空心＝沒亮</em><em class="lb-sm">沒亮</em></span>
+            <span><i class="lamp" data-s="missing"></i><em class="lb-lg">虛線＝待資料</em><em class="lb-sm">待資料</em></span>
+            <span class="lb-key-br" aria-hidden="true"></span>
+            <span><i class="lamp lamp--bottom" data-s="on"></i>藍＝落底</span>
+            <span><i class="lamp lamp--warn" data-s="on"></i>黃藍＝偏空</span>
+            <span class="lb-key-tip"><em class="lb-lg">點任一個燈看白話說明</em><em class="lb-sm">點燈看說明</em></span>
+          </div>
+          <div class="lb-fam">
+            <div class="lb-fam-h"><h3>落底面</h3><span class="lb-ref">參考</span></div>
+            <ol class="lb-lamprow" data-draw="fam-lamps" data-fam="bottom" data-source="status" aria-label="落底訊號燈號"></ol>
+            <details class="lb-more">
+              <summary>看落底面回測</summary>
+              <p class="lb-cap" data-draw="reference-backtest" data-source="summary" data-signal="combo4">正在載入落底面回測…</p>
+            </details>
+          </div>
+          <div class="lb-fam" id="lb-warnings-now">
+            <div class="lb-fam-h"><h3>偏空警示</h3><span class="lb-chip" data-draw="fam-chip" data-source="status" data-fam="warn">—</span><p class="lb-fam-n"><b class="lb-num" data-draw="sc-wscore" data-source="status" data-field="value" data-where="signal=wscore">—</b> / 3</p></div>
+            <ol class="lb-lamprow" data-draw="fam-lamps" data-fam="warn" data-source="status" aria-label="偏空警示燈號"></ol>
+            <details class="lb-more">
+              <summary>看偏空警示回測</summary>
+              <p class="lb-cap" data-draw="reference-backtest" data-source="summary" data-signal="fut_short">正在載入偏空警示回測…</p>
+            </details>
+          </div>
+        </details>
         <div class="lb-share">
           <button type="button" class="lb-btn lb-btn--primary" id="lb-share-btn" aria-expanded="false" aria-controls="lb-share-panel">
             <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5v8.5M4.8 4.6 8 1.5l3.2 3.1M3 8.5v5h10v-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
             分享今天的圖卡
           </button>
-          <span class="lb-cap">把今天的恐慌溫度、雙重確認與燈號做成一張圖</span>
           <div class="lb-share-panel" id="lb-share-panel" hidden>
             <div id="lb-share-prev"></div>
             <div class="lb-bar">
@@ -530,9 +554,9 @@
     </section>
 
     <section class="lb-sec" id="lb-levels-sec">
-      <h2>回測：恐慌溫度分級與雙重確認</h2>
+      <h2>恐慌溫度回測</h2>
       <nav class="lb-sub" aria-label="回測分類"><a href="#lb-levels-sec">恐慌溫度</a><a href="#lb-bottom">落底訊號</a><a href="#lb-top">過熱訊號</a><a href="#lb-warn">偏空警示</a></nav>
-      <div class="lb-bar">
+      <div class="lb-bar" id="lb-levels-controls">
         <select id="lb-tix" aria-label="分級回測指數">
           <option value="TAIEX">加權指數</option>
           <option value="TPEx">櫃買指數</option>
@@ -541,14 +565,19 @@
       <div class="lb-tablewrap">
         <table class="lb-table" id="lb-levels" data-compact data-source="summary" data-row-key="signal,index">
           <thead><tr>
-            <th data-field="name">等級</th><th data-field="n">事件數</th><th data-field="ret20">20 日報酬</th><th data-field="win20" class="lb-minor">上漲比例</th>
-            <th data-field="excess20">20 日超額</th><th data-field="beat20" class="lb-minor">贏過配對</th><th data-field="ext_within5" class="lb-minor">低點在 ±5 個交易日內</th>
-            <th data-field="further_mean">20 日平均最低收盤報酬</th><th data-field="ret60" class="lb-minor">後 60 日</th>
+            <th data-field="name">訊號／等級</th><th data-field="ret20">20 日 <span>平均報酬</span></th><th data-field="n">20 日 <span>有效樣本</span></th><th data-field="win20" class="lb-minor">上漲比例</th>
+            <th data-field="excess20" class="lb-minor">20 日超額</th><th data-field="beat20" class="lb-minor">贏過配對</th><th data-field="ext_within5" class="lb-minor">低點在 ±5 個交易日內</th>
+            <th data-field="further_mean" class="lb-minor">20 日平均最低收盤報酬</th><th data-field="ret60" class="lb-minor">後 60 日</th>
           </tr></thead>
           <tbody data-draw="thermo-levels" data-source="summary status"></tbody>
         </table>
       </div>
-      <p class="lb-cap">溫度各級統計首次達門檻的事件（10 個交易日內不重複），隔天開盤進場。20 日有效樣本只包括已有完整報酬的事件；低點與最低收盤報酬各用該欄可計算的事件。最低收盤報酬以進場價為基準，取後 20 個交易日的最低收盤價。「超額」與「贏過配對」是跟同一年、前 5 天漲跌最接近的日子比。樣本少，請保守看待。</p>
+      <p class="lb-cap">有效樣本只計已滿 20 個交易日且有完整報酬的事件。樣本少，請保守看待。</p>
+      <details class="lb-more">
+        <summary>回測口徑與欄位說明</summary>
+        <p>溫度各級統計首次達門檻的事件，10 個交易日內不重複，並以隔天開盤價作為進場價。低點與最低收盤報酬各用該欄可計算的事件。</p>
+        <p>最低收盤報酬以進場價為基準，取後 20 個交易日的最低收盤價。「超額」與「贏過配對」是跟同一年、前 5 天漲跌最接近的日子比。</p>
+      </details>
     </section>
 
     <section class="lb-sec" id="lb-bottom">

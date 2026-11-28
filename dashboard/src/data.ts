@@ -112,7 +112,8 @@ const statusFields = {
 };
 const statusRow = v.variant('signal', [
   v.object({ ...statusFields, signal: v.picklist(standardStatusSignals) }),
-  v.object({ ...statusFields, signal: v.literal('dual'), value: binary, l5: count, creative_heat: number, dd60: number }),
+  v.object({ ...statusFields, signal: v.literal('dual'), value: binary, l5: count, creative_heat: number, dd60: number,
+    checks: v.optional(v.object({ loss: v.boolean(), creative: v.boolean(), drawdown: v.boolean() })) }),
   v.object({ ...statusFields, signal: v.literal('thermo'), value: v.pipe(number, v.minValue(0), v.maxValue(100)), c5: count, l5: count }),
 ]);
 export type StatusRow = v.InferOutput<typeof statusRow>;

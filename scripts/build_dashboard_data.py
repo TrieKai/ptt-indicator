@@ -216,7 +216,9 @@ for t in (95, 90, 85, 80): flag[f"thermo{t}"] = [f is not None and f >= t for f 
 #           而且加權指數距 60 日高點至少跌 5%（大盤真的有跌；排除像 2020/7/20 合一重挫這種單一個股事件）
 ch5 = [heat(c5c, i) for i in range(N)]
 dd60 = [ctw[i] / max(ctw[max(0, i - 60):i + 1]) - 1 for i in range(N)]
-flag["dual"] = [l5c[i] >= 3 and ch5[i] is not None and ch5[i] >= 0.90 and dd60[i] <= -0.05 for i in range(N)]
+dual_checks = [{"loss": l5c[i] >= 3, "creative": ch5[i] is not None and ch5[i] >= 0.90,
+                "drawdown": dd60[i] <= -0.05} for i in range(N)]
+flag["dual"] = [all(checks.values()) for checks in dual_checks]
 score5 = score_of(BOT[:5]); flag["combo5_3"] = [s >= 3 for s in score5]   # 對照：加入選擇權／期貨／VIX 前的 5 訊號版本
 flag["gcombo3"] = [s >= 3 for s in gscore]; flag["gcombo4"] = [s >= 4 for s in gscore]
 
@@ -415,7 +417,7 @@ d_last = max((i for i in range(N) if flag["dual"][i]), default=None)
 status.append({"signal": "dual", "name": NAMES["dual"], "side": "bottom", "asof": days[-1].isoformat(), "value": int(flag["dual"][-1]),
                "threshold": 1, "unit": "", "rule": "=", "lit5": int(any(flag["dual"][j] for j in range(N - 5, N))),
                "last_lit": days[d_last].isoformat() if d_last is not None else None, "l5": l5c[-1], "creative_heat": round(ch5[-1] * 100, 1),
-               "dd60": round(dd60[-1] * 100, 1)})
+               "dd60": round(dd60[-1] * 100, 1), "checks": dual_checks[-1]})
 t_last = max((i for i in range(N) if flag["thermo95"][i]), default=None)
 status.append({"signal": "thermo", "name": "鄉民恐慌溫度", "side": "bottom", "asof": days[-1].isoformat(), "value": round(fear[-1], 1),
                "threshold": 95, "unit": "/100", "rule": "≥", "lit5": int(any(flag["thermo95"][j] for j in range(N - 5, N))),

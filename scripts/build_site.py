@@ -39,9 +39,11 @@ levels = [(0, "平常", "<80"), (80, "留意", "80–85"), (85, "偏恐慌", "85
 limit, level, level_range = next(row for row in reversed(levels) if t >= row[0])
 og_title = f"鄉民恐慌溫度 {t:.1f}（{level}）｜台股落底訊號回測"
 dual = st["dual"]
-dual_today = "成立" if dual["value"] == 1 else "未成立"
-dual_recent = "（近 5 個交易日曾亮燈）" if dual["value"] == 0 and dual["lit5"] == 1 else ""
-og_desc = (f"雙重確認本交易日{dual_today}{dual_recent}・偏空警示近 5 個交易日 {st['wscore']['value']}/3 項。"
+dual_today = "本交易日已同時達標" if dual["value"] == 1 else "本交易日未同時達標"
+dual_recent = "近 5 個交易日曾達標" if dual["value"] == 0 and dual["lit5"] == 1 else ""
+og_desc = (f"PTT 恐慌文與大盤跌幅，{dual_today}"
+           + (f"（{dual_recent}）" if dual_recent else "")
+           + f"。偏空警示近 5 個交易日 {st['wscore']['value']}/3 項。"
            f"收盤資料日 {st['thermo']['asof'].replace('-', '/')}。歷史統計不代表未來，也不是投資建議。")
 e = lambda x: html.escape(x, quote=True)
 
@@ -68,8 +70,13 @@ def seed_today(page):
         "thermo-c5": str(thermo["c5"]),
         "thermo-l5": str(thermo["l5"]),
         "thermo-asof": e("上次 ≥95：" + date(thermo["last_lit"])),
-        "dual-pill": "本交易日" + dual_today,
-        "dual-recent": "近 5 個交易日曾亮燈" if dual_recent else "",
+        "dual-pill": dual_today,
+        "dual-recent": dual_recent,
+        "dual-l5": str(dual["l5"]),
+        "dual-ch": f'{dual["creative_heat"]:.1f}',
+        "dual-dd": f'{dual["dd60"]:.2f}%',
+        "dual-last": "上次達標 " + date(dual["last_lit"]),
+        **{f"dual-check-{key}": "達標" if passed else "未達標" for key, passed in dual.get("checks", {}).items()},
         "sc-wscore": str(st["wscore"]["value"]),
     }
     for key, value in values.items():
@@ -129,7 +136,7 @@ HEAD = """<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>台股落底訊號回測</title>
-<meta name="description" content="PTT 股票版鄉民恐慌溫度、雙重確認、偏空警示與歷史回測。">
+<meta name="description" content="查看 PTT 股票版鄉民恐慌溫度、恐慌文與大盤跌幅是否達標、偏空警示和歷史回測。">
 %OG%<meta name="theme-color" content="#e8eaee" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0f1113" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%232456ad'/%3E%3Ccircle cx='16' cy='16' r='5.5' fill='%23fff'/%3E%3C/svg%3E">
