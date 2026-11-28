@@ -5,6 +5,7 @@ import type { Dashboard } from './runtime.ts';
 import { articleKinds, chartLinkUrl, chartSections, readChartLink } from './chart-link.ts';
 import type { ArticleKind, ChartKey } from './chart-link.ts';
 import { registerReadingComparison } from './reading-comparison.ts';
+import { registerReportStatus } from './report-status.ts';
 import { dualStatus, FAM, temperatureLevels as T_LEVELS } from './signals.ts';
 
 type MaybeNumber = number | null | undefined;
@@ -51,6 +52,7 @@ const strips: Record<Family, SignalLabels> = {
 
 export function registerDashboard(dash: Dashboard, charts: () => typeof import('d3')) {
   registerReadingComparison(dash.today);
+  registerReportStatus(dash.today);
   let sharedDay = readChartLink(new URL(location.href));
   const state: ViewState = {
     ix: sharedDay?.market ?? 'TAIEX', tix: 'TAIEX', range: 'all', trange: '1y', strip: sharedDay?.strip ?? 'bottom',
@@ -429,12 +431,7 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
 
   dash.draw('stamp', (el) => {
     const r = statusRow('thermo'); if (!r) { el.textContent = '—'; return; }
-    el.textContent = '收盤資料日 ' + displayDate(r.asof) + (r.ptt_asof ? '・PTT 文章至 ' + r.ptt_asof.slice(5).replace('-', '/') : '');
-    if (r.ptt_lag_h != null && r.ptt_lag_h > 3) {
-      const note = document.createElement('small'); note.className = 'lb-stamp-note';
-      note.textContent = '最新文章距資料產生逾 ' + Math.floor(r.ptt_lag_h) + ' 小時';
-      el.append(note);
-    }
+    el.textContent = '收盤資料日 ' + displayDate(r.asof) + (r.ptt_asof ? '・PTT 最新發文 ' + r.ptt_asof.slice(5).replace('-', '/') : '');
   });
   dash.draw('reading-status', (el) => {
     const status = dash.data('status').status;

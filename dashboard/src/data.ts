@@ -159,6 +159,7 @@ const todaySchema = v.object({
   status: statusRows,
   daily: dailyRow,
   previous_daily: v.nullish(dailyRow),
+  generated_at: v.nullish(v.string()),
   summary: v.array(summaryRow),
 });
 export type Today = v.InferOutput<typeof todaySchema>;

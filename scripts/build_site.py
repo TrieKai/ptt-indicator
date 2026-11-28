@@ -2,7 +2,7 @@
 編譯 TypeScript、驗證資料並建立 GitHub Pages 靜態頁。
 
 用法: python3 -I scripts/build_site.py dashboard site
-輸出: site/index.html、site/data/{daily,events,summary,status,posts,post_days}.json、
+輸出: site/index.html、site/data/{daily,events,summary,status,posts,post_days,report}.json、
       site/assets/、site/card.js、site/card.html、site/og/.target
 """
 import sys, os, shutil, json, hashlib, html, re, subprocess
@@ -27,9 +27,10 @@ def load(name):
 
 status_data = load("status")
 status, summary, daily = status_data["rows"], load("summary")["rows"], load("daily")["rows"]
+generated = next((item["value"] for item in status_data.get("meta", []) if item["label"] == "產生時間"), None)
 CARD = {"status": status, "daily": daily[-1], "summary": [r for r in summary if r["signal"] == "thermo95" and r["index"] == "TAIEX"]}
 card_json = json.dumps(CARD, ensure_ascii=False, separators=(",", ":"))
-today_json = json.dumps({**CARD, "previous_daily": daily[-2] if len(daily) > 1 else None},
+today_json = json.dumps({**CARD, "previous_daily": daily[-2] if len(daily) > 1 else None, "generated_at": generated},
                         ensure_ascii=False, separators=(",", ":"))
 # 圖檔固定叫 og/today.png，網址後面加 ?v=（跟著「資料＋畫法」變）：社群網站的預覽快取會換新圖，
 # 以前分享出去的連結指向的檔案也一直存在，不會變成破圖
@@ -54,10 +55,8 @@ def seed_today(page):
     date = lambda value: value.replace("-", "/") if value else "無"
     stamp = "收盤資料日 " + date(thermo["asof"])
     if thermo.get("ptt_asof"):
-        stamp += "・PTT 文章至 " + date(thermo["ptt_asof"][5:])
+        stamp += "・PTT 最新發文 " + date(thermo["ptt_asof"][5:])
     stamp = e(stamp)
-    if thermo.get("ptt_lag_h", 0) > 3:
-        stamp += f'<small class="lb-stamp-note">最新文章距資料產生逾 {int(thermo["ptt_lag_h"])} 小時</small>'
     scale = "".join(
         ("<li class=\"is-now\" aria-current=\"true\">" if threshold == limit else "<li>")
         + f'<i class="lamp lamp--bottom" data-s="{"on" if threshold == limit else "off"}" aria-hidden="true"></i>'
@@ -66,6 +65,9 @@ def seed_today(page):
     )
     values = {
         "stamp": stamp,
+        "report-close": e(date(thermo["asof"])),
+        "report-ptt": e(date(thermo.get("ptt_asof"))),
+        "report-generated": e(date(generated)),
         "thermo-val": f"{t:.1f}",
         "thermo-chip": e(f"{level}（{level_range}）"),
         "thermo-scale": scale,
@@ -82,7 +84,7 @@ def seed_today(page):
         "sc-wscore": str(st["wscore"]["value"]),
     }
     for key, value in values.items():
-        tag = rf'(<(?P<tag>[a-z]+)\b[^>]*\bdata-draw="{key}"[^>]*>)[^<]*(</(?P=tag)>)'
+        tag = rf'(<(?P<tag>[a-z]+)\b[^>]*\bdata-(?:draw|seed)="{key}"[^>]*>)[^<]*(</(?P=tag)>)'
         page = re.sub(tag, lambda m: m[1] + value + m[3], page)
     page = page.replace(' data-draw="reading-status"', ' hidden data-draw="reading-status"', 1)
     if t >= 90:
@@ -157,7 +159,7 @@ HEAD = """<!doctype html>
 
 FOOT = """
 <footer class="site-foot">
-  資料產生時間：<span id="site-updated">—</span>（台灣時間）。收盤資料每天 15:40（平日）、22:10 自動更新；PTT 文章的更新時間見頁首。<br>
+  資料產生時間：<span id="site-updated">—</span>（台灣時間）。收盤資料每天 15:40（平日）、22:10 自動更新，PTT 最新發文時間見頁首。<br>
   資料來源：證交所、櫃買中心、期交所、FinMind、CBOE、PTT 股票版。畢業／虧損文另由 AI 讀內文確認。程式自動計算，可能有誤；歷史統計不代表未來，也不是投資建議。
 </footer>
 </body>
@@ -169,11 +171,12 @@ with open(os.path.join(OUT, "index.html"), "w", encoding="utf-8") as f:
     gc_head = (f'<script data-goatcounter="https://{GOATCOUNTER}.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>\n'
                if GOATCOUNTER else "")
     gc_note = "本站用 GoatCounter 統計瀏覽次數，不使用 cookie、不收集個人資料。<br>\n  " if GOATCOUNTER else ""
-    generated = next((item["value"] for item in status_data.get("meta", []) if item["label"] == "產生時間"), "—")
     f.write(HEAD.replace("%OG%", OG).replace("%FONTS%", FONTS)
             .replace("%TODAY%", today_json.replace("</", "<\\/")).replace("</head>", gc_head + "</head>")
             + seed_today(page) + FOOT.replace("  資料來源：", "  " + gc_note + "資料來源：", 1)
-            .replace('<span id="site-updated">—</span>', f'<span id="site-updated">{e(generated)}</span>'))
+            .replace('<span id="site-updated">—</span>', f'<span id="site-updated">{e(generated or "—")}</span>'))
+with open(os.path.join(OUT, "data", "report.json"), "w", encoding="utf-8") as f:
+    json.dump({"generated_at": generated}, f, separators=(",", ":"))
 shutil.copytree(BUILD / "assets", Path(OUT, "assets"), dirs_exist_ok=True)
 shutil.copyfile(BUILD / "card.js", os.path.join(OUT, "card.js"))
 open(os.path.join(OUT, "card.html"), "w", encoding="utf-8").write(CARD_HTML)

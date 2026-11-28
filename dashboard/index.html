@@ -81,7 +81,15 @@
   .lb-nav a[aria-current="true"] { background: var(--ink); color: var(--panel); }
   .lb-nav-mobile, .lb-quick-warn, .lb-reading-trend, .lb-current-lamps > summary { display: none; }
   .lb-top .lb-stamp { margin: 0; max-width: 17rem; font-size: var(--fs-cap); color: var(--ink-3); text-align: right; }
+  .lb-stamp > a { display: block; }
   .lb-stamp-note { display: block; color: var(--warn); font: inherit; font-weight: 500; }
+  .lb-stamp-note[hidden] { display: none; }
+  .lb-report-times { margin-top: 8px; }
+  .lb-report-times dl { margin: 6px 0; }
+  .lb-report-times dl div { display: grid; grid-template-columns: minmax(7.6em, 1fr) 1fr; gap: 8px; padding: 4px 0; border-bottom: 1px solid var(--rule); }
+  .lb-report-times dd { margin: 0; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .lb-report-times .lb-bar { margin-top: 6px; }
+  .lb-report-times .lb-btn[aria-disabled="true"] { opacity: 0.6; cursor: progress; }
 
   /* 今天 */
   .lb-today { background: var(--panel); border-bottom: 1px solid var(--rule); padding: 32px 0 28px; }
@@ -415,7 +423,7 @@
         </div>
       </details>
     </nav>
-    <p class="lb-stamp" data-draw="stamp" data-source="status">—</p>
+    <p class="lb-stamp"><a href="#lb-report-times" data-draw="stamp" data-source="status">—</a><small class="lb-stamp-note" data-report-notice hidden></small></p>
   </div>
 </header>
 
@@ -423,7 +431,7 @@
   <section class="lb-today" id="lb-today" aria-label="今天">
     <div class="lb-wrap lb-today-in">
       <div class="lb-reading">
-        <p class="lb-cap lb-stamp lb-stamp-m" data-draw="stamp" data-source="status">—</p>
+        <p class="lb-cap lb-stamp lb-stamp-m"><a href="#lb-report-times" data-draw="stamp" data-source="status">—</a><small class="lb-stamp-note" data-report-notice hidden></small></p>
         <h2>鄉民恐慌溫度</h2>
         <p class="lb-cap" data-draw="reading-status" data-source="status" role="status">正在載入恐慌溫度…</p>
         <p class="lb-reading-num"><b class="lb-num" data-draw="thermo-val" data-source="status" data-field="value" data-where="signal=thermo">—</b><small>/ 100</small><span class="lb-chip lb-level" data-draw="thermo-chip" data-source="status">—</span></p>
@@ -471,6 +479,20 @@
             <p class="lb-cap" data-draw="thermo-asof" data-source="status">—</p>
             <p>溫度越高，兩類文章的整體發文熱度越高。畢業／虧損文是分享做多認賠或重大虧損的文章，創作文以 PTT 標題的「創作」分類辨識。</p>
             <p>兩類文章各自比較過去 250 個交易日，算出篇數比這次少的天數比例，再平均換成 0–100。發文從當天 09:00 算到下一個交易日 09:00 前。</p>
+            <details class="lb-report-times" id="lb-report-times">
+              <summary>資料時間與更新</summary>
+              <dl>
+                <div><dt>收盤資料日</dt><dd data-seed="report-close">—</dd></div>
+                <div><dt>PTT 最新發文</dt><dd data-seed="report-ptt">—</dd></div>
+                <div><dt>網站資料產生</dt><dd data-seed="report-generated">—</dd></div>
+              </dl>
+              <p class="lb-cap">時間皆為台灣時間。PTT 顯示本站收錄文章的最新發文時間。鄉民恐慌溫度按最近有收盤資料的交易日計算。</p>
+              <div class="lb-bar" data-report-controls hidden>
+                <button class="lb-btn" type="button" data-report-check>檢查更新</button>
+                <button class="lb-btn" type="button" data-report-load hidden>載入新版資料</button>
+                <span class="lb-cap" data-report-result role="status"></span>
+              </div>
+            </details>
           </details>
           <details class="lb-more">
             <summary>這些訊號的歷史回測</summary>
