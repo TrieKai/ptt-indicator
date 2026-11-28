@@ -65,6 +65,13 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
     parse: (date: string) => new Date(date + 'T00:00:00Z'),
     iso: (date: Date) => date.toISOString().slice(0, 10),
     date: (date: Date) => date.toISOString().slice(0, 10).replaceAll('-', '/'),
+    dateW: (date: Date) => date.toISOString().slice(0, 10).replaceAll('-', '/') + '（' + '日一二三四五六'[date.getUTCDay()] + '）',
+    // 長區間標年；兩年內的月初刻度標「年/月」（手機只標「6月」，1 月標年份），其他刻度標「月/日」
+    axisFormat: (spanD: number, narrow: boolean) => {
+      const d3 = charts(), year = d3.utcFormat('%Y'), month = d3.utcFormat(narrow ? '%-m月' : '%Y/%m'), day = d3.utcFormat('%m/%d');
+      return (date: Date) => spanD >= 800 || (narrow && date.getUTCDate() === 1 && date.getUTCMonth() === 0) ? year(date)
+        : date.getUTCDate() === 1 ? month(date) : day(date);
+    },
     pct: (x: MaybeNumber) => x == null ? '—' : (x > 0 ? '+' : '') + x.toFixed(2) + '%',
     pct0: (x: MaybeNumber) => x == null ? '—' : Math.round(x) + '%',
     within5: (r: SummaryRow): string => r.ext_within5 == null ? '—' :
@@ -524,7 +531,7 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
           const lamp = document.createElement('i'); lamp.className = 'lamp lamp--' + fam; lamp.dataset.s = state;
           if (state === 'off') { lamp.style.setProperty('--ls', '6px'); lamp.style.borderWidth = '0'; lamp.style.background = 'var(--rule)'; }
           td.dataset.i = String(i); td.dataset.s = state; td.tabIndex = i === last ? 0 : -1;
-          td.setAttribute('aria-label', displayDate(dr.date) + ' ' + (label || r.name) + ' ' + (missing ? '待資料' : on ? '亮燈' : '未亮'));
+          td.setAttribute('aria-label', LB.dateW(LB.parse(dr.date)) + ' ' + (label || r.name) + ' ' + (missing ? '待資料' : on ? '亮燈' : '未亮'));
           td.append(lamp);
         });
         const v = tr.insertCell(); v.className = 'lb-v'; v.textContent = r.value == null ? '—' : UNIT[sig](r.value);
@@ -565,7 +572,7 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
       const r = statusRow(sig); if (!r) return;
       const state = td.dataset.s, isToday = i === last;
       tip.replaceChildren();
-      const b = document.createElement('b'); b.textContent = LB.date(LB.parse(dr.date)) + (isToday ? '（最新一天）' : ''); tip.append(b);
+      const b = document.createElement('b'); b.textContent = LB.dateW(LB.parse(dr.date)) + (isToday ? '・最新一天' : ''); tip.append(b);
       const lines = [tr.dataset.label + '・' + (state === 'missing' ? '當日待資料' : state === 'on' ? '亮燈' : '未亮')];
       if (sig === 'thermo') lines.push('那天溫度 ' + (dr.fear == null ? '—' : dr.fear.toFixed(1)));
       if (sig === 'dual') lines.push('那天畢業文 5 日 ' + dr.l5 + ' 篇・創作文熱度 ' + dr.cheat);
@@ -711,7 +718,7 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
     svg.append('g').attr('class', 'lb-grid').selectAll('line').data(ticks).join('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y).attr('y2', y);
     svg.append('g').selectAll<SVGTextElement, unknown>('text').data(ticks).join('text').attr('x', m.l - 6).attr('y', (v) => y(v) + 4).attr('text-anchor', 'end').text((v) => LB.num(v));
     svg.append('g').attr('class', 'lb-axis').attr('transform', `translate(0,${H - 20})`)
-      .call(d3.axisBottom<Date>(x).ticks(narrow ? 4 : 8).tickSizeOuter(0).tickFormat(d3.utcFormat(spanD < 800 ? '%Y/%m' : '%Y')));
+      .call(d3.axisBottom<Date>(x).ticks(narrow ? 4 : 8).tickSizeOuter(0).tickFormat(LB.axisFormat(spanD, narrow)));
     svg.append('path').datum(rows).attr('fill', 'none').attr('stroke-width', 1.4).style('stroke', 'var(--ink-2)')
       .attr('d', d3.line<typeof rows[number]>().x((r) => x(r.t)).y((r) => y(r.price)));
     const dates = new Set(rows.map((r) => r.date));
@@ -808,14 +815,14 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
         rule.attr('x1', x(r.t)).attr('x2', x(r.t)).attr('opacity', 1);
         const lit = all.filter(([k]) => r[`f_${k}`] === 1).map((s) => s[1]);
         tip.replaceChildren();
-        const b = document.createElement('b'); b.textContent = LB.date(r.t); tip.append(b);
+        const b = document.createElement('b'); b.textContent = LB.dateW(r.t); tip.append(b);
         [(LB.ix === 'TAIEX' ? '加權 ' : '櫃買 ') + LB.num(r.price, 2), (r.fear != null ? '恐慌溫度 ' + r.fear.toFixed(1) : '恐慌溫度 —') + (r.f_dual === 1 ? '・雙重確認亮燈' : '') + '・偏空警示 ' + r.wscore + ' / 3',
           lit.length ? '當天亮燈：' + lit.join('、') : '當天沒有已確認的亮燈'].forEach((t) => { const div = document.createElement('div'); div.textContent = t; tip.append(div); });
         const ri = rows.indexOf(r), near = ev.filter((q) => Math.abs((idxOf.get(q.date) ?? -99) - ri) <= 2).sort((a, b) => ORD[b.signal] - ORD[a.signal])[0];
         const nt = e.data.find((q) => q.signal === 'note' && q.start <= r.date && r.date <= q.end);
         if (nt?.signal === 'note' && !near?.note) { const div = document.createElement('div'); div.textContent = '事件註記：' + nt.note + '（' + nt.start.replaceAll('-', '/') + '–' + nt.end.slice(5).replace('-', '/') + '）'; tip.append(div); }
         if (near) {
-          const hd = document.createElement('b'); hd.textContent = LB.date(LB.parse(near.date)) + ' ' + (LB.SHORT[near.signal] || near.signal) + ' 標記'; tip.append(hd);
+          const hd = document.createElement('b'); hd.textContent = LB.dateW(LB.parse(near.date)) + ' ' + (LB.SHORT[near.signal] || near.signal) + ' 標記'; tip.append(hd);
           [near.value || ''].concat(LB.evLines(near)).filter(Boolean).forEach((t) => { const div = document.createElement('div'); div.textContent = t; tip.append(div); });
         }
         tip.hidden = false;
@@ -1249,7 +1256,7 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
     ([[90, 'var(--ink-3)'], [95, 'var(--lamp-blue)']] as const).forEach(([v, c]) => svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', yT(v)).attr('y2', yT(v))
       .style('stroke', c).attr('stroke-dasharray', '4 3'));
     svg.append('g').attr('class', 'lb-axis').attr('transform', `translate(0,${H - 22})`)
-      .call(d3.axisBottom<Date>(x).ticks(narrow ? 4 : 8).tickSizeOuter(0).tickFormat(d3.utcFormat(spanD < 800 ? '%Y/%m' : '%Y')));
+      .call(d3.axisBottom<Date>(x).ticks(narrow ? 4 : 8).tickSizeOuter(0).tickFormat(LB.axisFormat(spanD, narrow)));
     const byDate = new Map(rows.map((row, i) => [row.date, { row, i }]));
     const marks = e.data.flatMap((event) => {
       const position = byDate.get(event.date);
@@ -1310,7 +1317,7 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
         const r = rows[bis(rows, x.invert(px))];
         rule.attr('x1', x(r.t)).attr('x2', x(r.t)).attr('opacity', 1);
         tip.replaceChildren();
-        const b = document.createElement('b'); b.textContent = LB.date(r.t); tip.append(b);
+        const b = document.createElement('b'); b.textContent = LB.dateW(r.t); tip.append(b);
         const ri = rows.indexOf(r), near = evAll.find((mark) => Math.abs(mark.i - ri) <= 2)?.event;
         ['恐慌溫度 ' + r.fear.toFixed(1), '創作文 5 日 ' + r.c5 + ' 篇（熱度 ' + r.cheat + '）・畢業文 5 日 ' + r.l5 + ' 篇', '加權 ' + LB.num(r.taiex, 2)]
           .concat(r.f_dual ? ['雙重確認亮燈'] : []).concat(near ? LB.evLines(near) : [])

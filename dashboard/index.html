@@ -392,10 +392,10 @@
           <p><b class="lb-dual-name">PTT 恐慌文與大盤跌幅</b><span class="lb-chip" data-draw="dual-pill" data-source="status">—</span> <span class="lb-cap" data-draw="dual-recent" data-source="status"></span></p>
           <details class="lb-more" id="lb-dual-conditions">
             <summary>查看達標條件</summary>
-            <p>三項條件同時達標時亮燈，回測中稱為「雙重確認」。</p>
+            <p>下面三項全部達標才亮燈：前兩項看 PTT 鄉民有沒有恐慌，第三項看大盤是不是真的跌了。兩邊互相確認，所以圖表和回測叫它「雙重確認」。</p>
             <ul class="lb-dual-conditions">
               <li><div><b>畢業／虧損文</b><p>近 5 個交易日有 <span class="lb-num" data-draw="dual-l5" data-source="status">—</span> 篇，門檻是 3 篇。</p></div><b data-draw="dual-check-loss" data-source="status"></b></li>
-              <li><div><b>創作文熱度</b><p>目前 <span class="lb-num" data-draw="dual-ch" data-source="status">—</span>，門檻是 90。比較過去一年，每次都用 5 個交易日的篇數。</p></div><b data-draw="dual-check-creative" data-source="status"></b></li>
+              <li><div><b>創作文熱度</b><p>目前 <span class="lb-num" data-draw="dual-ch" data-source="status">—</span>，門檻是 90。熱度 90 代表近 5 個交易日的篇數比過去一年 90% 的日子多。</p></div><b data-draw="dual-check-creative" data-source="status"></b></li>
               <li><div><b>加權指數距高點</b><p>較近 60 日高點 <span class="lb-num" data-draw="dual-dd" data-source="status">—</span>，門檻是下跌至少 5%。</p></div><b data-draw="dual-check-drawdown" data-source="status"></b></li>
             </ul>
             <p class="lb-cap" data-draw="dual-last" data-source="status">—</p>
@@ -498,7 +498,7 @@
       </div>
       <div class="lb-legend">
         <span><i class="lamp lamp--bottom" data-s="on"></i>溫度第一次衝到 95 以上</span>
-        <span><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 0.5 11.5 6 6 11.5 0.5 6Z" fill="var(--ink)"/></svg>雙重確認</span>
+        <span><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 0.5 11.5 6 6 11.5 0.5 6Z" fill="var(--ink)"/></svg>雙重確認（PTT 恐慌文＋大盤跌幅）</span>
         <span><i class="lamp" data-s="on" style="--c:var(--ink-3)"></i>人工註記的事件、溫度未達 95</span>
       </div>
       <div class="lb-chart dash-skeleton" data-draw="thermo-chart" data-source="daily events"></div>
@@ -535,7 +535,7 @@
       <div class="lb-legend">
         <span><i class="lamp lamp--bottom" data-s="recent"></i>恐慌溫度 ≥90</span>
         <span><i class="lamp lamp--bottom" data-s="on"></i>恐慌溫度 ≥95</span>
-        <span><i class="lamp lamp--bottom lb-ring" data-s="on"></i>雙重確認</span>
+        <span><i class="lamp lamp--bottom lb-ring" data-s="on"></i>雙重確認（PTT 恐慌文＋大盤跌幅）</span>
       </div>
       <div class="lb-chart dash-skeleton" id="lb-main-chart" data-draw="chart" data-source="daily events"></div>
       <details class="lb-more lb-chart-events" hidden>
@@ -776,7 +776,7 @@
         <li>選擇權 P/C 成交量比：臺指選擇權賣權成交量 ÷ 買權成交量，高於第 95 百分位（大家搶買保護）／低於第 5 百分位。資料：期交所 Put/Call Ratio。台灣市場常看的「未平倉量比」習慣解讀方向相反（未平倉比高常被當成支撐），所以這裡用成交量比，未平倉比只在回測紀錄中參考。</li>
         <li>偏空警示：外資臺股期貨（大台）淨未平倉口數、淨部位 ÷ 全市場未平倉、5 日淨部位變化，任一項低於第 5 百分位就亮燈。外資空單會隨指數變高而增加（2018–2026 相關係數約 −0.85，多半是現貨避險與套利），而且歷史上空單極端之後通常繼續偏弱，所以不算進落底分數。多單極端（高於第 95 百分位）仍放在過熱訊號。資料：期交所三大法人期貨（經 FinMind 整理，與期交所官方 701 天比對一致）。</li>
         <li>臺指 VIX：期交所網站只提供最近 3 個月，完整歷史要到期貨智慧資訊商店付費申購，所以沒有放進回測。</li>
-        <li>雙重確認須同時符合三項條件。畢業／虧損文 5 日累計 ≥3 篇，創作文 5 日篇數的熱度 ≥90（比過去 250 個交易日中 90% 的日子多），加權指數距 60 日高點至少跌 5%。大盤條件是看到 2020/7/20 合一重挫的反例後加上的，門檻用 5% 或 8% 結果相同。隔天開盤進場。檢查過前後兩段（2019–2022、2023–2026）與相鄰門檻（畢業文 2–4 篇 × 創作文熱度 80–95），結果都一致。</li>
+        <li>雙重確認須同時符合三項條件：PTT 兩項、大盤一項，兩邊互相確認。畢業／虧損文 5 日累計 ≥3 篇，創作文 5 日篇數的熱度 ≥90（比過去 250 個交易日中 90% 的日子多），加權指數距 60 日高點至少跌 5%。大盤條件是看到 2020/7/20 合一重挫的反例後加上的，門檻用 5% 或 8% 結果相同。隔天開盤進場。檢查過前後兩段（2019–2022、2023–2026）與相鄰門檻（畢業文 2–4 篇 × 創作文熱度 80–95），結果都一致。</li>
         <li>事件說明：PTT 訊號的事件，會從當時 5 日內畢業文與創作文的標題，用關鍵字計算最常出現的主題（例如合一、航運、關稅／川普、被動元件、輝達／AI），並列出畢業文標題。2020/3、2021/5、2024/7、2024/8、2025/4 另有人工註記的事件名稱，是依公開資訊整理，請自行查證。</li>
         <li>鄉民恐慌溫度：創作文與畢業／虧損文的 5 日篇數，各自跟過去 250 個交易日比，算出比今天少的天數比例，兩者平均乘以 100。沒有相關文章時是 0。≥80、≥85、≥90、≥95 四個等級各自當作事件，用隔天開盤進場回測。門檻 95 是同時測過 90 與 95 後的結果，樣本只有個位數，請保守看待。</li>
         <li>落底分數與過熱分數各自統計近 5 個交易日亮過的訊號數，落底 0–7、過熱 0–8。歷史回測將分數 ≥3 或 ≥4 分別當作事件。「原 5 訊號」是加入選擇權、期貨與 VIX 之前的版本，留著對照。單日跌 3% 只當對照，不算進分數。同一個訊號 10 個交易日內重複亮燈只算第一次。兩個分數的回測效果都不明顯（20 日超額接近 0，p 值遠大於 0.05）。2026/11/27 起，首頁呈現落底面的參考燈號。過熱訊號亮燈後的 20 日超額在 0 附近或為正，可在燈號明細與回測表查看。</li>
