@@ -2,12 +2,13 @@ import type { BaseType, Selection } from 'd3';
 import { backtestSignals, eventColumnNames, families, isOption, markets, postSignals, statusSignals, validDate } from './data.ts';
 import type { BacktestEvent, BacktestSignal, DailyRow, EventField, EventRow, Family, LampSignal, LampState, Market, PostRow, PostSignal, StatusRow, StatusSignal, SummaryRow } from './data.ts';
 import type { Dashboard } from './runtime.ts';
+import { articleKinds, chartLinkUrl, chartSections, readChartLink } from './chart-link.ts';
+import type { ArticleKind, ChartKey } from './chart-link.ts';
 import { registerReadingComparison } from './reading-comparison.ts';
 import { dualStatus, FAM, temperatureLevels as T_LEVELS } from './signals.ts';
 
 type MaybeNumber = number | null | undefined;
 type Zoom = [Date, Date] | null;
-type ChartKey = 'chart' | 'thermo-chart';
 type UrlParams = Record<string, string | null>;
 type Cell = [text: string | null | undefined, value?: MaybeNumber, note?: string];
 type SignalLabels = [LampSignal, string][];
@@ -50,8 +51,9 @@ const strips: Record<Family, SignalLabels> = {
 
 export function registerDashboard(dash: Dashboard, charts: () => typeof import('d3')) {
   registerReadingComparison(dash.today);
+  let sharedDay = readChartLink(new URL(location.href));
   const state: ViewState = {
-    ix: 'TAIEX', tix: 'TAIEX', range: 'all', trange: '1y', strip: 'bottom',
+    ix: sharedDay?.market ?? 'TAIEX', tix: 'TAIEX', range: 'all', trange: '1y', strip: sharedDay?.strip ?? 'bottom',
     evsig: 'thermo95', eventIndex: 'TAIEX', eventDate: null, psig: 'creative', pevent: null,
     zMain: null, zTherm: null,
   };
@@ -106,6 +108,7 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
   const nativeClick = (event: MouseEvent) => event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
   const sectionUrl = (id: string, params: UrlParams) => {
     const url = new URL(location.href);
+    for (const key of ['day', 'strip', 'from', 'to', 'articles']) url.searchParams.delete(key);
     Object.entries(params).forEach(([k, v]) => v == null ? url.searchParams.delete(k) : url.searchParams.set(k, v));
     url.hash = id;
     return url;
@@ -169,11 +172,14 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
   window.addEventListener('popstate', syncSectionUrl);
   window.addEventListener('hashchange', openDisclosures);
 
-  document.querySelectorAll<HTMLSelectElement>('select[data-ix]').forEach((s) => s.addEventListener('change', () => {
-    if (!isOption(markets, s.value)) return;
-    LB.ix = s.value; document.querySelectorAll<HTMLSelectElement>('select[data-ix]').forEach((o) => { o.value = LB.ix; });
-    ['chart', 'sum-body', 'excess-bars', 'timing', 'timing-body'].forEach((n) => dash.draw(n));
-  }));
+  document.querySelectorAll<HTMLSelectElement>('select[data-ix]').forEach((s) => {
+    s.value = LB.ix;
+    s.addEventListener('change', () => {
+      if (!isOption(markets, s.value)) return;
+      LB.ix = s.value; document.querySelectorAll<HTMLSelectElement>('select[data-ix]').forEach((o) => { o.value = LB.ix; });
+      ['chart', 'sum-body', 'excess-bars', 'timing', 'timing-body'].forEach((n) => dash.draw(n));
+    });
+  });
   const chartRange = (formId: string, fromId: string, toId: string, rangeId: string, resetId: string, errorId: string, key: 'zMain' | 'zTherm', name: ChartKey, rangeKey: 'range' | 'trange') => {
     const form = byId(formId, HTMLFormElement);
     const from = byId(fromId, HTMLInputElement), to = byId(toId, HTMLInputElement);
@@ -183,12 +189,12 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
       error.textContent = text;
       [from, to].forEach((i) => i.setAttribute('aria-invalid', String(!!text)));
     };
-    const setZoom = (zoom: Zoom) => {
+    const setZoom = (zoom: Zoom, redraw = true) => {
       draft = false;
       showError('');
       LB[key] = zoom;
       range.value = zoom ? 'custom' : LB[rangeKey];
-      dash.draw(name);
+      if (redraw) dash.draw(name);
     };
     [from, to].forEach((i) => i.addEventListener('input', () => { draft = true; showError(''); }));
     form.addEventListener('submit', (event) => {
@@ -217,8 +223,22 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
   };
   const indexRange = chartRange('lb-index-range-form', 'lb-from', 'lb-to', 'lb-range', 'lb-zreset', 'lb-date-error', 'zMain', 'chart', 'range');
   const thermoRange = chartRange('lb-thermo-range-form', 'lb-tfrom', 'lb-tto', 'lb-trange', 'lb-treset', 'lb-tdate-error', 'zTherm', 'thermo-chart', 'trange');
+  const restoreSharedRange = (key: ChartKey, rows: readonly { date: string; t: Date }[], range: typeof indexRange) => {
+    if (sharedDay?.key !== key) return null;
+    const link = sharedDay;
+    sharedDay = null;
+    const position = rows.findIndex((row) => row.date === link.day);
+    if (position < 0 || rows.length < 2) return link;
+    const bounds = link.range;
+    const shared = bounds ? rows.filter((row) => row.date >= bounds[0] && row.date <= bounds[1]) : [];
+    const nearby = shared.length >= 2 ? shared : rows.slice(Math.max(0, position - 10), position + 11);
+    range.setZoom([nearby[0].t, nearby[nearby.length - 1].t], false);
+    return link;
+  };
   document.querySelectorAll<HTMLSelectElement>('#lb-tix').forEach((s) => s.addEventListener('change', () => { if (isOption(markets, s.value)) { LB.tix = s.value; dash.draw('thermo-levels'); } }));
-  document.querySelectorAll<HTMLSelectElement>('#lb-strip').forEach((s) => s.addEventListener('change', () => { if (isOption(families, s.value)) { LB.strip = s.value; dash.draw('chart'); } }));
+  const stripSelect = byId('lb-strip', HTMLSelectElement);
+  stripSelect.value = LB.strip;
+  stripSelect.addEventListener('change', () => { if (isOption(families, stripSelect.value)) { LB.strip = stripSelect.value; dash.draw('chart'); } });
   eventSelect.addEventListener('change', () => {
     pendingEventReveal = null;
     setEvents(selectedOption(eventSelect, backtestSignals, eventSelect.value, LB.evsig), null, LB.eventIndex);
@@ -658,8 +678,6 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
   const DUAL_LIT = '雙重確認：畢業文、創作文與大盤跌幅都達標';
   const PICK_HINT = '點圖可查這個交易日與文章';
   const dayPick: Record<ChartKey, string | null> = { chart: null, 'thermo-chart': null };
-  const articleKinds = ['loss', 'creative'] as const;
-  type ArticleKind = typeof articleKinds[number];
   const articleLabels = { loss: '畢業／虧損文', creative: '創作文' };
   const dayKind: Record<ChartKey, ArticleKind> = { chart: 'loss', 'thermo-chart': 'loss' };
   const judgeLabel = (judge: PostRow['judge']) => judge ? { title: '待 AI 讀內文・暫依標題計入', ref: '歷史內文判定', ai: 'AI 已讀內文' }[judge] : '';
@@ -712,29 +730,45 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
     const summary = requireElement(details.firstElementChild, HTMLElement);
     summary.after(byId('lb-chart-day-controls', HTMLTemplateElement).content.cloneNode(true));
     const evidence = requireElement(details.querySelector('.lb-day-evidence'), HTMLDetailsElement);
-    const input = requireElement(details.querySelector('input'), HTMLInputElement);
+    const input = requireElement(details.querySelector('input[type="date"]'), HTMLInputElement);
     const prev = requireElement(details.querySelector('[data-step="-1"]'), HTMLButtonElement);
     const next = requireElement(details.querySelector('[data-step="1"]'), HTMLButtonElement);
     const message = requireElement(details.querySelector('.lb-day-date-status'), HTMLElement);
     const reading = requireElement(details.querySelector('.lb-day-reading'), HTMLElement);
+    const shareButton = requireElement(details.querySelector('.lb-day-share button'), HTMLButtonElement);
+    const shareInput = requireElement(details.querySelector('.lb-day-share input'), HTMLInputElement);
+    const shareStatus = requireElement(details.querySelector('.lb-day-share p'), HTMLElement);
     message.id = sectionId + '-day-status';
     input.setAttribute('aria-describedby', message.id);
-    return { details, summary, evidence, input, prev, next, message, reading };
+    return { details, summary, evidence, input, prev, next, message, reading, shareButton, shareInput, shareStatus };
   };
   const dayPickers = { chart: dayPicker('lb-chart-sec'), 'thermo-chart': dayPicker('lb-thermo') };
-  const connectDayPicker = (key: ChartKey, rows: readonly DailyRow[], market: Market, showPick: (date: string | null) => void) => {
-    const { details, summary, evidence, input, prev, next, message, reading } = dayPickers[key];
+  const connectDayPicker = (key: ChartKey, rows: readonly DailyRow[], market: Market, showPick: (date: string | null) => void,
+    link: ReturnType<typeof readChartLink>) => {
+    const { details, summary, evidence, input, prev, next, message, reading, shareButton, shareInput, shareStatus } = dayPickers[key];
     const price = market === 'TAIEX' ? 'taiex' : 'tpex';
-    let selected = rows.findIndex((row) => row.date === dayPick[key]);
+    let selected = rows.findIndex((row) => row.date === (link?.day ?? dayPick[key]));
     input.min = rows[0].date;
     input.max = rows[rows.length - 1].date;
     details.hidden = false;
+    if (link) {
+      details.open = true;
+      if (selected >= 0 && link.articles) {
+        dayKind[key] = link.articles;
+        evidence.open = true;
+      }
+      requestAnimationFrame(() => {
+        if (location.hash === '#' + chartSections[key]) summary.scrollIntoView({ block: 'start' });
+      });
+    }
     const select = (position: number) => {
       selected = position;
       const row = rows[selected];
       input.value = dayPick[key] = row.date;
       input.removeAttribute('aria-invalid');
       message.hidden = true;
+      shareInput.hidden = true;
+      shareStatus.textContent = '';
       prev.setAttribute('aria-disabled', String(selected === 0));
       next.setAttribute('aria-disabled', String(selected === rows.length - 1));
       const title = document.createElement('b'); title.textContent = LB.dateW(LB.parse(row.date));
@@ -751,7 +785,12 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
       showPick(details.open ? row.date : null);
       dash.draw('day-posts');
     };
+    const missingDay = link && selected < 0;
     select(selected < 0 ? rows.length - 1 : selected);
+    if (missingDay) {
+      message.textContent = '找不到連結中的 ' + displayDate(link.day) + '，目前顯示這張圖的最新交易日。';
+      message.hidden = false;
+    }
     details.ontoggle = () => showPick(details.open ? rows[selected].date : null);
     input.onchange = () => {
       const position = rows.findIndex((row) => row.date === input.value);
@@ -762,6 +801,27 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
     };
     prev.onclick = () => { if (selected > 0) select(selected - 1); };
     next.onclick = () => { if (selected < rows.length - 1) select(selected + 1); };
+    const shareUrl = () => chartLinkUrl(new URL(location.href), {
+      key, day: rows[selected].date, market, strip: LB.strip,
+      range: [rows[0].date, rows[rows.length - 1].date],
+      articles: evidence.open ? dayKind[key] : null,
+    });
+    shareButton.onclick = async () => {
+      const url = shareUrl();
+      try {
+        await navigator.clipboard.writeText(url);
+        if (url !== shareUrl()) return;
+        shareInput.hidden = true;
+        shareStatus.textContent = '已複製交易日連結';
+      } catch {
+        if (url !== shareUrl()) return;
+        shareInput.value = url;
+        shareInput.hidden = false;
+        shareInput.focus();
+        shareInput.select();
+        shareStatus.textContent = '請複製下方連結';
+      }
+    };
     return (position: number) => {
       details.open = true;
       select(position);
@@ -811,7 +871,12 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
       });
       result.append(list);
     };
-    filter.onchange = () => { if (isOption(articleKinds, filter.value)) render(filter.value); };
+    filter.onchange = () => {
+      if (!isOption(articleKinds, filter.value)) return;
+      dayPickers[key].shareStatus.textContent = '';
+      dayPickers[key].shareInput.hidden = true;
+      render(filter.value);
+    };
     el.append(range, filter, result);
     render(dayKind[key]);
   });
@@ -889,6 +954,7 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
       const price = r[key];
       return price == null ? [] : [{ ...r, t: LB.parse(r.date), price }];
     });
+    const shared = restoreSharedRange('chart', rows, indexRange);
     const last = rows.at(-1)?.t;
     const back = last ? { all: null, '3y': d3.utcYear.offset(last, -3), '1y': d3.utcYear.offset(last, -1), '6m': d3.utcMonth.offset(last, -6) }[LB.range] : null;
     if (back && !LB.zMain) rows = rows.filter((r) => r.t >= back);
@@ -1003,7 +1069,7 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
       const t = date ? LB.parse(date) : null;
       pick.attr('opacity', t && t >= rows[0].t && t <= rows[rows.length - 1].t ? 1 : 0).attr('x1', t ? x(t) : 0).attr('x2', t ? x(t) : 0);
     };
-    const selectDay = connectDayPicker('chart', rows, LB.ix, showPick);
+    const selectDay = connectDayPicker('chart', rows, LB.ix, showPick, shared);
     let dragX: number | null = null;
     svg.append('rect').attr('x', m.l).attr('y', 0).attr('width', W - m.l - m.r).attr('height', H - 20).attr('fill', 'transparent').style('cursor', 'crosshair')
       .on('click', (evt: MouseEvent) => {
@@ -1462,6 +1528,7 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
     LB.done(el); el.replaceChildren();
     if (d.status !== 'ok' || e.status !== 'ok') { const p = document.createElement('p'); p.className = 'lb-err'; p.textContent = '溫度資料載入失敗。'; el.append(p); return; }
     let rows = d.data.filter((r): r is DailyRow & { fear: number } => r.fear != null).map((r) => ({ ...r, t: LB.parse(r.date) }));
+    const shared = restoreSharedRange('thermo-chart', rows, thermoRange);
     const last = rows.at(-1)?.t;
     const back = last ? { all: null, '3y': d3.utcYear.offset(last, -3), '1y': d3.utcYear.offset(last, -1), '6m': d3.utcMonth.offset(last, -6) }[LB.trange] : null;
     if (back && !LB.zTherm) rows = rows.filter((r) => r.t >= back);
@@ -1542,7 +1609,7 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
       const t = date ? LB.parse(date) : null;
       pick.attr('opacity', t && t >= rows[0].t && t <= rows[rows.length - 1].t ? 1 : 0).attr('x1', t ? x(t) : 0).attr('x2', t ? x(t) : 0);
     };
-    const selectDay = connectDayPicker('thermo-chart', rows, 'TAIEX', showPick);
+    const selectDay = connectDayPicker('thermo-chart', rows, 'TAIEX', showPick, shared);
     let dragX: number | null = null;
     svg.append('rect').attr('x', m.l).attr('y', 0).attr('width', W - m.l - m.r).attr('height', H - 22).attr('fill', 'transparent').style('cursor', 'crosshair')
       .on('click', (evt: MouseEvent) => {

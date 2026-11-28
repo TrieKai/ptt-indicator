@@ -272,6 +272,8 @@
   .lb-day-reading dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(7.5em, 1fr)); gap: 8px 12px; margin: 6px 0 0; padding: 8px 0; border-block: 1px solid var(--rule); }
   .lb-day-reading dt { color: var(--ink-3); font-size: var(--fs-cap); }
   .lb-day-reading dd { margin: 1px 0 0; font-size: var(--fs-body); font-weight: 700; }
+  .lb-day-share { margin-bottom: 10px; }
+  .lb-day-share input { box-sizing: border-box; width: 100%; margin-top: 6px; padding: 5px 8px; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); color: var(--ink); font: inherit; }
   .lb-day-evidence select { max-width: 100%; margin-block: 3px 6px; }
   .lb-day-posts { margin: 4px 0 0; }
   .lb-day-posts ol { list-style: none; margin: 6px 0 0; padding: 0; }
@@ -280,6 +282,8 @@
   .lb-day-when, .lb-day-rec { font-size: var(--fs-cap); color: var(--ink-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
   @media (max-width: 560px) {
     .lb-day-controls input, .lb-day-controls button { min-height: 44px; font-size: 1rem; }
+    .lb-day-share button, .lb-day-share input { min-height: 44px; }
+    .lb-day-share input { font-size: 1rem; }
     .lb-day-controls .lb-date { flex-basis: 100%; }
     .lb-day-posts li { grid-template-columns: minmax(0, 1fr) auto; }
     .lb-day-when { grid-column: 1 / -1; }
@@ -551,6 +555,13 @@
       </div>
       <p class="lb-err lb-day-date-status" role="status" hidden></p>
       <div class="lb-day-reading" role="status"></div>
+      <div class="lb-day-share">
+        <div class="lb-bar">
+          <button type="button" class="lb-btn">複製交易日連結</button>
+          <p class="lb-cap" role="status"></p>
+        </div>
+        <input type="text" aria-label="交易日連結" readonly hidden>
+      </div>
     </template>
     <section class="lb-sec" id="lb-thermo">
       <h2>恐慌溫度走勢</h2>
