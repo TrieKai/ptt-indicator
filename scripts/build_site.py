@@ -2,7 +2,7 @@
 編譯 TypeScript、驗證資料並建立 GitHub Pages 靜態頁。
 
 用法: python3 -I scripts/build_site.py dashboard site
-輸出: site/index.html、site/data/{daily,events,summary,status,posts}.json、
+輸出: site/index.html、site/data/{daily,events,summary,status,posts,post_days}.json、
       site/assets/、site/card.js、site/card.html、site/og/.target
 """
 import sys, os, shutil, json, hashlib, html, re, subprocess
@@ -14,7 +14,7 @@ BUILD = ROOT / "dashboard" / ".build"
 subprocess.run(["node", "scripts/validate-dashboard-data.mjs", str(Path(SRC, "data").resolve())], cwd=ROOT, check=True)
 subprocess.run(["npm", "run", "build"], cwd=ROOT, check=True)
 
-NAMES = ["daily", "events", "summary", "status", "posts"]
+NAMES = ["daily", "events", "summary", "status", "posts", "post_days"]
 page = open(os.path.join(SRC, "index.html"), encoding="utf-8").read()
 SITE_URL = os.environ.get("SITE_URL", "https://triekai.github.io/ptt-indicator/")
 # 瀏覽人數統計（GoatCounter，不用 cookie）：填上站台代號（<code>.goatcounter.com 的 code）才會啟用；空字串＝不統計
@@ -29,6 +29,8 @@ status_data = load("status")
 status, summary, daily = status_data["rows"], load("summary")["rows"], load("daily")["rows"]
 CARD = {"status": status, "daily": daily[-1], "summary": [r for r in summary if r["signal"] == "thermo95" and r["index"] == "TAIEX"]}
 card_json = json.dumps(CARD, ensure_ascii=False, separators=(",", ":"))
+today_json = json.dumps({**CARD, "previous_daily": daily[-2] if len(daily) > 1 else None},
+                        ensure_ascii=False, separators=(",", ":"))
 # 圖檔固定叫 og/today.png，網址後面加 ?v=（跟著「資料＋畫法」變）：社群網站的預覽快取會換新圖，
 # 以前分享出去的連結指向的檔案也一直存在，不會變成破圖
 OG_NAME = "og/today.png"
@@ -169,7 +171,7 @@ with open(os.path.join(OUT, "index.html"), "w", encoding="utf-8") as f:
     gc_note = "本站用 GoatCounter 統計瀏覽次數，不使用 cookie、不收集個人資料。<br>\n  " if GOATCOUNTER else ""
     generated = next((item["value"] for item in status_data.get("meta", []) if item["label"] == "產生時間"), "—")
     f.write(HEAD.replace("%OG%", OG).replace("%FONTS%", FONTS)
-            .replace("%TODAY%", card_js).replace("</head>", gc_head + "</head>")
+            .replace("%TODAY%", today_json.replace("</", "<\\/")).replace("</head>", gc_head + "</head>")
             + seed_today(page) + FOOT.replace("  資料來源：", "  " + gc_note + "資料來源：", 1)
             .replace('<span id="site-updated">—</span>', f'<span id="site-updated">{e(generated)}</span>'))
 shutil.copytree(BUILD / "assets", Path(OUT, "assets"), dirs_exist_ok=True)

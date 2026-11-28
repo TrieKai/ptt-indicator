@@ -1,6 +1,6 @@
 import * as v from 'valibot';
 
-export const dataNames = ['daily', 'events', 'summary', 'status', 'posts'] as const;
+export const dataNames = ['daily', 'events', 'summary', 'status', 'posts', 'post_days'] as const;
 export type DataName = typeof dataNames[number];
 
 export const markets = ['TAIEX', 'TPEx'] as const;
@@ -124,6 +124,7 @@ const postRow = v.object({
   ...article, signal: v.picklist(postSignals), event: v.string(), posted: v.string(), nrec: v.string(),
   pending: v.optional(v.boolean()), judge: v.optional(v.picklist(['ref', 'ai', 'title'])),
 });
+export type PostRow = v.InferOutput<typeof postRow>;
 
 const meta = v.object({ label: v.string(), value: v.string(), type: v.optional(v.string()), lang: v.optional(v.string()) });
 type Meta = v.InferOutput<typeof meta>;
@@ -138,6 +139,8 @@ const payloads = {
   summary: v.object({ rows: v.array(summaryRow), meta: v.optional(v.array(meta)) }),
   status: v.object({ rows: statusRows, meta: v.optional(v.array(meta)) }),
   posts: v.object({ rows: v.array(postRow), meta: v.optional(v.array(meta)), windows: v.optional(v.record(v.string(), postWindow)) }),
+  post_days: v.object({ rows: v.array(postRow), meta: v.optional(v.array(meta)),
+    trading_days: v.pipe(v.array(date), v.nonEmpty()), latest_window: postWindow }),
 };
 
 type Rows = { [K in DataName]: v.InferOutput<typeof payloads[K]>['rows'] };
@@ -145,13 +148,17 @@ type LoadedByName = { [K in DataName]: {
   status: 'ok';
   data: Rows[K];
   meta?: Meta[];
-} & (K extends 'posts' ? { windows?: Record<string, PostWindow> } : unknown) };
+} & (K extends 'posts' ? { windows?: Record<string, PostWindow> } : K extends 'post_days' ? {
+  trading_days: string[];
+  latest_window: PostWindow;
+} : unknown) };
 export type DataStore = { [K in DataName]: LoadedByName[K] | { status: 'idle' | 'loading' | 'error' } };
 export type LoadState<K extends DataName> = DataStore[K];
 
 const todaySchema = v.object({
   status: statusRows,
   daily: dailyRow,
+  previous_daily: v.nullish(dailyRow),
   summary: v.array(summaryRow),
 });
 export type Today = v.InferOutput<typeof todaySchema>;

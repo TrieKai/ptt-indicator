@@ -84,7 +84,7 @@ for q in 斷頭 違約交割 歸零 賠光 追繳 爆倉; do python3 -I scripts/
 for q in 財富自由 歐印 噴 翻倍 創新高 賺爛 上車; do python3 -I scripts/fetch_ptt_search.py "$q" 200 "data/greed_$q.json"; done
 python3 -I scripts/fetch_ptt_latest.py 40 data/ptt_latest.json                   # PTT 最新文章（站內搜尋會延遲收錄）
 curl -sL https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv -o data/cboe_vix.csv
-python3 -I scripts/build_dashboard_data.py data dashboard/data                   # 產生 daily/events/summary/status/posts.json
+python3 -I scripts/build_dashboard_data.py data dashboard/data                   # 產生網站資料與逐日文章檔 post_days.json
 ```
 
 - 融資：FinMind `TaiwanStockTotalMarginPurchaseShortSale`；`scripts/fetch_margin.py` 可直接從證交所抓（較慢，每天一次請求）。融資當晚才公布，只用隔天進場。

@@ -1,11 +1,13 @@
 import type { BaseType, Selection } from 'd3';
 import { backtestSignals, eventColumnNames, families, isOption, markets, postSignals, statusSignals, validDate } from './data.ts';
-import type { BacktestEvent, BacktestSignal, DailyRow, EventField, EventRow, Family, LampSignal, LampState, Market, PostSignal, StatusRow, StatusSignal, SummaryRow } from './data.ts';
+import type { BacktestEvent, BacktestSignal, DailyRow, EventField, EventRow, Family, LampSignal, LampState, Market, PostRow, PostSignal, StatusRow, StatusSignal, SummaryRow } from './data.ts';
 import type { Dashboard } from './runtime.ts';
+import { registerReadingComparison } from './reading-comparison.ts';
 import { dualStatus, FAM, temperatureLevels as T_LEVELS } from './signals.ts';
 
 type MaybeNumber = number | null | undefined;
 type Zoom = [Date, Date] | null;
+type ChartKey = 'chart' | 'thermo-chart';
 type UrlParams = Record<string, string | null>;
 type Cell = [text: string | null | undefined, value?: MaybeNumber, note?: string];
 type SignalLabels = [LampSignal, string][];
@@ -47,6 +49,7 @@ const strips: Record<Family, SignalLabels> = {
 };
 
 export function registerDashboard(dash: Dashboard, charts: () => typeof import('d3')) {
+  registerReadingComparison(dash.today);
   const state: ViewState = {
     ix: 'TAIEX', tix: 'TAIEX', range: 'all', trange: '1y', strip: 'bottom',
     evsig: 'thermo95', eventIndex: 'TAIEX', eventDate: null, psig: 'creative', pevent: null,
@@ -81,10 +84,6 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
     evLabel: (r: EventRow) => r.note || (r.themes ? r.themes.split('、')[0].replace(/×\d+$/, '') : ''),
     titles: (r: EventRow) => (r.loss_titles == null || r.loss_titles === '' ? [] : Array.isArray(r.loss_titles) ? r.loss_titles : String(r.loss_titles).split('｜')).filter(Boolean),
     evLines: (r: EventRow, includeTitles = true) => [r.note ? '事件：' + r.note : '', r.themes ? '標題主題：' + r.themes : '', includeTitles && LB.titles(r).length ? '畢業文：' + LB.titles(r).slice(0, 2).join('、') : ''].filter(Boolean),
-    syncDates: (a: string, b: string, rows: readonly { t: Date }[]) => {
-      document.querySelectorAll<HTMLInputElement>(a).forEach((i) => { i.value = LB.iso(rows[0].t); });
-      document.querySelectorAll<HTMLInputElement>(b).forEach((i) => { i.value = LB.iso(rows[rows.length - 1].t); });
-    },
     // 在圖上畫一顆燈：s = 'on' 實心、'recent' 外圈加內點、'off' 空心
     lampSvg: <P extends BaseType, PD>(g: Selection<SVGGElement, unknown, P, PD>, cx: number, cy: number, r: number, color: string, s: LampState) => {
       g.append('circle').attr('cx', cx).attr('cy', cy).attr('r', r - 1).style('fill', s === 'on' ? color : 'var(--color-bg)').style('stroke', color).attr('stroke-width', 2);
@@ -175,24 +174,49 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
     LB.ix = s.value; document.querySelectorAll<HTMLSelectElement>('select[data-ix]').forEach((o) => { o.value = LB.ix; });
     ['chart', 'sum-body', 'excess-bars', 'timing', 'timing-body'].forEach((n) => dash.draw(n));
   }));
-  const lbZoomInputs = (fromId: string, toId: string, rangeId: string, resetId: string, errorId: string, key: 'zMain' | 'zTherm', name: string, rangeKey: 'range' | 'trange') => {
+  const chartRange = (formId: string, fromId: string, toId: string, rangeId: string, resetId: string, errorId: string, key: 'zMain' | 'zTherm', name: ChartKey, rangeKey: 'range' | 'trange') => {
+    const form = byId(formId, HTMLFormElement);
     const from = byId(fromId, HTMLInputElement), to = byId(toId, HTMLInputElement);
     const range = byId(rangeId, HTMLSelectElement), error = byId(errorId, HTMLElement);
+    let draft = false;
     const showError = (text: string) => {
       error.textContent = text;
-      [from, to].forEach((i) => { i.setAttribute('aria-invalid', String(!!text)); i.setAttribute('aria-describedby', errorId); });
+      [from, to].forEach((i) => i.setAttribute('aria-invalid', String(!!text)));
     };
-    [from, to].forEach((i) => i.addEventListener('change', () => {
-      const text = !from.value || !to.value ? '請填寫起訖日期。' : from.value >= to.value ? '結束日期須晚於開始日期。' : '';
-      showError(text);
-      if (!text) { LB[key] = [LB.parse(from.value), LB.parse(to.value)]; dash.draw(name); }
-    }));
-    const reset = () => { showError(''); LB[key] = null; dash.draw(name); };
+    const setZoom = (zoom: Zoom) => {
+      draft = false;
+      showError('');
+      LB[key] = zoom;
+      range.value = zoom ? 'custom' : LB[rangeKey];
+      dash.draw(name);
+    };
+    [from, to].forEach((i) => i.addEventListener('input', () => { draft = true; showError(''); }));
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (!validDate(from.value) || !validDate(to.value)) { showError('請填寫開始和結束日期。'); return; }
+      if (from.value >= to.value) { showError('結束日期須晚於開始日期。'); return; }
+      const daily = dash.data('daily');
+      const price = LB.ix === 'TAIEX' ? 'taiex' : 'tpex';
+      if (daily.status !== 'ok') { showError('交易日資料尚未載入。'); return; }
+      const count = daily.data.filter((row) => row.date >= from.value && row.date <= to.value &&
+        (name === 'thermo-chart' ? row.fear != null : row[price] != null)).length;
+      if (count < 2) { showError('這段期間少於 2 個有資料的交易日，請加大範圍。'); return; }
+      setZoom([LB.parse(from.value), LB.parse(to.value)]);
+    });
+    const reset = () => setZoom(null);
     byId(resetId, HTMLElement).addEventListener('click', reset);
     range.addEventListener('change', () => { if (isOption(ranges, range.value)) { LB[rangeKey] = range.value; reset(); } });
+    return {
+      setZoom,
+      sync(rows: readonly { date: string }[]) {
+        if (draft) return;
+        from.value = rows[0].date;
+        to.value = rows[rows.length - 1].date;
+      },
+    };
   };
-  lbZoomInputs('lb-from', 'lb-to', 'lb-range', 'lb-zreset', 'lb-date-error', 'zMain', 'chart', 'range');
-  lbZoomInputs('lb-tfrom', 'lb-tto', 'lb-trange', 'lb-treset', 'lb-tdate-error', 'zTherm', 'thermo-chart', 'trange');
+  const indexRange = chartRange('lb-index-range-form', 'lb-from', 'lb-to', 'lb-range', 'lb-zreset', 'lb-date-error', 'zMain', 'chart', 'range');
+  const thermoRange = chartRange('lb-thermo-range-form', 'lb-tfrom', 'lb-tto', 'lb-trange', 'lb-treset', 'lb-tdate-error', 'zTherm', 'thermo-chart', 'trange');
   document.querySelectorAll<HTMLSelectElement>('#lb-tix').forEach((s) => s.addEventListener('change', () => { if (isOption(markets, s.value)) { LB.tix = s.value; dash.draw('thermo-levels'); } }));
   document.querySelectorAll<HTMLSelectElement>('#lb-strip').forEach((s) => s.addEventListener('change', () => { if (isOption(families, s.value)) { LB.strip = s.value; dash.draw('chart'); } }));
   eventSelect.addEventListener('change', () => {
@@ -631,19 +655,39 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
     a.href = article.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = article.title;
     return a;
   };
-  // 圖表上指到或點某一天：那天往前 5 個交易日計入恐慌溫度的畢業文，就是「畢業文 5 日 N 篇」的那幾篇
   const DUAL_LIT = '雙重確認：畢業文、創作文與大盤跌幅都達標';
-  const PICK_HINT = '點一下在圖下列出文章連結';
-  type ChartKey = 'chart' | 'thermo-chart';
+  const PICK_HINT = '點圖可查這個交易日與文章';
   const dayPick: Record<ChartKey, string | null> = { chart: null, 'thermo-chart': null };
-  let lastZoom = 0;   // 拖曳放大後緊接著的 click 不算點選
-  const lossWindow = (date: string) => {
-    const p = dash.data('posts'), d = dash.data('daily');
+  const articleKinds = ['loss', 'creative'] as const;
+  type ArticleKind = typeof articleKinds[number];
+  const articleLabels = { loss: '畢業／虧損文', creative: '創作文' };
+  const dayKind: Record<ChartKey, ArticleKind> = { chart: 'loss', 'thermo-chart': 'loss' };
+  const judgeLabel = (judge: PostRow['judge']) => judge ? { title: '待 AI 讀內文・暫依標題計入', ref: '歷史內文判定', ai: 'AI 已讀內文' }[judge] : '';
+  let lastZoom = 0;
+  let indexedPosts: PostRow[] | undefined;
+  const postsByDay = new Map<string, PostRow[]>();
+  const articleWindow = (date: string) => {
+    const p = dash.data('post_days'), d = dash.data('daily');
     if (p.status !== 'ok' || d.status !== 'ok') return null;
-    const i = d.data.findIndex((r) => r.date === date);
-    if (i < 0) return null;
-    const days = d.data.slice(Math.max(0, i - 4), i + 1).map((r) => r.date), keys = new Set(days.map((day) => 'day-' + day));
-    return { days, posts: p.data.filter((r) => r.signal === 'loss' && keys.has(r.event)) };
+    if (indexedPosts !== p.data) {
+      indexedPosts = p.data;
+      postsByDay.clear();
+      for (const post of p.data) {
+        if (!post.event.startsWith('day-')) continue;
+        const day = post.event.slice(4);
+        const posts = postsByDay.get(day);
+        if (posts) posts.push(post);
+        else postsByDay.set(day, [post]);
+      }
+    }
+    const row = d.data.find((row) => row.date === date);
+    const dates = p.trading_days;
+    const i = dates.indexOf(date);
+    if (i < 0 || !row) return null;
+    const days = dates.slice(Math.max(0, i - 4), i + 1);
+    const next = dates[i + 1];
+    return { days, row, end: next ?? p.latest_window.end, estimated: !next && p.latest_window.end_estimated,
+      posts: days.flatMap((day) => postsByDay.get(day) ?? []) };
   };
   const shortTitle = (title: string) => {
     const t = title.replace(/^[[［][^\]］]*[\]］]\s*/, '');
@@ -651,46 +695,125 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
   };
   // 提示框用：最新的 2 篇標題；文章資料還沒載入或那幾天沒有畢業文就回傳 null
   const lossTitles = (date: string, count: number) => {
-    const w = count ? lossWindow(date) : null;
-    if (!w?.posts.length) return null;
-    return w.posts.slice().reverse().slice(0, 2).map((r) => shortTitle(r.title)).join('、') + (w.posts.length > 2 ? ' 等 ' + w.posts.length + ' 篇' : '');
+    const posts = count ? articleWindow(date)?.posts.filter((post) => post.signal === 'loss') : null;
+    if (!posts?.length) return null;
+    return posts.slice().reverse().slice(0, 2).map((r) => shortTitle(r.title)).join('、') + (posts.length > 2 ? ' 等 ' + posts.length + ' 篇' : '');
+  };
+  const loadHoverPosts = (event: PointerEvent) => {
+    if (event.pointerType === 'mouse' && dash.data('post_days').status === 'idle') void dash.reload?.('post_days');
   };
   const postedW = (posted: string) => {
     const m = /^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2})/.exec(posted);
     return m && validDate(m[1]) ? LB.dateW(LB.parse(m[1])).slice(5) + ' ' + m[2] : posted;
   };
-  const pickDay = (key: ChartKey, date: string) => {
-    dayPick[key] = date;
-    dash.draw('day-posts');
-    document.querySelector<HTMLElement>(`[data-draw="day-posts"][data-chart="${key}"]`)?.scrollIntoView({ block: 'nearest' });
+  const dayPicker = (sectionId: string) => {
+    const section = byId(sectionId, HTMLElement);
+    const details = requireElement(section.querySelector('.lb-day-picker'), HTMLDetailsElement);
+    const summary = requireElement(details.firstElementChild, HTMLElement);
+    summary.after(byId('lb-chart-day-controls', HTMLTemplateElement).content.cloneNode(true));
+    const evidence = requireElement(details.querySelector('.lb-day-evidence'), HTMLDetailsElement);
+    const input = requireElement(details.querySelector('input'), HTMLInputElement);
+    const prev = requireElement(details.querySelector('[data-step="-1"]'), HTMLButtonElement);
+    const next = requireElement(details.querySelector('[data-step="1"]'), HTMLButtonElement);
+    const message = requireElement(details.querySelector('.lb-day-date-status'), HTMLElement);
+    const reading = requireElement(details.querySelector('.lb-day-reading'), HTMLElement);
+    message.id = sectionId + '-day-status';
+    input.setAttribute('aria-describedby', message.id);
+    return { details, summary, evidence, input, prev, next, message, reading };
+  };
+  const dayPickers = { chart: dayPicker('lb-chart-sec'), 'thermo-chart': dayPicker('lb-thermo') };
+  const connectDayPicker = (key: ChartKey, rows: readonly DailyRow[], market: Market, showPick: (date: string | null) => void) => {
+    const { details, summary, evidence, input, prev, next, message, reading } = dayPickers[key];
+    const price = market === 'TAIEX' ? 'taiex' : 'tpex';
+    let selected = rows.findIndex((row) => row.date === dayPick[key]);
+    input.min = rows[0].date;
+    input.max = rows[rows.length - 1].date;
+    details.hidden = false;
+    const select = (position: number) => {
+      selected = position;
+      const row = rows[selected];
+      input.value = dayPick[key] = row.date;
+      input.removeAttribute('aria-invalid');
+      message.hidden = true;
+      prev.setAttribute('aria-disabled', String(selected === 0));
+      next.setAttribute('aria-disabled', String(selected === rows.length - 1));
+      const title = document.createElement('b'); title.textContent = LB.dateW(LB.parse(row.date));
+      const metrics = document.createElement('dl');
+      for (const [label, value] of [
+        [market === 'TAIEX' ? '加權收盤' : '櫃買收盤', LB.num(row[price], 2)],
+        ['鄉民恐慌溫度', row.fear?.toFixed(1) ?? '—'],
+        ['畢業／虧損文（近 5 日）', row.l5 + ' 篇'], ['創作文（近 5 日）', row.c5 + ' 篇'],
+      ]) {
+        const item = document.createElement('div'), term = document.createElement('dt'), data = document.createElement('dd');
+        term.textContent = label; data.textContent = value; item.append(term, data); metrics.append(item);
+      }
+      reading.replaceChildren(title, metrics);
+      showPick(details.open ? row.date : null);
+      dash.draw('day-posts');
+    };
+    select(selected < 0 ? rows.length - 1 : selected);
+    details.ontoggle = () => showPick(details.open ? rows[selected].date : null);
+    input.onchange = () => {
+      const position = rows.findIndex((row) => row.date === input.value);
+      if (position >= 0) { select(position); return; }
+      input.setAttribute('aria-invalid', 'true');
+      message.textContent = '這天在圖上沒有交易資料。可改選日期，或用前後一個交易日。';
+      message.hidden = false;
+    };
+    prev.onclick = () => { if (selected > 0) select(selected - 1); };
+    next.onclick = () => { if (selected < rows.length - 1) select(selected + 1); };
+    return (position: number) => {
+      details.open = true;
+      select(position);
+      evidence.open = true;
+      summary.scrollIntoView({ block: 'nearest' });
+    };
   };
   dash.draw('day-posts', (el) => {
     const key: ChartKey = el.dataset.chart === 'chart' ? 'chart' : 'thermo-chart', date = dayPick[key];
-    el.replaceChildren(); el.hidden = !date;
+    el.replaceChildren();
     if (!date) return;
-    const head = document.createElement('div'); head.className = 'lb-day-posts-h';
-    const h = document.createElement('b'); h.textContent = LB.dateW(LB.parse(date)) + ' 計入的畢業文';
-    const close = document.createElement('button'); close.type = 'button'; close.className = 'lb-btn'; close.textContent = '收起';
-    close.addEventListener('click', () => { dayPick[key] = null; dash.draw(key); dash.draw('day-posts'); });
-    head.append(h, close); el.append(head);
-    const posts = dash.data('posts'), w = lossWindow(date);
-    const cap = document.createElement('p'); el.append(cap);
-    if (!w) { cap.className = posts.status === 'error' ? 'lb-err' : 'lb-cap'; cap.textContent = posts.status === 'error' ? '文章資料載入失敗。' : '正在載入文章…'; return; }
-    cap.className = 'lb-cap';
-    const range = displayDate(w.days[0]).slice(5) + '–' + displayDate(date).slice(5);
-    cap.textContent = w.posts.length ? '往前 5 個交易日（' + range + '）計入恐慌溫度的 ' + w.posts.length + ' 篇，新的在上面。'
-      : '往前 5 個交易日（' + range + '）沒有計入恐慌溫度的畢業文。';
-    if (!w.posts.length) return;
-    const list = document.createElement('ol');
-    w.posts.slice().reverse().forEach((r) => {
-      const li = document.createElement('li');
-      const when = document.createElement('span'); when.className = 'lb-day-when'; when.textContent = postedW(r.posted);
-      const title = document.createElement('span'); title.append(articleLink(r) || r.title);
-      if (r.judge === 'title') { const s = document.createElement('span'); s.className = 'lb-pend'; s.textContent = '待 AI 讀內文・暫依標題計入'; title.append(s); }
-      const rec = document.createElement('span'); rec.className = 'lb-day-rec'; rec.textContent = r.nrec ? '推文 ' + r.nrec : '';
-      li.append(when, title, rec); list.append(li);
-    });
-    el.append(list);
+    const posts = dash.data('post_days');
+    const window = articleWindow(date);
+    if (posts.status !== 'ok') return; // 載入與重試由區塊狀態顯示。
+    if (!window) { el.textContent = '這個交易日沒有可核對的文章範圍。'; return; }
+    const start = displayDate(window.days[0]);
+    const range = document.createElement('p'); range.className = 'lb-cap';
+    range.textContent = '台灣時間 ' + start + ' 09:00 至 ' + displayDate(window.end) + ' 09:00' +
+      (window.estimated ? '（結束日暫按下一個平日估計）' : '') + '。';
+    const count = { loss: window.row.l5, creative: window.row.c5 };
+    const filter = document.createElement('select'); filter.setAttribute('aria-label', '計入溫度的文章類別');
+    articleKinds.forEach((kind) => filter.add(new Option(articleLabels[kind] + '（' + count[kind] + ' 篇）', kind)));
+    filter.value = dayKind[key];
+    const result = document.createElement('div');
+    const render = (kind: ArticleKind) => {
+      dayKind[key] = kind;
+      const rows = window.posts.filter((post) => post.signal === kind).reverse();
+      result.replaceChildren();
+      if (rows.length !== count[kind] || !rows.length) {
+        const cap = document.createElement('p'); cap.className = 'lb-cap'; cap.setAttribute('role', 'status');
+        cap.textContent = rows.length !== count[kind] ? '已留存 ' + rows.length + ' 篇明細，這段期間共計入 ' + count[kind] + ' 篇。'
+          : '這段期間沒有計入溫度的' + articleLabels[kind] + '。';
+        result.append(cap);
+      }
+      if (!rows.length) return;
+      const list = document.createElement('ol');
+      rows.forEach((r) => {
+        const li = document.createElement('li');
+        const when = document.createElement('span'); when.className = 'lb-day-when'; when.textContent = postedW(r.posted);
+        const title = document.createElement('span'); title.append(articleLink(r) || r.title);
+        if (r.judge) {
+          const judge = document.createElement('small'); judge.className = r.judge === 'title' ? 'lb-pend' : 'lb-cell-note';
+          judge.textContent = judgeLabel(r.judge); title.append(judge);
+        }
+        const rec = document.createElement('span'); rec.className = 'lb-day-rec'; rec.textContent = r.nrec ? '推文 ' + r.nrec : '';
+        li.append(when, title, rec); list.append(li);
+      });
+      result.append(list);
+    };
+    filter.onchange = () => { if (isOption(articleKinds, filter.value)) render(filter.value); };
+    el.append(range, filter, result);
+    render(dayKind[key]);
   });
 
   const eventEvidence = (event: EventRow) => {
@@ -755,6 +878,7 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
   dash.draw('chart', (el) => {
     const d3 = charts();
     const d = dash.data('daily'), e = dash.data('events');
+    dayPickers.chart.details.hidden = true;
     const disclosure = el.nextElementSibling;
     if (disclosure instanceof HTMLElement) disclosure.hidden = true;
     if (d.status === 'loading' || e.status === 'loading') { el.replaceChildren(); el.textContent = '—'; return; }
@@ -771,7 +895,7 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
     const zoom = LB.zMain;
     if (zoom) rows = rows.filter((r) => r.t >= zoom[0] && r.t <= zoom[1]);
     if (rows.length < 2) { const p = document.createElement('p'); p.className = 'lb-err'; p.textContent = '這段期間沒有資料，請按「重設範圍」。'; el.append(p); return; }
-    LB.syncDates("#lb-from", "#lb-to", rows);
+    indexRange.sync(rows);
     const strip = LB.STRIP[LB.strip], stripC = LB.FAMC[LB.strip];
     const W = Math.max(280, el.clientWidth), narrow = W < 560;
     const priceH = narrow ? 220 : 300, rowH = 14, stripTop = priceH + 16;
@@ -879,14 +1003,14 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
       const t = date ? LB.parse(date) : null;
       pick.attr('opacity', t && t >= rows[0].t && t <= rows[rows.length - 1].t ? 1 : 0).attr('x1', t ? x(t) : 0).attr('x2', t ? x(t) : 0);
     };
-    showPick(dayPick.chart);
+    const selectDay = connectDayPicker('chart', rows, LB.ix, showPick);
     let dragX: number | null = null;
     svg.append('rect').attr('x', m.l).attr('y', 0).attr('width', W - m.l - m.r).attr('height', H - 20).attr('fill', 'transparent').style('cursor', 'crosshair')
       .on('click', (evt: MouseEvent) => {
         if (Date.now() - lastZoom < 400) return;
-        const r = rows[bis(rows, x.invert(d3.pointer(evt)[0]))];
-        showPick(r.date); pickDay('chart', r.date);
+        selectDay(bis(rows, x.invert(d3.pointer(evt)[0])));
       })
+      .on('pointerenter', loadHoverPosts)
       .on('pointerdown', function (evt: PointerEvent) {
         if (evt.pointerType !== 'mouse' || evt.button !== 0) return;
         dragX = d3.pointer(evt)[0]; selR.attr('x', dragX).attr('width', 0); this.setPointerCapture(evt.pointerId); evt.preventDefault();
@@ -894,8 +1018,13 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
       .on('pointerup', (evt: PointerEvent) => {
         if (dragX == null) return;
         const px = d3.pointer(evt)[0], a = Math.min(px, dragX), b = Math.max(px, dragX); dragX = null; selR.attr('width', 0);
-        if (b - a > 8) { lastZoom = Date.now(); LB.zMain = [x.invert(a), x.invert(b)]; dash.draw('chart'); }
+        if (b - a > 8) {
+          lastZoom = Date.now();
+          const start = bis(rows, x.invert(a)), end = bis(rows, x.invert(b));
+          if (start < end) indexRange.setZoom([rows[start].t, rows[end].t]);
+        }
       })
+      .on('pointercancel', () => { dragX = null; selR.attr('width', 0); })
       .on('pointermove', (evt: PointerEvent) => {
         const [px] = d3.pointer(evt);
         if (dragX != null) { selR.attr('x', Math.min(px, dragX)).attr('width', Math.abs(px - dragX)); tip.hidden = true; return; }
@@ -950,6 +1079,19 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
   });
   const sampleNote = (n: MaybeNumber) => n == null ? '' : n + ' 筆';
   const sample20Note = (r: SummaryRow) => r.n20 == null ? '' : '20 日有效 ' + r.n20;
+  const eventListLink = (row: SummaryRow, text: string) => {
+    const link = document.createElement('a');
+    const { signal, index, name, n } = row;
+    link.textContent = text;
+    link.setAttribute('aria-label', text + '，查看' + name + '的 ' + n + ' 次事件');
+    link.href = sectionUrl('lb-events', { signal, event: null, index }).href;
+    link.addEventListener('click', (event) => {
+      if (nativeClick(event)) return;
+      event.preventDefault();
+      goEvents(signal, null, index);
+    });
+    return link;
+  };
   dash.draw('sum-body', (element) => {
     const el = requireElement(element, HTMLTableSectionElement);
     const s = dash.data('summary'); el.replaceChildren();
@@ -961,6 +1103,7 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
       writeCells(tr, headers, [[r.name], [String(r.n), null, sample20Note(r)], [r.entry], [LB.pct(r.ret5), r.ret5, sampleNote(r.n5)], [LB.pct(r.ret20), r.ret20], [LB.pct(r.ret60), r.ret60, sampleNote(r.n60)],
         [LB.pct(r.excess5), r.excess5], [LB.pct(r.excess20), r.excess20], [LB.pct0(r.beat20)], [r.p20 == null ? '—' : r.p20.toFixed(3)],
         [LB.pct(r.excess60), r.excess60], [LB.pct0(r.beat60)], [r.p60 == null ? '—' : r.p60.toFixed(3)]]);
+      if (r.n > 0) tr.cells[1].firstChild?.replaceWith(eventListLink(r, String(r.n)));
     });
   });
 
@@ -1212,7 +1355,7 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
       }
       if (r.judge) {
         const s = document.createElement('span'); s.className = r.judge === 'title' ? 'lb-pend' : 'lb-cell-note';
-        s.textContent = { title: '待 AI 讀內文・暫依標題計入', ref: '歷史內文判定', ai: 'AI 已讀內文' }[r.judge] || '';
+        s.textContent = judgeLabel(r.judge);
         t0.append(s);
       }
       const td = tr.insertCell(); td.className = 'lb-l';
@@ -1298,6 +1441,7 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
         [LB.pct(r.ret60), r.ret60, sampleNote(r.n60)],
       ]);
       tr.cells[2].classList.add('lb-levels-sample');
+      if (r.n > 0) tr.cells[2].querySelector('small')?.replaceChildren(eventListLink(r, '共 ' + r.n + ' 次事件'));
       if (k === 'dual') {
         const link = document.createElement('a');
         link.href = '#lb-dual-conditions'; link.textContent = label;
@@ -1311,6 +1455,7 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
   dash.draw('thermo-chart', (el) => {
     const d3 = charts();
     const d = dash.data('daily'), e = dash.data('events');
+    dayPickers['thermo-chart'].details.hidden = true;
     const disclosure = el.nextElementSibling;
     if (disclosure instanceof HTMLElement) disclosure.hidden = true;
     if (d.status === 'loading' || e.status === 'loading') { el.replaceChildren(); el.textContent = '—'; return; }
@@ -1323,18 +1468,20 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
     const zoom = LB.zTherm;
     if (zoom) rows = rows.filter((r) => r.t >= zoom[0] && r.t <= zoom[1]);
     if (rows.length < 2) { const p = document.createElement('p'); p.className = 'lb-err'; p.textContent = '這段期間沒有溫度資料，請按「重設範圍」。'; el.append(p); return; }
-    LB.syncDates("#lb-tfrom", "#lb-tto", rows);
-    const W = Math.max(280, el.clientWidth), narrow = W < 560, topH = narrow ? 120 : 160, gap = 18, botH = narrow ? 130 : 170, H = topH + gap + botH + 24;
+    thermoRange.sync(rows);
+    const W = Math.max(280, el.clientWidth), narrow = W < 560, topH = narrow ? 136 : 176, gap = 26, botH = narrow ? 130 : 170, H = topH + gap + botH + 24;
     const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', '加權指數與鄉民恐慌溫度走勢');
     const [lo, hi] = d3.extent(rows, (r) => r.taiex);
     if (lo == null || hi == null) return;
-    const yP = d3.scaleLog().domain([lo * 0.97, hi * 1.03]).range([topH - 4, 6]);
+    const yP = d3.scaleLog().domain([lo * 0.97, hi * 1.03]).range([topH - 4, 28]);
     let pt = yP.ticks(4).filter((v) => v >= lo * 0.97 && v <= hi * 1.03); while (pt.length > 4) pt = pt.filter((v, i) => i % 2 === 0);
     const probe = svg.append('g').selectAll<SVGTextElement, unknown>('text').data(pt.map((v) => LB.num(v)).concat(['100'])).join('text').text((t) => t);
     const m = { l: Math.ceil(Math.max(...probe.nodes().map((n) => n.getComputedTextLength()))) + 10, r: 8 };
     probe.remove();
     const x = d3.scaleUtc().domain([rows[0].t, rows[rows.length - 1].t]).range([m.l, W - m.r]);
     const yT = d3.scaleLinear().domain([0, 100]).range([topH + gap + botH, topH + gap]);
+    svg.append('text').attr('class', 'lb-chart-track').attr('x', m.l).attr('y', 13).text('加權指數（點）');
+    svg.append('text').attr('class', 'lb-chart-track').attr('x', m.l).attr('y', topH + 15).text('鄉民恐慌溫度（0–100）');
     svg.append('g').attr('class', 'lb-grid').selectAll('line').data(pt).join('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', yP).attr('y2', yP);
     svg.append('g').selectAll<SVGTextElement, unknown>('text').data(pt).join('text').attr('x', m.l - 6).attr('y', (v) => yP(v) + 4).attr('text-anchor', 'end').text((v) => LB.num(v));
     svg.append('path').datum(rows).attr('fill', 'none').attr('stroke-width', 1.4).style('stroke', 'var(--ink-2)').attr('d', d3.line<typeof rows[number]>().x((r) => x(r.t)).y((r) => yP(r.taiex)));
@@ -1374,7 +1521,7 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
     labeled.sort((a, b) => a.event.date.localeCompare(b.event.date));
     svg.append('g').selectAll<SVGTextElement, unknown>('text').data(labeled).join('text')
       .attr('x', ({ row }) => Math.min(Math.max(x(row.t), m.l + 30), W - m.r - 30))
-      .attr('y', ({ row }, k) => Math.max(10, yP(row.taiex) - 24 - (k % 2) * 12)).attr('text-anchor', 'middle')
+      .attr('y', ({ row }, k) => Math.max(25, yP(row.taiex) - 24 - (k % 2) * 12)).attr('text-anchor', 'middle')
       .style('font-size', '11px').style('font-weight', 500).style('fill', 'var(--ink)')
       .style('paint-order', 'stroke').style('stroke', 'var(--color-bg)').style('stroke-width', '3px').style('stroke-linejoin', 'round').text(({ event }) => LB.evLabel(event));
     const nlab = marks.filter(({ event }) => event.signal === 'note' && !evAll.some((q) => q.event.note === event.note));
@@ -1395,14 +1542,14 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
       const t = date ? LB.parse(date) : null;
       pick.attr('opacity', t && t >= rows[0].t && t <= rows[rows.length - 1].t ? 1 : 0).attr('x1', t ? x(t) : 0).attr('x2', t ? x(t) : 0);
     };
-    showPick(dayPick['thermo-chart']);
+    const selectDay = connectDayPicker('thermo-chart', rows, 'TAIEX', showPick);
     let dragX: number | null = null;
     svg.append('rect').attr('x', m.l).attr('y', 0).attr('width', W - m.l - m.r).attr('height', H - 22).attr('fill', 'transparent').style('cursor', 'crosshair')
       .on('click', (evt: MouseEvent) => {
         if (Date.now() - lastZoom < 400) return;
-        const r = rows[bis(rows, x.invert(d3.pointer(evt)[0]))];
-        showPick(r.date); pickDay('thermo-chart', r.date);
+        selectDay(bis(rows, x.invert(d3.pointer(evt)[0])));
       })
+      .on('pointerenter', loadHoverPosts)
       .on('pointerdown', function (evt: PointerEvent) {
         if (evt.pointerType !== 'mouse' || evt.button !== 0) return;
         dragX = d3.pointer(evt)[0]; selR.attr('x', dragX).attr('width', 0); this.setPointerCapture(evt.pointerId); evt.preventDefault();
@@ -1410,8 +1557,13 @@ export function registerDashboard(dash: Dashboard, charts: () => typeof import('
       .on('pointerup', (evt: PointerEvent) => {
         if (dragX == null) return;
         const px = d3.pointer(evt)[0], a = Math.min(px, dragX), b = Math.max(px, dragX); dragX = null; selR.attr('width', 0);
-        if (b - a > 8) { lastZoom = Date.now(); LB.zTherm = [x.invert(a), x.invert(b)]; dash.draw('thermo-chart'); }
+        if (b - a > 8) {
+          lastZoom = Date.now();
+          const start = bis(rows, x.invert(a)), end = bis(rows, x.invert(b));
+          if (start < end) thermoRange.setZoom([rows[start].t, rows[end].t]);
+        }
       })
+      .on('pointercancel', () => { dragX = null; selR.attr('width', 0); })
       .on('pointermove', (evt: PointerEvent) => {
         const [px] = d3.pointer(evt);
         if (dragX != null) { selR.attr('x', Math.min(px, dragX)).attr('width', Math.abs(px - dragX)); tip.hidden = true; return; }

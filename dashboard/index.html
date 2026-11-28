@@ -112,6 +112,14 @@
   .lb-dual-conditions li p { margin: 0; }
   .lb-dual-conditions li b { color: var(--ink); }
   .lb-reading-links { display: grid; justify-items: start; gap: 6px; margin-top: 12px; }
+  .lb-compare { width: 100%; }
+  .lb-compare-summary { color: var(--ink-3); font-size: var(--fs-cap); }
+  .lb-compare-table { border-collapse: collapse; width: 100%; margin: 6px 0 10px; font-variant-numeric: tabular-nums; text-align: left; }
+  .lb-compare-table th, .lb-compare-table td { border-bottom: 1px solid var(--rule); padding: 5px 6px; }
+  .lb-compare-table thead th { color: var(--ink-3); font-size: var(--fs-cap); font-weight: 500; }
+  .lb-compare-table tbody th { width: 44%; font-weight: 500; }
+  .lb-compare .lb-bar { margin: 8px 0 4px; }
+  .lb-compare button[aria-disabled="true"] { color: var(--ink-3); cursor: default; }
   .lb-history { margin: 12px 0 8px; }
   .lb-history p { margin: 0 0 8px; }
   .lb-history p:last-child { margin-bottom: 0; }
@@ -251,25 +259,41 @@
   .lb-chart-events { min-width: 0; }
   .lb-chart-events select { max-width: 100%; }
   .lb-chart-event { margin: 8px 0 0; }
+  .lb-chart-dates form, .lb-day-controls { margin-top: 8px; }
+  .lb-chart-dates output, .lb-day-date-status { margin-top: 4px; }
+  .lb-chart-dates output { display: block; }
+  .lb-chart-dates output:empty { display: none; }
   .lb-chart .lb-pick { stroke: var(--ink-2); stroke-width: 1; stroke-dasharray: 3 3; }
   .lb-tip .lb-tip-hint { color: var(--ink-3); }
-  .lb-day-posts { margin: 10px 0 0; padding-top: 10px; border-top: 1px solid var(--rule); }
-  .lb-day-posts-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 2px; }
+  .lb-day-picker > summary { min-height: 34px; color: var(--ink); font-weight: 700; }
+  .lb-day-controls input { min-width: 0; }
+  .lb-day-controls button[aria-disabled="true"] { opacity: 0.6; cursor: default; }
+  .lb-day-reading { margin: 10px 0; color: var(--ink); }
+  .lb-day-reading dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(7.5em, 1fr)); gap: 8px 12px; margin: 6px 0 0; padding: 8px 0; border-block: 1px solid var(--rule); }
+  .lb-day-reading dt { color: var(--ink-3); font-size: var(--fs-cap); }
+  .lb-day-reading dd { margin: 1px 0 0; font-size: var(--fs-body); font-weight: 700; }
+  .lb-day-evidence select { max-width: 100%; margin-block: 3px 6px; }
+  .lb-day-posts { margin: 4px 0 0; }
   .lb-day-posts ol { list-style: none; margin: 6px 0 0; padding: 0; }
   .lb-day-posts li { display: grid; grid-template-columns: 9.5em minmax(0, 1fr) auto; gap: 2px 12px; align-items: baseline; padding: 7px 0; border-top: 1px solid var(--rule); font-size: var(--fs-sm); }
+  .lb-day-posts li a { overflow-wrap: anywhere; }
   .lb-day-when, .lb-day-rec { font-size: var(--fs-cap); color: var(--ink-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
   @media (max-width: 560px) {
+    .lb-day-controls input, .lb-day-controls button { min-height: 44px; font-size: 1rem; }
+    .lb-day-controls .lb-date { flex-basis: 100%; }
     .lb-day-posts li { grid-template-columns: minmax(0, 1fr) auto; }
     .lb-day-when { grid-column: 1 / -1; }
   }
   .lb-chart.dash-skeleton { min-height: 260px; }
   .lb-chart svg { display: block; width: 100%; height: auto; overflow: visible; }
   .lb-chart text { font-size: 12px; fill: var(--ink-3); font-family: var(--font); }
+  .lb-chart text.lb-chart-track { fill: var(--ink-2); font-weight: 700; }
   .lb-chart .lb-axis path, .lb-chart .lb-axis line { stroke: var(--cds-chart-axis); }
   .lb-chart .lb-grid line { stroke: var(--cds-chart-grid); }
   .lb-tip { position: absolute; pointer-events: none; background: var(--panel); color: var(--ink); border: 1px solid var(--rule); box-shadow: var(--shadow-tip); border-radius: 4px;
             padding: 8px 10px; font-size: var(--fs-cap); line-height: 1.55; max-width: 280px; z-index: 3; }
   .lb-tip b { font-weight: 700; }
+  .lb-chart > .lb-tip { max-width: min(280px, 100%); box-sizing: border-box; }
   .lb-tip div { text-wrap: pretty; }
   .lb-tip--fixed { position: fixed; z-index: 20; }
   .lb-matrix td.lb-d { cursor: default; }
@@ -399,7 +423,7 @@
         <h2>鄉民恐慌溫度</h2>
         <p class="lb-cap" data-draw="reading-status" data-source="status" role="status">正在載入恐慌溫度…</p>
         <p class="lb-reading-num"><b class="lb-num" data-draw="thermo-val" data-source="status" data-field="value" data-where="signal=thermo">—</b><small>/ 100</small><span class="lb-chip lb-level" data-draw="thermo-chip" data-source="status">—</span></p>
-        <p class="lb-what">用 PTT 股票版畢業文與創作文的篇數衡量市場情緒。</p>
+        <p class="lb-what">把 PTT 股票版近 5 個交易日的畢業文與創作文篇數，和過去一年相比。</p>
         <ol class="lb-scale lb-scale-desktop" data-draw="thermo-scale" data-source="status" aria-label="溫度等級"></ol>
         <div class="lb-dual" id="lb-dual">
           <i class="lamp lamp--bottom" data-draw="dual-lamp" data-source="status" data-s="missing" aria-hidden="true"></i>
@@ -419,15 +443,30 @@
         <a href="#lb-warnings-now" class="lb-quick-warn"><i class="lamp lamp--warn" data-draw="warn-lamp" data-source="status" data-s="missing" aria-hidden="true"></i><b>偏空警示</b><span class="lb-cap">近 5 個交易日 <b class="lb-num" data-draw="sc-wscore" data-source="status">—</b>／3 項</span></a>
         <div class="lb-reading-links">
           <a class="lb-btn lb-reading-trend" href="#lb-thermo">看恐慌溫度走勢</a>
+          <details class="lb-more lb-compare" id="lb-reading-comparison" hidden>
+            <summary>比較近期變化 <span class="lb-compare-summary"></span></summary>
+            <p class="lb-cap" data-comparison-date></p>
+            <table class="lb-compare-table" aria-label="近期讀值比較">
+              <thead><tr><th scope="col">項目</th><th scope="col" data-comparison-base>基準</th><th scope="col">本次</th></tr></thead>
+              <tbody></tbody>
+            </table>
+            <div class="lb-bar">
+              <button type="button" class="lb-btn" data-comparison-save>記住這次讀值</button>
+              <button type="button" class="lb-btn" data-comparison-clear hidden>清除記錄</button>
+            </div>
+            <p class="lb-cap">記錄存在這個瀏覽器，下次回來可直接比較。</p>
+            <p class="lb-cap" data-comparison-message role="status" hidden></p>
+          </details>
           <details class="lb-more">
             <summary>看近 5 個交易日文章</summary>
             <p><a href="?post=creative&amp;date=window-latest#lb-posts" data-post-window="creative">創作文 <span class="lb-num" data-draw="thermo-c5" data-source="status">—</span> 篇</a>・<a href="?post=loss&amp;date=window-latest#lb-posts" data-post-window="loss">畢業／虧損文 <span class="lb-num" data-draw="thermo-l5" data-source="status">—</span> 篇</a></p>
           </details>
           <details class="lb-more">
-            <summary>溫度刻度與算法</summary>
+            <summary>溫度怎麼看</summary>
             <ol class="lb-scale lb-scale-mobile" data-draw="thermo-scale" data-source="status" aria-label="溫度等級"></ol>
             <p class="lb-cap" data-draw="thermo-asof" data-source="status">—</p>
-            <p>把創作文與畢業／虧損文的近 5 日篇數，分別和過去 250 個交易日比。算出比本次篇數少的天數比例，再將兩個比例平均並換成 0–100。發文從當天 09:00 算到下一個交易日 09:00 前。</p>
+            <p>溫度越高，兩類文章的整體發文熱度越高。畢業／虧損文是分享做多認賠或重大虧損的文章，創作文以 PTT 標題的「創作」分類辨識。</p>
+            <p>兩類文章各自比較過去 250 個交易日，算出篇數比這次少的天數比例，再平均換成 0–100。發文從當天 09:00 算到下一個交易日 09:00 前。</p>
           </details>
           <details class="lb-more">
             <summary>這些訊號的歷史回測</summary>
@@ -445,7 +484,7 @@
           <summary>查看今日燈號</summary>
           <div class="lb-fams-h">
             <h3>其他訊號</h3>
-            <p class="lb-cap">落底面包含 PTT 與市場數據，個別燈號供參考。偏空警示顯示近 5 個交易日亮過的項目數。</p>
+            <p class="lb-cap">落底面的 PTT 與市場燈號供參考。偏空警示看的是 3 項外資期貨部位指標，有幾項在近 5 個交易日亮過。</p>
           </div>
           <div class="lb-key" role="note" aria-label="燈號怎麼看">
             <b class="lb-key-h">燈號怎麼看</b>
@@ -504,6 +543,15 @@
   <p class="lb-wrap lb-cap lb-disclaim">報酬數字紅色是漲、綠色是跌（台股習慣）；燈號顏色只代表訊號類別。回測期間 2019/1 起。PTT 訊號只看得到沒被刪的文章。歷史統計不代表未來，也不是投資建議。</p>
 
   <div class="lb-wrap lb-main">
+    <template id="lb-chart-day-controls">
+      <div class="lb-bar lb-day-controls">
+        <label class="lb-date">交易日 <input type="date" required></label>
+        <button type="button" class="lb-btn" data-step="-1">前一交易日</button>
+        <button type="button" class="lb-btn" data-step="1">後一交易日</button>
+      </div>
+      <p class="lb-err lb-day-date-status" role="status" hidden></p>
+      <div class="lb-day-reading" role="status"></div>
+    </template>
     <section class="lb-sec" id="lb-thermo">
       <h2>恐慌溫度走勢</h2>
       <div class="lb-bar">
@@ -511,24 +559,41 @@
           <option value="1y">近 1 年</option>
           <option value="3y">近 3 年</option>
           <option value="all">2019 年至今</option>
+          <option value="custom" disabled hidden>自訂期間</option>
         </select>
-        <label class="lb-date">從 <input type="date" id="lb-tfrom"></label>
-        <label class="lb-date">到 <input type="date" id="lb-tto"></label>
         <button type="button" class="lb-btn" id="lb-treset">重設範圍</button>
-        <span id="lb-tdate-error" class="lb-err" role="status"></span>
       </div>
+      <details class="lb-more lb-chart-dates">
+        <summary>自訂日期範圍</summary>
+        <form class="lb-bar" id="lb-thermo-range-form" novalidate>
+          <label class="lb-date">開始 <input type="date" id="lb-tfrom" aria-describedby="lb-tdate-error" required></label>
+          <label class="lb-date">結束 <input type="date" id="lb-tto" aria-describedby="lb-tdate-error" required></label>
+          <button type="submit" class="lb-btn">套用範圍</button>
+        </form>
+        <output id="lb-tdate-error" class="lb-err" for="lb-tfrom lb-tto"></output>
+      </details>
       <div class="lb-legend">
-        <span><i class="lamp lamp--bottom" data-s="on"></i>溫度第一次衝到 95 以上</span>
-        <span><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 0.5 11.5 6 6 11.5 0.5 6Z" fill="var(--ink)"/></svg>雙重確認（畢業文＋創作文＋大盤跌幅）</span>
-        <span><i class="lamp" data-s="on" style="--c:var(--ink-3)"></i>人工註記的事件、溫度未達 95</span>
+        <span><i class="lamp lamp--bottom" data-s="on"></i>溫度首次 ≥95</span>
+        <span><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 0.5 11.5 6 6 11.5 0.5 6Z" fill="var(--ink)"/></svg><a href="#lb-dual-conditions">雙重確認</a></span>
+        <span><i class="lamp" data-s="on" style="--c:var(--ink-3)"></i>人工註記，未達 95</span>
       </div>
       <div class="lb-chart dash-skeleton" data-draw="thermo-chart" data-source="daily events"></div>
       <details class="lb-more lb-chart-events" hidden>
         <summary>查看圖上事件</summary>
         <div class="lb-chart-event"></div>
       </details>
-      <div class="lb-day-posts" data-draw="day-posts" data-chart="thermo-chart" data-source="daily posts" aria-live="polite" hidden></div>
-      <p class="lb-cap">上圖是加權指數，下圖是恐慌溫度；虛線是 90 與 95。標記都是 10 個交易日內不重複的第一次。標記上方的文字是事件說明：有人工註記的重大事件用註記，其他的用當時標題裡最常出現的主題（例如「合一」）；指向標記可以看畢業文標題。灰點的例子是 2022/10：人工註記的事件低點，但 PTT 訊號沒抓到。指向圖表可以看當天的篇數，點一下會在圖下列出那幾篇畢業文；按住滑鼠左右拖曳可以放大某一段，也可以輸入起訖日期，按「重設範圍」回到原本的期間。</p>
+      <details class="lb-more lb-day-picker" hidden>
+        <summary>查交易日與文章</summary>
+        <details class="lb-day-evidence">
+          <summary>看計入溫度的 5 日文章</summary>
+          <div class="lb-day-posts" data-draw="day-posts" data-chart="thermo-chart" data-source="daily post_days"></div>
+        </details>
+      </details>
+      <details class="lb-more">
+        <summary>圖表說明</summary>
+        <p>上圖是加權指數，下圖是恐慌溫度，虛線是 90 與 95。雙重確認要同時達到畢業文、創作文和大盤跌幅的門檻。事件標記在 10 個交易日內不重複，文字來自人工註記或當時文章的常見主題。灰點是溫度未達 95 的人工註記事件，例如 2022/10。</p>
+        <p>點圖可查交易日，按住滑鼠左右拖曳可放大，也能自訂起訖日期。「重設範圍」會回到上次選的期間。</p>
+      </details>
     </section>
 
     <section class="lb-sec" id="lb-chart-sec">
@@ -543,29 +608,46 @@
           <option value="3y">近 3 年</option>
           <option value="1y">近 1 年</option>
           <option value="6m">近 6 個月</option>
+          <option value="custom" disabled hidden>自訂期間</option>
         </select>
         <select id="lb-strip" aria-label="下方燈號列">
           <option value="bottom">燈號列：落底訊號</option>
           <option value="top">燈號列：過熱訊號</option>
           <option value="warn">燈號列：偏空警示</option>
         </select>
-        <label class="lb-date">從 <input type="date" id="lb-from"></label>
-        <label class="lb-date">到 <input type="date" id="lb-to"></label>
         <button type="button" class="lb-btn" id="lb-zreset">重設範圍</button>
-        <span id="lb-date-error" class="lb-err" role="status"></span>
       </div>
+      <details class="lb-more lb-chart-dates">
+        <summary>自訂日期範圍</summary>
+        <form class="lb-bar" id="lb-index-range-form" novalidate>
+          <label class="lb-date">開始 <input type="date" id="lb-from" aria-describedby="lb-date-error" required></label>
+          <label class="lb-date">結束 <input type="date" id="lb-to" aria-describedby="lb-date-error" required></label>
+          <button type="submit" class="lb-btn">套用範圍</button>
+        </form>
+        <output id="lb-date-error" class="lb-err" for="lb-from lb-to"></output>
+      </details>
       <div class="lb-legend">
         <span><i class="lamp lamp--bottom" data-s="recent"></i>恐慌溫度 ≥90</span>
         <span><i class="lamp lamp--bottom" data-s="on"></i>恐慌溫度 ≥95</span>
-        <span><i class="lamp lamp--bottom lb-ring" data-s="on"></i>雙重確認（畢業文＋創作文＋大盤跌幅）</span>
+        <span><i class="lamp lamp--bottom lb-ring" data-s="on"></i><a href="#lb-dual-conditions">雙重確認</a></span>
       </div>
       <div class="lb-chart dash-skeleton" id="lb-main-chart" data-draw="chart" data-source="daily events"></div>
       <details class="lb-more lb-chart-events" hidden>
         <summary>查看圖上事件</summary>
         <div class="lb-chart-event"></div>
       </details>
-      <div class="lb-day-posts" data-draw="day-posts" data-chart="chart" data-source="daily posts" aria-live="polite" hidden></div>
-      <p class="lb-cap">標記是鄉民恐慌溫度第一次到 90、95 以上，以及雙重確認亮燈的日子（10 個交易日內不重複），外面多一圈的是雙重確認。標記旁的文字是事件說明：有人工註記的重大事件用註記，其次用當時 PTT 標題最常出現的主題。灰點是人工註記的事件低點、但恐慌溫度沒有到 90 的時候（例如 2022/10）。文字重疊時只留一個，指向標記可以看完整說明。點圖上某一天，會在圖下列出那天往前 5 個交易日的畢業文。價格軸是對數刻度。在圖上按住滑鼠左右拖曳可以放大某一段，也可以直接輸入起訖日期，按「重設範圍」回到原本的期間。下方每一列是一個訊號亮燈的日子；最底三列是恐慌溫度（80 以上才上色，越深越高）、雙重確認與偏空警示。</p>
+      <details class="lb-more lb-day-picker" hidden>
+        <summary>查交易日與文章</summary>
+        <details class="lb-day-evidence">
+          <summary>看計入溫度的 5 日文章</summary>
+          <div class="lb-day-posts" data-draw="day-posts" data-chart="chart" data-source="daily post_days"></div>
+        </details>
+      </details>
+      <details class="lb-more">
+        <summary>圖表說明</summary>
+        <p>價格軸採對數刻度。標記顯示溫度首次達 90、95 和雙重確認的日期，10 個交易日內不重複。雙重確認要同時達到畢業文、創作文與大盤跌幅的門檻。灰點是溫度未達 90 的人工註記事件。「查看圖上事件」可讀取標記說明。</p>
+        <p>下方各列是該訊號的亮燈日。溫度從 80 開始上色，越深代表溫度越高。點圖可查交易日，按住滑鼠左右拖曳可放大，也能自訂日期。</p>
+      </details>
     </section>
 
     <section class="lb-sec" id="lb-lamps">
@@ -612,7 +694,7 @@
           <option value="TPEx">櫃買指數</option>
         </select>
       </div>
-      <p>「超額」是跟同一年、前 5 天漲跌幅最接近的 10 個交易日比較，扣掉單純跌深反彈的部分。「贏過配對」是事件中超額為正的比例。p 值是同年度隨機抽樣的平均報酬高於事件平均的機率，越小越不像運氣。</p>
+      <p>「超額」比較同一年、前 5 天漲跌幅最接近的 10 個交易日。「贏過配對」是超額為正的事件比例。p 值是同年度隨機抽樣中，平均報酬至少和亮燈事件一樣高的比例。本頁比較多組訊號與期間，請搭配樣本數解讀。</p>
       <div class="lb-tablewrap">
         <table class="lb-table" data-compact data-source="summary" data-row-key="signal,index">
           <thead><tr class="lb-grp-h"><th colspan="3"></th><th colspan="3">亮燈後的報酬</th><th colspan="7">扣掉跌深反彈後的超額（跟同一年漲跌相近的日子比）</th></tr><tr>
@@ -642,7 +724,7 @@
 
     <section class="lb-sec" id="lb-top">
       <h2>回測：過熱訊號亮燈後的報酬</h2>
-      <p>過熱訊號要看的是之後會不會比較差。「跑輸配對」是事件中超額為負的比例，p 值是同年度隨機抽樣的平均報酬低於事件平均的機率，越小代表亮燈後確實偏弱。</p>
+      <p>「跑輸配對」是超額為負的事件比例。p 值是同年度隨機抽樣中，平均報酬不高於亮燈事件的比例。本頁比較多組訊號與期間，請搭配樣本數解讀。</p>
       <div class="lb-tablewrap">
         <table class="lb-table" data-compact data-source="summary" data-row-key="signal,index">
           <thead><tr class="lb-grp-h"><th colspan="3"></th><th colspan="3">亮燈後的報酬</th><th colspan="7">扣掉跌深反彈後的超額（跟同一年漲跌相近的日子比）</th></tr><tr>

@@ -47,6 +47,7 @@ export function createDashboard(today: Today) {
     summary: { status: 'idle' },
     status: { status: 'ok', data: today.status },
     posts: { status: 'idle' },
+    post_days: { status: 'idle' },
   };
   const renderers = new Map<string, Renderer>();
   const bindings: Binding[] = [];

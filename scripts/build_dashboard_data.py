@@ -1,10 +1,11 @@
 """
-產生「台股落底訊號回測」儀表板的資料：5 個 JSON 檔，各為 {rows, meta}
+產生「台股落底訊號回測」儀表板的 JSON 資料，各為 {rows, meta}
   daily.json    每日：加權、櫃買、各訊號是否亮燈與數值、落底分數、過熱分數
   events.json   每個訊號事件：日期、當時數值、兩個指數的後續報酬、再跌／再漲幅度、距波段低點／高點天數
   summary.json  每個訊號 × 指數：後 1/5/20/60 日報酬、同年度隨機對照、價格配對超額、精準度
   status.json   最新一天每個訊號的數值、門檻、最近亮燈日
   posts.json    PTT 訊號（創作文、畢業文、過熱文）每次事件與最近 5 日的文章標題與連結；另有每個交易日計入的畢業文（event = "day-日期"）
+  post_days.json 圖表查詢所需的逐日畢業文與創作文，含組成 5 日區間的交易日
 
 用法: python3 -I build_dashboard_data.py data out_dir
 
@@ -458,10 +459,13 @@ for k, plist, win in [("creative", creative_posts, 1), ("loss", loss_posts, 5), 
     for j in range(N - win, N):                  # 最近一天往回 win 個交易日
         for p in sorted(idx.get(j, []), key=lambda p: p["ts"]): posts.append(post_row(k, "latest", p))
     for p in PENDING[k]: posts.append({**post_row(k, "latest", p), "pending": True})
-# 每個交易日計入恐慌溫度的畢業文（event = "day-日期"）：圖表上點某一天，列出那天往前 5 個交易日的文章
-for i in sorted(loss_idx):
-    if start - 4 <= i < N:                       # i == N 是還沒收盤的那天，不計分，所以不列
-        for p in sorted(loss_idx[i], key=lambda p: p["ts"]): posts.append(post_row("loss", "day-" + days[i].isoformat(), p))
+# 圖表按日期組合對應的 5 個交易日，不為每個交易日重複產生一整份 5 日清單。
+day_posts = []
+for k, idx in [("loss", loss_idx), ("creative", crea_idx)]:
+    for i in range(max(0, start - 4), N):
+        for p in sorted(idx.get(i, []), key=lambda p: p["ts"]):
+            day_posts.append(post_row(k, "day-" + days[i].isoformat(), p))
+posts.extend(row for row in day_posts if row["signal"] == "loss")  # 舊版圖表仍會從 posts.json 讀取逐日畢業文
 add_temperature_window("window-latest", N - 1)
 for i in sorted(set().union(*(events[k] for k in ("thermo80", "thermo85", "thermo90", "thermo95", "dual")))):
     add_temperature_window("window-" + days[i].isoformat(), i)
@@ -482,10 +486,13 @@ meta = [{"label": "build_dashboard_data.py", "value": SRC, "type": "code", "lang
         {"label": "輸入", "value": "taifex_pc.csv（期交所 Put/Call Ratio）、futures_foreign.csv（FinMind，與期交所三大法人期貨比對一致）、cboe_vix.csv（CBOE VIX History）、ptt_latest.json（PTT 列表頁最新文章）、taiex.csv（證交所 MI_5MINS_HIST）、tpex.csv（櫃買中心 indexInfo/inx）、turnover.csv（FinMind，與證交所 FMTQIK 抽樣一致）、PTT 股票版站內搜尋（只比對標題）、margin.csv（FinMind，整理自證交所 MI_MARGN）、default_daily.csv（證交所違約公告專區 BFIGTU）、foreign_inst.csv（FinMind，整理自證交所 BFI82U）"},
         {"label": "產生時間", "value": dt.datetime.now(TZ).strftime("%Y-%m-%d %H:%M")}]
 os.makedirs(OUT, exist_ok=True)
-for name, rows in [("daily", daily), ("events", ev_rows), ("summary", summary), ("status", status), ("posts", posts)]:
+for name, rows in [("daily", daily), ("events", ev_rows), ("summary", summary), ("status", status), ("posts", posts), ("post_days", day_posts)]:
     payload = {"rows": rows, "meta": meta}
     if name == "posts":
         payload["windows"] = post_windows
+    if name == "post_days":
+        payload["trading_days"] = [day.isoformat() for day in days[max(0, start - 4):]]
+        payload["latest_window"] = post_windows["window-latest"]
     with open(f"{OUT}/{name}.json", "w") as f:
         json.dump(payload, f, ensure_ascii=False, separators=(",", ":"), allow_nan=False)
     print(name, len(rows), "rows", os.path.getsize(f"{OUT}/{name}.json") // 1024, "KB")
