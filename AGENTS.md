@@ -1,6 +1,6 @@
 # AGENTS.md
 
-給寫程式的 AI agent 看的工作說明。給人看的介紹在 `README.md`。
+給寫程式的 AI agent 看的工作說明。網站介紹在 `README.md`（給讀者看），本機執行、部署與抓 PTT 的 Mac 設定在 `docs/maintenance.md`（給維護者看）。
 
 ## 專案
 
@@ -27,6 +27,7 @@
 | `dashboard/src/data.ts` | valibot 資料格式；建置與瀏覽器都用它驗證 |
 | `dashboard/src/signals.ts` | 共用標籤（`dualTitle`、燈號簡稱、溫度等級） |
 | `dashboard/src/card.ts` | 分享圖卡；連結預覽圖（og:image）也是它畫的 |
+| `README.md`、`docs/maintenance.md` | 給讀者的介紹；給維護者的執行、部署、排程與重現研究指令 |
 
 ## 指令
 
@@ -45,6 +46,7 @@ python3 -m http.server 8765 --bind 127.0.0.1 --directory site    # 預覽
 ## 規則
 
 - **介面文字用台灣繁體中文**，用語照 `PRODUCT.md` 固定：鄉民恐慌溫度、落底分數、過熱分數、偏空警示、雙重確認、創作文、畢業／虧損文、超額、贏過配對。不要用「恐慌文」，要寫出「畢業文、創作文」。
+- **README 只寫給讀者**：網站內容、方法、資料來源、限制。怎麼跑、怎麼部署、排程與金鑰設定寫在 `docs/maintenance.md`。
 - **改一個用語要全部一起改**：`dashboard/index.html`、`dashboard/src/view.ts`、`dashboard/src/signals.ts`／`card.ts`（圖卡），以及 `scripts/build_site.py`（meta 與 og 文字）。
 - **不加沒有資料根據的說法**：數字都來自計算結果，不要自己寫績效或預測。免責聲明保留。
 - **訊號只用當時已知的資料**：PTT 以 09:00 分界、隔天開盤進場；門檻用過去 250 個交易日的百分位。改訊號定義就要重跑回測並更新說明。
