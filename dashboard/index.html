@@ -19,7 +19,7 @@
     :root:not([data-theme="light"]) {
       --ground: #0f1113; --panel: #171a1e; --panel-2: #1e2227; --ink: #e8eaed; --ink-2: #c1c6cd; --ink-3: #a1a8b2;
       --rule: #2d3239; --rule-2: #252a30; --rule-ink: #e8eaed;
-      --lamp-blue: #5d8ff0; --lamp-red: #ff6457; --lamp-amber: #f0b43c; --lamp-green: #4cc27c; --lamp-yr: #ff9a4d; --lamp-off: #4b525b;
+      --lamp-blue: #5d8ff0; --lamp-red: #ff6457; --lamp-amber: #f0b43c; --lamp-green: #4cc27c; --lamp-yr: #ff9a4d; --lamp-off: #6f7680;
       --wash-blue: #1b2840; --wash-red: #3a1f1d; --wash-amber: #352a14;
       --up: #ff6b63; --down: #4cc38a; --warn: #f0a43a; --focus: #7da6f5;
       --shadow-tip: 0 6px 20px rgba(0, 0, 0, 0.5);
@@ -30,7 +30,7 @@
   :root[data-theme="dark"] {
     --ground: #0f1113; --panel: #171a1e; --panel-2: #1e2227; --ink: #e8eaed; --ink-2: #c1c6cd; --ink-3: #a1a8b2;
     --rule: #2d3239; --rule-2: #252a30; --rule-ink: #e8eaed;
-    --lamp-blue: #5d8ff0; --lamp-red: #ff6457; --lamp-amber: #f0b43c; --lamp-green: #4cc27c; --lamp-yr: #ff9a4d; --lamp-off: #4b525b;
+    --lamp-blue: #5d8ff0; --lamp-red: #ff6457; --lamp-amber: #f0b43c; --lamp-green: #4cc27c; --lamp-yr: #ff9a4d; --lamp-off: #6f7680;
     --wash-blue: #1b2840; --wash-red: #3a1f1d; --wash-amber: #352a14;
     --up: #ff6b63; --down: #4cc38a; --warn: #f0a43a; --focus: #7da6f5;
     --shadow-tip: 0 6px 20px rgba(0, 0, 0, 0.5);
@@ -79,6 +79,7 @@
   .lb-nav a { flex: none; padding: 6px 10px; border-radius: 4px; font-size: var(--fs-sm); font-weight: 500; color: var(--ink-2); text-decoration: none; transition: background-color 150ms ease-out, color 150ms ease-out; }
   .lb-nav a:hover { background: var(--panel-2); color: var(--ink); }
   .lb-nav a[aria-current="true"] { background: var(--ink); color: var(--panel); }
+  .lb-nav-mobile, .lb-quick-warn { display: none; }
   .lb-top .lb-stamp { margin: 0; max-width: 17rem; font-size: var(--fs-cap); color: var(--ink-3); text-align: right; }
   .lb-stamp-note { display: block; color: var(--warn); font: inherit; font-weight: 500; }
 
@@ -199,6 +200,11 @@
   .lb-cell-note { display: block; color: var(--ink-3); font-size: 0.75rem; font-weight: 400; }
   #lb-levels td:first-child .lb-cell-note { white-space: pre-line; }
   .lb-row-link { display: block; width: fit-content; font-size: var(--fs-cap); color: var(--lamp-blue); }
+  .lb-table tr.lb-event-match td { background: var(--wash-blue); }
+  .lb-table tr.lb-event-match:focus { outline: 2px solid var(--focus); outline-offset: -2px; }
+  .lb-evidence a { color: var(--lamp-blue); }
+  .lb-load-state { margin: 0; }
+  .lb-load-state .lb-btn { margin-inline-start: 8px; }
   #lb-ev-table tr.lb-has-sub td { border-bottom: 0; padding-bottom: 2px; }
   #lb-ev-table tr.lb-evsub td { position: static; text-align: left; white-space: normal; font-size: var(--fs-cap); color: var(--ink-3); padding-top: 0; padding-bottom: 9px; line-height: 1.55; }
   #lb-ev-table tr.lb-evsub td span + span::before { content: '｜'; margin: 0 4px; color: var(--rule); }
@@ -267,6 +273,14 @@
     .lb-wrap { padding: 0 16px; }
     .lb-top-in { min-height: 52px; gap: 4px 12px; }
     .lb-brand { font-size: 1rem; }
+    .lb-nav-desktop { display: none; }
+    .lb-nav-mobile { display: flex; align-items: center; overflow: visible; gap: 2px; }
+    .lb-nav-mobile a, .lb-nav-menu summary { padding: 6px 8px; white-space: nowrap; }
+    .lb-nav-menu { position: relative; margin-inline-start: auto; }
+    .lb-nav-menu[open] summary { margin-bottom: 0; }
+    .lb-nav-menu:not([open]) div { display: none; }
+    .lb-nav-menu summary { min-height: 34px; box-sizing: border-box; border: 1px solid var(--rule); border-radius: 4px; }
+    .lb-nav-menu div { position: absolute; right: 0; top: calc(100% + 4px); display: grid; min-width: 9rem; padding: 4px; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); }
     .lb-today { padding-top: 16px; padding-bottom: 20px; }
     .lb-today-in { gap: 16px; }
     .lb-reading-num { flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
@@ -274,6 +288,8 @@
     .lb-scale { margin-bottom: 10px; padding-top: 8px; }
     .lb-fams { padding-top: 12px; border-top: 1px solid var(--rule); }
     .lb-dual { margin-top: 10px; padding-top: 10px; }
+    .lb-quick-warn { display: flex; align-items: center; gap: 6px; width: fit-content; margin-top: 10px; font-size: var(--fs-sm); }
+    .lb-quick-warn .lamp { --ls: 16px; margin-inline: 2px; }
     .lb-reading > .lb-more { margin-top: 8px; }
     .lb-fam { padding: 10px 0; gap: 6px; }
     .lb-fam:first-child { padding-top: 10px; }
@@ -336,8 +352,17 @@
 <header class="lb-top">
   <div class="lb-wrap lb-top-in">
     <h1 class="lb-brand"><a href="#lb-today"><span class="lb-mark" aria-hidden="true"><i style="background:var(--lamp-blue)"></i><i style="background:linear-gradient(135deg,var(--lamp-amber) 50%,var(--lamp-blue) 50%)"></i><i style="background:var(--lamp-green)"></i><i style="background:var(--lamp-yr)"></i><i style="background:var(--lamp-red)"></i></span>台股落底訊號回測</a></h1>
-    <nav class="lb-nav" aria-label="頁面章節">
+    <nav class="lb-nav lb-nav-desktop" aria-label="頁面章節">
       <a href="#lb-today">今天</a><a href="#lb-thermo">恐慌溫度</a><a href="#lb-chart-sec">指數走勢</a><a href="#lb-lamps">燈號明細</a><a href="#lb-levels-sec">回測</a><a href="#lb-events">事件明細</a><a href="#lb-posts">PTT 文章</a><a href="#lb-notes">定義與來源</a>
+    </nav>
+    <nav class="lb-nav lb-nav-mobile" aria-label="頁面章節">
+      <a href="#lb-today">今天</a><a href="#lb-thermo">溫度</a><a href="#lb-lamps">燈號</a><a href="#lb-levels-sec">回測</a>
+      <details class="lb-nav-menu">
+        <summary>更多章節</summary>
+        <div>
+          <a href="#lb-chart-sec">指數走勢</a><a href="#lb-events">事件明細</a><a href="#lb-posts">PTT 文章</a><a href="#lb-notes">定義與來源</a>
+        </div>
+      </details>
     </nav>
     <p class="lb-stamp" data-draw="stamp" data-source="status">—</p>
   </div>
@@ -363,7 +388,8 @@
             <p>創作文代表「大家正在恐慌」，畢業文代表「有人認賠出場」，兩個同時出現、而且大盤真的有跌，才是投降式賣壓。大盤條件用來排除單一個股事件，例如 2020/7/20 合一重挫，當時加權只比高點低 0.3%。前後兩段（2019–2022、2023–2026）都成立，把門檻換成相鄰的數字也都成立；只有畢業文、沒有創作文恐慌時反而不準。</p>
           </details>
         </div>
-        <p class="lb-cap lb-history">近 5 個交易日：創作文 <span class="lb-num" data-draw="thermo-c5" data-source="status">—</span> 篇・畢業／虧損文 <span class="lb-num" data-draw="thermo-l5" data-source="status">—</span> 篇・<span data-draw="thermo-asof" data-source="status">—</span></p>
+        <a href="#lb-warnings-now" class="lb-quick-warn"><i class="lamp lamp--warn" data-draw="warn-lamp" data-source="status" data-s="missing" aria-hidden="true"></i><b>偏空警示</b><span class="lb-cap">近 5 日 <b class="lb-num" data-draw="sc-wscore" data-source="status">—</b>／3 項</span></a>
+        <p class="lb-cap lb-history">近 5 個交易日　<a href="?post=creative&amp;date=window-latest#lb-posts" data-post-window="creative">創作文 <span class="lb-num" data-draw="thermo-c5" data-source="status">—</span> 篇</a>・<a href="?post=loss&amp;date=window-latest#lb-posts" data-post-window="loss">畢業／虧損文 <span class="lb-num" data-draw="thermo-l5" data-source="status">—</span> 篇</a>・<span data-draw="thermo-asof" data-source="status">—</span></p>
         <details class="lb-more">
           <summary>這些訊號的歷史回測</summary>
           <div class="lb-history">
@@ -396,15 +422,15 @@
         </div>
         <div class="lb-fam">
           <div class="lb-fam-h"><h3>落底面</h3><span class="lb-ref">參考</span></div>
-          <ol class="lb-lamprow" data-draw="fam-lamps" data-fam="bottom" data-source="status daily" aria-label="落底訊號燈號"></ol>
+          <ol class="lb-lamprow" data-draw="fam-lamps" data-fam="bottom" data-source="status" aria-label="落底訊號燈號"></ol>
           <details class="lb-more">
             <summary>看落底面回測</summary>
             <p class="lb-cap" data-draw="reference-backtest" data-source="summary" data-signal="combo4">正在載入落底面回測…</p>
           </details>
         </div>
-        <div class="lb-fam">
+        <div class="lb-fam" id="lb-warnings-now">
           <div class="lb-fam-h"><h3>偏空警示</h3><span class="lb-chip" data-draw="fam-chip" data-source="status" data-fam="warn">—</span><p class="lb-fam-n"><b class="lb-num" data-draw="sc-wscore" data-source="status" data-field="value" data-where="signal=wscore">—</b> / 3</p></div>
-          <ol class="lb-lamprow" data-draw="fam-lamps" data-fam="warn" data-source="status daily" aria-label="偏空警示燈號"></ol>
+          <ol class="lb-lamprow" data-draw="fam-lamps" data-fam="warn" data-source="status" aria-label="偏空警示燈號"></ol>
           <details class="lb-more">
             <summary>看偏空警示回測</summary>
             <p class="lb-cap" data-draw="reference-backtest" data-source="summary" data-signal="fut_short">正在載入偏空警示回測…</p>
@@ -517,12 +543,12 @@
           <thead><tr>
             <th data-field="name">等級</th><th data-field="n">事件數</th><th data-field="ret20">20 日報酬</th><th data-field="win20" class="lb-minor">上漲比例</th>
             <th data-field="excess20">20 日超額</th><th data-field="beat20" class="lb-minor">贏過配對</th><th data-field="ext_within5" class="lb-minor">低點在 ±5 個交易日內</th>
-            <th data-field="further_mean">20 日最大再跌</th><th data-field="ret60" class="lb-minor">後 60 日</th>
+            <th data-field="further_mean">20 日平均最低收盤報酬</th><th data-field="ret60" class="lb-minor">後 60 日</th>
           </tr></thead>
           <tbody data-draw="thermo-levels" data-source="summary status"></tbody>
         </table>
       </div>
-      <p class="lb-cap">溫度各級統計首次達門檻的事件（10 個交易日內不重複），隔天開盤進場。20 日有效樣本只包括已有完整報酬的事件；低點與最大再跌各用該欄可計算的事件。「超額」與「贏過配對」是跟同一年、前 5 天漲跌最接近的日子比。樣本少，請保守看待。</p>
+      <p class="lb-cap">溫度各級統計首次達門檻的事件（10 個交易日內不重複），隔天開盤進場。20 日有效樣本只包括已有完整報酬的事件；低點與最低收盤報酬各用該欄可計算的事件。最低收盤報酬以進場價為基準，取後 20 個交易日的最低收盤價。「超額」與「贏過配對」是跟同一年、前 5 天漲跌最接近的日子比。樣本少，請保守看待。</p>
     </section>
 
     <section class="lb-sec" id="lb-bottom">
@@ -555,7 +581,7 @@
         <table class="lb-table" id="lb-bottom-timing" data-compact data-source="summary" data-row-key="signal,index">
           <thead><tr>
             <th data-field="name">訊號</th><th data-field="ext_median">距低點中位數（交易日）</th><th data-field="ext_within5">低點在 ±5 日內</th>
-            <th data-field="ext_after" class="lb-minor">低點還在 5 日後</th><th data-field="further_mean">之後 20 日平均最大再跌</th><th data-field="further_big" class="lb-minor">再跌超過 5% 的比例</th><th data-field="off_ext" class="lb-minor">亮燈時距 60 日高點</th>
+            <th data-field="ext_after" class="lb-minor">低點還在 5 日後</th><th data-field="further_mean">20 日平均最低收盤報酬</th><th data-field="further_big" class="lb-minor">最低收盤較進場低至少 5% 的比例</th><th data-field="off_ext" class="lb-minor">亮燈時距 60 日高點</th>
           </tr></thead>
           <tbody data-draw="timing-body" data-side="bottom" data-source="summary"></tbody>
         </table>
@@ -585,7 +611,7 @@
         <table class="lb-table" id="lb-top-timing" data-compact data-source="summary" data-row-key="signal,index">
           <thead><tr>
             <th data-field="name">訊號</th><th data-field="ext_median">距高點中位數（交易日）</th><th data-field="ext_within5">高點在 ±5 日內</th>
-            <th data-field="ext_after" class="lb-minor">高點還在 5 日後</th><th data-field="further_mean">之後 20 日平均最大再漲</th><th data-field="further_big" class="lb-minor">再漲超過 5% 的比例</th><th data-field="off_ext" class="lb-minor">亮燈時距 60 日低點</th>
+            <th data-field="ext_after" class="lb-minor">高點還在 5 日後</th><th data-field="further_mean">20 日平均最高收盤報酬</th><th data-field="further_big" class="lb-minor">最高收盤較進場高至少 5% 的比例</th><th data-field="off_ext" class="lb-minor">亮燈時距 60 日低點</th>
           </tr></thead>
           <tbody data-draw="timing-body" data-side="top" data-source="summary"></tbody>
         </table>
@@ -614,7 +640,7 @@
         <table class="lb-table" id="lb-warn-timing" data-compact data-source="summary" data-row-key="signal,index">
           <thead><tr>
             <th data-field="name">項目</th><th data-field="ext_median">距低點中位數（交易日）</th><th data-field="ext_within5">低點在 ±5 日內</th>
-            <th data-field="ext_after" class="lb-minor">低點還在 5 日後</th><th data-field="further_mean">之後 20 日平均最大再跌</th><th data-field="further_big" class="lb-minor">再跌超過 5% 的比例</th><th data-field="off_ext" class="lb-minor">亮燈時距 60 日高點</th>
+            <th data-field="ext_after" class="lb-minor">低點還在 5 日後</th><th data-field="further_mean">20 日平均最低收盤報酬</th><th data-field="further_big" class="lb-minor">最低收盤較進場低至少 5% 的比例</th><th data-field="off_ext" class="lb-minor">亮燈時距 60 日高點</th>
           </tr></thead>
           <tbody data-draw="timing-body" data-side="warn" data-source="summary"></tbody>
         </table>
@@ -627,11 +653,13 @@
         <select id="lb-evsig" aria-label="訊號">
           <optgroup label="鄉民恐慌">
             <option value="dual">雙重確認</option>
-            <option value="thermo95">鄉民恐慌溫度 ≥95</option>
+            <option value="thermo95" selected>鄉民恐慌溫度 ≥95</option>
             <option value="thermo90">鄉民恐慌溫度 ≥90</option>
+            <option value="thermo85">鄉民恐慌溫度 ≥85</option>
+            <option value="thermo80">鄉民恐慌溫度 ≥80</option>
           </optgroup>
           <optgroup label="落底訊號">
-            <option value="combo4" selected>落底分數 ≥4</option>
+            <option value="combo4">落底分數 ≥4</option>
             <option value="combo3">落底分數 ≥3</option>
             <option value="combo5_3">原 5 訊號落底分數 ≥3（對照）</option>
             <option value="vix_high">美國 VIX 恐慌</option>
@@ -661,20 +689,26 @@
             <option value="fut_chg_short">外資 5 日大增空單</option>
           </optgroup>
         </select>
+        <select id="lb-event-index" aria-label="事件回測指數">
+          <option value="TAIEX">加權指數</option>
+          <option value="TPEx">櫃買指數</option>
+        </select>
       </div>
+      <p class="lb-cap" id="lb-event-location" role="status" hidden></p>
       <div class="lb-tablewrap">
         <table class="lb-table" id="lb-ev-table" data-compact data-source="events" data-row-key="signal,date">
           <thead><tr>
             <th data-field="date">日期</th><th data-field="value">當時數值</th><th data-field="tw_close" class="lb-minor">加權收盤</th>
             <th data-field="tw_ret5" class="lb-minor">加權後 5 日</th><th data-field="tw_ret20">加權後 20 日</th><th data-field="tw_ret60" class="lb-minor">加權後 60 日</th>
-            <th data-field="tw_further">加權 20 日內最大再跌／再漲</th><th data-field="tw_ext" class="lb-minor">距加權低／高點</th>
+            <th data-field="tw_further">加權 20 日最低收盤報酬</th><th data-field="tw_ext" class="lb-minor">距加權低／高點</th>
+            <th data-field="tp_close" class="lb-minor">櫃買收盤</th>
             <th data-field="tp_ret5" class="lb-minor">櫃買後 5 日</th><th data-field="tp_ret20" class="lb-minor">櫃買後 20 日</th><th data-field="tp_ret60" class="lb-minor">櫃買後 60 日</th>
-            <th data-field="tp_further" class="lb-minor">櫃買 20 日內最大再跌／再漲</th>
+            <th data-field="tp_further" class="lb-minor">櫃買 20 日最低收盤報酬</th><th data-field="tp_ext" class="lb-minor">距櫃買低／高點</th>
           </tr></thead>
           <tbody data-draw="ev-body" data-source="events"></tbody>
         </table>
       </div>
-    <p class="lb-cap">落底訊號與偏空警示看最大再跌與距低點，過熱訊號看最大再漲與距高點。負的天數代表極值出現在亮燈之前。20 日欄位須等滿 20 個交易日。在 PTT 訊號列可點「看文章」查閱當時的文章。單日大跌與乖離以當天收盤進場，其餘用隔天開盤。融資、法人等資料收盤後才公布，PTT 當天篇數要到下一個交易日 09:00 才完整。</p>
+      <p class="lb-cap">最低／最高收盤報酬以進場價為基準，取亮燈後第 1 至第 20 個交易日的最低／最高收盤價。距低／高點的負天數表示極值出現在亮燈前。單日大跌與乖離以當天收盤進場，其餘用隔天開盤。PTT 當天篇數要到下一個交易日 09:00 才完整。</p>
     </section>
 
     <section class="lb-sec" id="lb-posts">
@@ -688,6 +722,7 @@
         </select>
         <select data-draw="pevent" aria-label="哪一次" data-source="posts"></select>
       </div>
+      <p class="lb-cap" data-draw="post-window" data-source="posts" role="status" hidden></p>
       <div class="lb-tablewrap">
         <table class="lb-table lb-posts" data-source="posts" data-row-key="url">
           <thead><tr><th data-field="posted">發文時間</th><th data-field="title">標題</th><th data-field="nrec">推文數</th></tr></thead>
@@ -726,7 +761,7 @@
 
 <script>
 window.LB = {
-  ix: 'TAIEX', tix: 'TAIEX', range: 'all', trange: '1y', strip: 'bottom', evsig: 'thermo95', psig: 'creative', pevent: null,
+  ix: 'TAIEX', tix: 'TAIEX', range: 'all', trange: '1y', strip: 'bottom', evsig: 'thermo95', eventIndex: 'TAIEX', eventDate: null, psig: 'creative', pevent: null,
   BORDER: ['dual', 'thermo95', 'thermo90', 'combo4', 'combo3', 'combo5_3', 'vix_high', 'pc_high', 'foreign', 'margin', 'default', 'loss', 'creative', 'bigdrop'],
   WORDER: ['fut_short', 'fut_ratio_short', 'fut_chg_short'],
   TORDER: ['gcombo4', 'gcombo3', 'vix_low', 'pc_low', 'fut_long', 'foreign_buy', 'margin_up', 'turnover', 'hot_ptt', 'stretch'],
@@ -745,8 +780,9 @@ window.LB = {
   SHORT: { dual: '雙重確認', thermo95: '溫度≥95', thermo90: '溫度≥90', combo4: '落底≥4', combo3: '落底≥3', combo5_3: '原5訊號≥3', vix_high: '美國VIX高', pc_high: 'P/C偏高', fut_short: '淨空單極端', fut_ratio_short: '空單佔比極端', fut_chg_short: '5日大增空單', foreign: '外資大賣', margin: '融資大減', default: '違約爆量', loss: '畢業文', creative: '創作文', bigdrop: '單日跌3%',
     gcombo4: '過熱≥4', gcombo3: '過熱≥3', vix_low: '美國VIX低', pc_low: 'P/C偏低', fut_long: '外資多單', foreign_buy: '外資大買', margin_up: '融資大增', turnover: '量能爆量', hot_ptt: '過熱文', stretch: '乖離過大' },
   PTT: ['creative', 'loss', 'hot_ptt'],
-  parse: d3.utcParse('%Y-%m-%d'),
-  date: d3.utcFormat('%Y/%m/%d'),
+  parse: (date) => new Date(date + 'T00:00:00Z'),
+  iso: (date) => date.toISOString().slice(0, 10),
+  date: (date) => LB.iso(date).replaceAll('-', '/'),
   pct: (x) => x == null ? '—' : (x > 0 ? '+' : '') + x.toFixed(2) + '%',
   pct0: (x) => x == null ? '—' : Math.round(x) + '%',
   within5: (r) => r.ext_within5 == null ? '—' :
@@ -763,11 +799,10 @@ window.LB = {
     return s.length > 3 ? s.slice(0, 2).join('＋') + '等' + s.length + '項' : s.join('＋');
   },
   titles: (r) => (r.loss_titles == null || r.loss_titles === '' ? [] : Array.isArray(r.loss_titles) ? r.loss_titles : String(r.loss_titles).split('｜')).filter(Boolean),
-  evLines: (r) => [r.note ? '事件：' + r.note : '', r.themes ? '標題主題：' + r.themes : '', LB.titles(r).length ? '畢業文：' + LB.titles(r).slice(0, 2).join('、') : ''].filter(Boolean),
+  evLines: (r, includeTitles = true) => [r.note ? '事件：' + r.note : '', r.themes ? '標題主題：' + r.themes : '', includeTitles && LB.titles(r).length ? '畢業文：' + LB.titles(r).slice(0, 2).join('、') : ''].filter(Boolean),
   syncDates: (a, b, rows) => {
-    const f = d3.utcFormat('%Y-%m-%d');
-    document.querySelectorAll(a).forEach((i) => { i.value = f(rows[0].t); });
-    document.querySelectorAll(b).forEach((i) => { i.value = f(rows[rows.length - 1].t); });
+    document.querySelectorAll(a).forEach((i) => { i.value = LB.iso(rows[0].t); });
+    document.querySelectorAll(b).forEach((i) => { i.value = LB.iso(rows[rows.length - 1].t); });
   },
   // 在圖上畫一顆燈：s = 'on' 實心、'recent' 外圈加內點、'off' 空心
   lampSvg: (g, cx, cy, r, color, s) => {
@@ -779,39 +814,75 @@ window.LB = {
 
 <script>
 const eventSelect = document.getElementById('lb-evsig');
+const eventIndexSelect = document.getElementById('lb-event-index');
 const postSelect = document.getElementById('lb-psig');
+const notes = document.getElementById('lb-notes');
+const navMenu = document.querySelector('.lb-nav-menu');
+let pendingEventReveal = null;
 const selectedOption = (select, value, fallback) => [...select.options].some((o) => o.value === value) ? value : fallback;
+const validDate = (date) => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return false;
+  const parsed = LB.parse(date);
+  return Number.isFinite(+parsed) && LB.iso(parsed) === date;
+};
+const isPostWindow = (date) => date === 'window-latest' || date?.startsWith('window-') && validDate(date.slice(7));
+const nativeClick = (event) => event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
 const sectionUrl = (id, params) => {
   const url = new URL(location.href);
-  Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+  Object.entries(params).forEach(([k, v]) => v == null ? url.searchParams.delete(k) : url.searchParams.set(k, v));
   url.hash = id;
   return url;
 };
-const setEvents = (sig) => { LB.evsig = eventSelect.value = sig; dash.draw('ev-body'); };
+const setEvents = (sig, date, index) => {
+  LB.evsig = eventSelect.value = sig;
+  LB.eventIndex = eventIndexSelect.value = index;
+  LB.eventDate = date;
+  dash.draw('ev-body');
+};
 const setPosts = (sig, date) => {
   LB.psig = postSelect.value = sig; LB.pevent = date;
-  dash.draw('pevent'); dash.draw('post-body');
+  dash.draw('pevent'); dash.draw('post-body'); dash.draw('post-window');
+};
+const openNotes = () => {
+  if (location.hash === '#lb-notes') notes.open = true;
 };
 const syncSectionUrl = () => {
   const query = new URLSearchParams(location.search);
-  setEvents(selectedOption(eventSelect, query.get('signal'), 'thermo95'));
+  const eventDate = query.get('event');
+  const index = selectedOption(eventIndexSelect, query.get('index'), 'TAIEX');
+  const event = validDate(eventDate) ? eventDate : null;
+  pendingEventReveal = event && location.hash === '#lb-events' ? 'scroll' : null;
+  setEvents(selectedOption(eventSelect, query.get('signal'), 'thermo95'), event, index);
   const date = query.get('date');
-  const parsed = date && LB.parse(date);
-  const validDate = parsed && d3.utcFormat('%Y-%m-%d')(parsed) === date;
-  setPosts(selectedOption(postSelect, query.get('post'), 'creative'), validDate ? date : null);
+  const post = selectedOption(postSelect, query.get('post'), 'creative');
+  setPosts(post, validDate(date) || (post !== 'hot_ptt' && isPostWindow(date)) ? date : null);
+  openNotes();
 };
-const jumpToSection = (id, url) => {
+const jumpToSection = (id, url, prepare) => {
   if (url.href !== location.href) history.pushState(null, '', url);
+  prepare();
   const section = document.getElementById(id);
+  dash.openSection?.(id);
   section.querySelector('h2').focus({ preventScroll: true });
   section.scrollIntoView();
 };
-LB.goEvents = (sig) => {
-  setEvents(sig);
-  jumpToSection('lb-events', sectionUrl('lb-events', { signal: sig }));
+LB.goEvents = (sig, date = null, index = LB.ix) => {
+  jumpToSection('lb-events', sectionUrl('lb-events', { signal: sig, event: date, index }), () => {
+    pendingEventReveal = date ? 'focus' : null;
+    setEvents(sig, date, index);
+  });
 };
+const goPosts = (sig, date, params = {}) => {
+  jumpToSection('lb-posts', sectionUrl('lb-posts', { ...params, post: sig, date }), () => setPosts(sig, date));
+};
+document.querySelectorAll('[data-post-window]').forEach((link) => link.addEventListener('click', (event) => {
+  if (nativeClick(event)) return;
+  event.preventDefault();
+  goPosts(link.dataset.postWindow, 'window-latest');
+}));
 syncSectionUrl();
 window.addEventListener('popstate', syncSectionUrl);
+window.addEventListener('hashchange', openNotes);
 
 document.querySelectorAll('select[data-ix]').forEach((s) => s.addEventListener('change', () => {
   LB.ix = s.value; document.querySelectorAll('select[data-ix]').forEach((o) => { o.value = LB.ix; });
@@ -838,33 +909,67 @@ lbZoomInputs('lb-tfrom', 'lb-tto', 'lb-trange', 'lb-treset', 'lb-tdate-error', '
 document.querySelectorAll('#lb-tix').forEach((s) => s.addEventListener('change', () => { LB.tix = s.value; dash.draw('thermo-levels'); }));
 document.querySelectorAll('#lb-strip').forEach((s) => s.addEventListener('change', () => { LB.strip = s.value; dash.draw('chart'); }));
 eventSelect.addEventListener('change', () => {
-  setEvents(eventSelect.value);
-  history.replaceState(null, '', sectionUrl('lb-events', { signal: LB.evsig }));
+  pendingEventReveal = null;
+  setEvents(eventSelect.value, null, eventIndexSelect.value);
+  history.replaceState(null, '', sectionUrl('lb-events', { signal: LB.evsig, event: null, index: LB.eventIndex }));
+});
+eventIndexSelect.addEventListener('change', () => {
+  setEvents(eventSelect.value, LB.eventDate, eventIndexSelect.value);
+  history.replaceState(null, '', sectionUrl('lb-events', { signal: LB.evsig, event: LB.eventDate, index: LB.eventIndex }));
 });
 postSelect.addEventListener('change', () => {
-  setPosts(postSelect.value, null);
-  history.replaceState(null, '', sectionUrl('lb-posts', { post: LB.psig, date: 'latest' }));
+  const date = postSelect.value !== 'hot_ptt' && isPostWindow(LB.pevent) ? LB.pevent : 'latest';
+  setPosts(postSelect.value, date);
+  history.replaceState(null, '', sectionUrl('lb-posts', { post: LB.psig, date }));
 });
 
-// 頂部導覽：還有沒顯示的章節時右邊淡出
+// 頂部導覽
 (() => {
-  const nav = document.querySelector('.lb-nav'); if (!nav) return;
+  const nav = document.querySelector('.lb-nav-desktop');
   const upd = () => nav.classList.toggle('is-more', nav.scrollWidth - nav.clientWidth - nav.scrollLeft > 4);
   nav.addEventListener('scroll', upd, { passive: true }); window.addEventListener('resize', upd); upd();
+  navMenu.addEventListener('click', (event) => {
+    const link = event.target.closest('a');
+    if (!link || nativeClick(event)) return;
+    if (link.hash === '#lb-notes') notes.open = true;
+    navMenu.open = false;
+    const section = document.getElementById(link.hash.slice(1));
+    const heading = section?.querySelector('h2, summary');
+    if (heading) {
+      heading.tabIndex = -1;
+      heading.focus({ preventScroll: true });
+    }
+  });
+  document.addEventListener('click', (event) => { if (!navMenu.contains(event.target)) navMenu.open = false; });
+  navMenu.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape' || !navMenu.open) return;
+    navMenu.open = false;
+    navMenu.querySelector('summary').focus();
+  });
+  document.querySelector('.lb-nav-desktop a[href="#lb-notes"]').addEventListener('click', (event) => {
+    if (!nativeClick(event)) notes.open = true;
+  });
 })();
 
 // 頂部導覽：標出目前所在的章節
 (() => {
-  const links = [...document.querySelectorAll('.lb-nav a')], map = new Map();
-  links.forEach((a) => { const id = a.getAttribute('href').slice(1); map.set(id, a); });
-  ['lb-bottom', 'lb-top', 'lb-warn'].forEach((k) => map.set(k, map.get('lb-levels-sec')));
+  const links = [...document.querySelectorAll('.lb-nav a')];
   const ids = ['lb-today', 'lb-thermo', 'lb-chart-sec', 'lb-lamps', 'lb-levels-sec', 'lb-bottom', 'lb-top', 'lb-warn', 'lb-events', 'lb-posts', 'lb-notes'];
   const els = ids.map((i) => document.getElementById(i)).filter(Boolean);
   if (!('IntersectionObserver' in window) || !els.length) return;
   const vis = new Set();
   const set = () => {
-    const cur = els.find((e) => vis.has(e.id)); links.forEach((a) => a.removeAttribute('aria-current'));
-    const a = cur && map.get(cur.id); if (a) { a.setAttribute('aria-current', 'true'); const nav = a.parentElement, l = a.offsetLeft - nav.offsetLeft; if (l < nav.scrollLeft || l + a.offsetWidth > nav.scrollLeft + nav.clientWidth) nav.scrollLeft = l - 8; }
+    let id = els.find((e) => vis.has(e.id))?.id;
+    if (['lb-bottom', 'lb-top', 'lb-warn'].includes(id)) id = 'lb-levels-sec';
+    links.forEach((a) => {
+      if (a.hash !== '#' + id) { a.removeAttribute('aria-current'); return; }
+      a.setAttribute('aria-current', 'true');
+      const nav = a.closest('.lb-nav-desktop');
+      if (nav?.clientWidth) {
+        const l = a.offsetLeft - nav.offsetLeft;
+        if (l < nav.scrollLeft || l + a.offsetWidth > nav.scrollLeft + nav.clientWidth) nav.scrollLeft = l - 8;
+      }
+    });
   };
   const io = new IntersectionObserver((es) => { es.forEach((e) => (e.isIntersecting ? vis.add(e.target.id) : vis.delete(e.target.id))); set(); }, { rootMargin: '-120px 0px -55% 0px' });
   els.forEach((e) => io.observe(e));
@@ -875,8 +980,13 @@ postSelect.addEventListener('change', () => {
 // 今天：溫度、分數、燈號
 const statusRow = (sig) => { const s = dash.data('status'); return s.status === 'ok' ? s.data.find((r) => r.signal === sig) : null; };
 const sumRow = (sig, ix) => { const s = dash.data('summary'); return s.status === 'ok' ? s.data.find((r) => r.signal === sig && r.index === ix) : null; };
-const lastDaily = () => { const d = dash.data('daily'); return d.status === 'ok' ? d.data[d.data.length - 1] : null; };
+const lastDaily = () => dash.today?.daily || dash.data('daily').data?.at(-1) || null;
 dash.draw('sc-wscore', (el) => { const r = statusRow('wscore'); el.textContent = r ? String(r.value) : '—'; });
+dash.draw('warn-lamp', (el) => {
+  const r = statusRow('wscore'), daily = lastDaily();
+  const on = LB.FAM.warn.some(([sig]) => daily?.['f_' + sig] === 1);
+  el.dataset.s = !r ? 'missing' : on ? 'on' : r.value > 0 ? 'recent' : 'off';
+});
 dash.draw('reference-backtest', (el) => {
   const r = sumRow(el.dataset.signal, 'TAIEX');
   if (!r) { el.textContent = '回測資料暫時無法顯示。'; return; }
@@ -1006,7 +1116,7 @@ dash.draw('reading-status', (el) => {
 (() => {
   const btn = document.getElementById('lb-share-btn'), panel = document.getElementById('lb-share-panel');
   if (!btn || !panel) return;
-  if (!window.LBCard) { btn.closest('.lb-share').hidden = true; return; }
+  if (!window.LBCard && !dash.loadCard) { btn.closest('.lb-share').hidden = true; return; }
   const prev = document.getElementById('lb-share-prev'), go = document.getElementById('lb-share-go');
   const dl = document.getElementById('lb-share-dl'), cp = document.getElementById('lb-share-copy'), msg = document.getElementById('lb-share-msg');
   const pageUrl = () => location.origin + location.pathname;
@@ -1015,7 +1125,8 @@ dash.draw('reading-status', (el) => {
   const make = async () => {
     const st = dash.data('status'), sm = dash.data('summary');
     if (st.status !== 'ok') throw new Error(st.status === 'loading' ? '資料還在載入，請稍候再試' : '資料載入失敗');
-    const m = LBCard.model(st.data, lastDaily(), sm.status === 'ok' ? sm.data : []);
+    await dash.loadCard?.();
+    const m = LBCard.model(st.data, lastDaily(), sm.status === 'ok' ? sm.data : dash.today?.summary || []);
     if (!m) throw new Error('找不到溫度資料');
     await LBCard.fontsReady(m);
     const c = document.createElement('canvas'); LBCard.draw(c, m, 2);
@@ -1058,19 +1169,19 @@ dash.draw('matrix', (el) => {
     if (d.status === 'error' || st.status === 'error') { const c = el.createTBody().insertRow().insertCell(); c.className = 'lb-err'; c.textContent = '燈號資料載入失敗。'; }
     return;
   }
-  const N = 20, days = d.data.slice(-N), last = days.length - 1, mm = d3.utcFormat('%m'), dd = d3.utcFormat('%d');
+  const N = 20, days = d.data.slice(-N), last = days.length - 1;
   const head = el.createTHead(), r1 = head.insertRow(), r2 = head.insertRow();
   const KEEP = 8, old = (i) => (i < days.length - KEEP ? ' lb-old' : '');  // 手機只顯示最近 KEEP 天
   const h0 = document.createElement('th'); h0.className = 'lb-name'; h0.rowSpan = 2; h0.textContent = '訊號'; h0.style.verticalAlign = 'bottom'; h0.style.paddingBottom = '4px'; r1.append(h0);
   let run = null;
   days.forEach((r, i) => {
-    const m = mm(LB.parse(r.date));
+    const m = r.date.slice(5, 7);
     if (!run || run.m !== m || (i === days.length - KEEP && run.start < days.length - KEEP)) {
       run = { m, start: i, th: document.createElement('th'), cont: !!run && run.m === m }; run.th.className = 'lb-d' + old(i); run.th.style.textAlign = 'left';
       if (run.cont) { const sp = document.createElement('span'); sp.className = 'lb-sm-only'; sp.textContent = (+m) + ' 月'; run.th.append(sp); } else run.th.textContent = (+m) + ' 月';
       run.th.colSpan = 1; r1.append(run.th);
     } else run.th.colSpan += 1;
-    const th = document.createElement('th'); th.className = 'lb-d' + old(i) + (i === last ? ' is-today' : ''); th.textContent = String(+dd(LB.parse(r.date))); th.scope = 'col'; r2.append(th);
+    const th = document.createElement('th'); th.className = 'lb-d' + old(i) + (i === last ? ' is-today' : ''); th.textContent = String(+r.date.slice(8)); th.scope = 'col'; r2.append(th);
   });
   r1.querySelectorAll('th.lb-d').forEach((th) => { if (th.colSpan < 3) th.replaceChildren(); });   // 太窄的月份不標，免得擠成兩行
   [['最新值', ''], ['亮燈門檻', ' lb-hide-sm'], ['上次亮燈', ' lb-hide-sm']].forEach(([t, c]) => { const th = document.createElement('th'); th.className = 'lb-v' + c; th.rowSpan = 2; th.textContent = t; th.style.verticalAlign = 'bottom'; th.style.paddingBottom = '4px'; r1.append(th); });
@@ -1182,6 +1293,24 @@ dash.draw('matrix', (el) => {
 </script>
 
 <script>
+const articleLink = (article) => {
+  if (!/^https:\/\/www\.ptt\.cc\/bbs\/Stock\//.test(article.url)) return null;
+  const a = document.createElement('a');
+  a.href = article.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = article.title;
+  return a;
+};
+const eventEvidence = (event) => {
+  const links = (event.loss_sources || []).slice(0, 2).map(articleLink).filter(Boolean);
+  if (!links.length) return null;
+  const group = document.createElement('span'); group.className = 'lb-evidence';
+  group.append('畢業文原文　');
+  links.forEach((link, i) => {
+    if (i) group.append('、');
+    group.append(link);
+  });
+  return group;
+};
+
 const chartEvents = (chart, marks, index) => {
   const disclosure = chart.nextElementSibling;
   const body = disclosure.querySelector('.lb-chart-event');
@@ -1200,22 +1329,24 @@ const chartEvents = (chart, marks, index) => {
   const info = document.createElement('div'); info.className = 'lb-chart-event'; info.setAttribute('aria-live', 'polite');
   const render = () => {
     const event = events[select.selectedIndex];
+    const evidence = eventEvidence(event);
     const title = document.createElement('b'); title.textContent = name(event);
     const value = event[index === 'TAIEX' ? 'tw_ret20' : 'tp_ret20'];
     const summary = [
       event.signal !== 'note' ? event.value : '',
       event.signal !== 'note' ? (index === 'TAIEX' ? '加權' : '櫃買') + '後 20 日 ' + (event.pending20 ? '尚未滿 20 日' : LB.pct(value)) : '',
-      ...LB.evLines(event).filter((line) => event.signal !== 'note' || line !== '事件：' + event.note),
+      ...LB.evLines(event, !evidence).filter((line) => event.signal !== 'note' || line !== '事件：' + event.note),
     ].filter(Boolean);
     info.replaceChildren(title, ...summary.map((line) => {
       const p = document.createElement('p'); p.className = 'lb-cap'; p.textContent = line; return p;
     }));
+    if (evidence) info.append(evidence);
     if (event.signal === 'note') return;
-    const link = document.createElement('a'); link.className = 'lb-row-link'; link.textContent = '看此訊號的事件明細';
-    link.href = sectionUrl('lb-events', { signal: event.signal });
+    const link = document.createElement('a'); link.className = 'lb-row-link'; link.textContent = '看這筆事件明細';
+    link.href = sectionUrl('lb-events', { signal: event.signal, event: event.date, index });
     link.addEventListener('click', (evt) => {
-      if (evt.metaKey || evt.ctrlKey || evt.shiftKey || evt.altKey) return;
-      evt.preventDefault(); LB.goEvents(event.signal);
+      if (nativeClick(evt)) return;
+      evt.preventDefault(); LB.goEvents(event.signal, event.date, index);
     });
     info.append(link);
   };
@@ -1493,53 +1624,120 @@ dash.draw('timing-body', (el) => {
 // 事件明細與 PTT 文章
 dash.draw('ev-body', (el) => {
   const e = dash.data('events'); el.replaceChildren();
-  if (e.status !== 'ok') { if (e.status === 'error') { const td = el.insertRow().insertCell(); td.colSpan = 12; td.className = 'lb-err'; td.textContent = '事件資料載入失敗。'; } return; }
+  const head = el.closest('table').tHead.rows[0];
+  const locationNote = document.getElementById('lb-event-location');
+  locationNote.hidden = true;
+  const empty = (message, className) => {
+    const td = el.insertRow().insertCell();
+    td.colSpan = head.cells.length; td.className = className; td.textContent = message;
+  };
+  if (e.status !== 'ok') {
+    if (e.status === 'error') empty('事件資料載入失敗。', 'lb-err');
+    return;
+  }
   const isPtt = LB.PTT.includes(LB.evsig);
+  const isTemperature = LB.evsig === 'dual' || LB.evsig.startsWith('thermo');
   const rows = e.data.filter((r) => r.signal === LB.evsig).slice().reverse();
-  if (!rows.length) { const td = el.insertRow().insertCell(); td.colSpan = 12; td.className = 'lb-l'; td.textContent = '這個訊號在回測期間沒有亮過燈。'; return; }
-  const headers = el.closest('table').tHead.rows[0].cells;
+  if (!rows.length) { empty('這個訊號在回測期間沒有亮過燈。', 'lb-l'); return; }
+  const selectedRow = rows.findIndex((r) => r.date === LB.eventDate);
+  if (selectedRow > 0) rows.unshift(...rows.splice(selectedRow, 1));
+  const market = LB.eventIndex === 'TPEx' ? 'tp' : 'tw';
+  const marketName = market === 'tp' ? '櫃買指數' : '加權指數';
+  const extreme = LB.TORDER.includes(LB.evsig) ? '最高' : '最低';
+  const columns = [...head.cells].sort((a, b) => {
+    const group = ({ dataset: { field } }) => field.includes('_') ? Number(!field.startsWith(market + '_')) + 1 : 0;
+    return group(a) - group(b);
+  });
+  const prominent = ['date', 'value', market + '_ret20', market + '_further'];
+  columns.forEach((th) => {
+    const field = th.dataset.field;
+    th.classList.toggle('lb-minor', !prominent.includes(field));
+    if (field.endsWith('_further')) th.textContent = (field.startsWith('tw') ? '加權' : '櫃買') + ' 20 日' + extreme + '收盤報酬';
+    if (field.endsWith('_ext')) th.textContent = '距' + (field.startsWith('tw') ? '加權' : '櫃買') + (extreme === '最低' ? '低點' : '高點');
+  });
+  head.append(...columns);
+  let match = null;
   rows.forEach((r) => {
     const tr = el.insertRow(); tr.dataset.key = r.signal + ',' + r.date;
-    const pending = (value) => [LB.pct(value), value, value == null && r.pending20 ? '尚未滿 20 日' : ''];
-    writeCells(tr, headers, [
-      [displayDate(r.date)], [r.value], [r.tw_close == null ? '—' : r.tw_close.toFixed(2)], [LB.pct(r.tw_ret5), r.tw_ret5], pending(r.tw_ret20),
-      [LB.pct(r.tw_ret60), r.tw_ret60], pending(r.tw_further), [r.tw_ext == null ? '—' : (r.tw_ext > 0 ? '+' : '') + r.tw_ext],
-      [LB.pct(r.tp_ret5), r.tp_ret5], pending(r.tp_ret20), [LB.pct(r.tp_ret60), r.tp_ret60], pending(r.tp_further),
-    ]);
-    const sub = LB.evLines(r).concat(r.lit ? ['亮燈：' + r.lit] : []);
-    if (sub.length) {
-      tr.classList.add('lb-has-sub');
-      const sr = el.insertRow(); sr.className = 'lb-evsub'; const sc = sr.insertCell(); sc.colSpan = 12;
-      sub.forEach((t) => { const sp = document.createElement('span'); sp.textContent = t; sc.append(sp); });
+    if (r.date === LB.eventDate) {
+      tr.classList.add('lb-event-match'); tr.id = 'lb-event-match'; tr.tabIndex = -1;
+      match = tr;
     }
-    if (isPtt) {
-      tr.classList.add('lb-click');
-      const link = document.createElement('a'); link.className = 'lb-row-link'; link.textContent = '看文章';
-      link.setAttribute('aria-label', '看 ' + displayDate(r.date) + ' 的 PTT 文章');
-      const url = sectionUrl('lb-posts', { signal: r.signal, post: r.signal, date: r.date });
-      link.href = url;
+    const pending = (value) => [LB.pct(value), value, value == null && r.pending20 ? '尚未滿 20 日' : ''];
+    writeCells(tr, columns, columns.map(({ dataset: { field } }) => {
+      const value = r[field];
+      if (field === 'date') return [displayDate(r.date)];
+      if (field === 'value') return [value];
+      if (field.endsWith('_close')) return [value == null ? '—' : LB.num(value, 2)];
+      if (field.endsWith('_ext')) return [value == null ? '—' : (value > 0 ? '+' : '') + value];
+      return field.endsWith('_ret20') || field.endsWith('_further') ? pending(value) : [LB.pct(value), value];
+    }));
+    const evidence = eventEvidence(r);
+    const sub = LB.evLines(r, !evidence).concat(r.lit ? ['亮燈：' + r.lit] : []);
+    if (sub.length || evidence) {
+      tr.classList.add('lb-has-sub');
+      const sr = el.insertRow(); sr.className = 'lb-evsub'; const sc = sr.insertCell(); sc.colSpan = columns.length;
+      sub.forEach((t) => { const sp = document.createElement('span'); sp.textContent = t; sc.append(sp); });
+      if (evidence) sc.append(evidence);
+    }
+    if (isPtt || isTemperature) {
+      const category = isPtt ? r.signal : 'creative', date = isPtt ? r.date : 'window-' + r.date;
+      const params = { signal: r.signal, event: r.date, index: LB.eventIndex };
+      const link = document.createElement('a'); link.className = 'lb-row-link'; link.textContent = isPtt ? '看文章' : '看 5 日文章';
+      link.setAttribute('aria-label', link.textContent + '（' + displayDate(r.date) + '）');
+      link.href = sectionUrl('lb-posts', { ...params, post: category, date });
       tr.cells[0].append(link);
-      tr.addEventListener('click', (evt) => {
-        if (evt.metaKey || evt.ctrlKey || evt.shiftKey || evt.altKey) return;
+      const open = (evt) => {
+        if (nativeClick(evt)) return;
         evt.preventDefault();
-        setPosts(r.signal, r.date);
-        jumpToSection('lb-posts', url);
-      });
+        goPosts(category, date, params);
+      };
+      if (isPtt) { tr.classList.add('lb-click'); tr.addEventListener('click', open); }
+      else link.addEventListener('click', open);
     }
   });
+  if (!LB.eventDate) return;
+  locationNote.hidden = false;
+  locationNote.textContent = match ? '已定位 ' + displayDate(LB.eventDate) + '・' + marketName : '這個訊號在 ' + displayDate(LB.eventDate) + ' 沒有回測事件。';
+  if (match && pendingEventReveal && location.hash === '#lb-events') {
+    const mode = pendingEventReveal, date = LB.eventDate;
+    pendingEventReveal = null;
+    requestAnimationFrame(() => {
+      const row = document.getElementById('lb-event-match');
+      if (!row || LB.eventDate !== date || location.hash !== '#lb-events') return;
+      row.closest('section').scrollIntoView({ block: 'start' });
+      if (mode === 'focus') row.focus({ preventScroll: true });
+    });
+  }
 });
 
 dash.draw('pevent', (sel) => {
   const p = dash.data('posts');
-  const evs = p.status === 'ok' ? [...new Set(p.data.filter((r) => r.signal === LB.psig && r.event !== 'latest').map((r) => r.event))].sort().reverse() : [];
-  if (LB.pevent && LB.pevent !== 'latest' && !evs.includes(LB.pevent)) evs.unshift(LB.pevent);
-  sel.replaceChildren(new Option(LB.psig === 'creative' ? '最新一天（當天 09:00 起算）' : '最近 5 個交易日', 'latest'), ...evs.map((d) => new Option(LB.date(LB.parse(d)) + ' 那次亮燈', d)));
-  if (!LB.pevent) LB.pevent = 'latest';
+  const evs = p.status === 'ok' ? [...new Set(p.data.filter((r) => r.signal === LB.psig && validDate(r.event)).map((r) => r.event))].sort().reverse() : [];
+  const opts = [new Option(LB.psig === 'creative' ? '最新一天（09:00 分界）' : '最新 5 日（含待計入文章）', 'latest')];
+  if (LB.psig !== 'hot_ptt' && (p.windows?.['window-latest'] || LB.pevent === 'window-latest')) {
+    opts.unshift(new Option('本次恐慌溫度的 5 日文章', 'window-latest'));
+  }
+  if (LB.pevent && LB.pevent !== 'latest' && LB.pevent !== 'window-latest' && !evs.includes(LB.pevent)) evs.unshift(LB.pevent);
+  sel.replaceChildren(...opts, ...evs.map((d) => new Option(
+    isPostWindow(d) ? displayDate(d.slice(7)) + ' 的 5 日文章' : displayDate(d) + ' 那次亮燈', d,
+  )));
+  if (!LB.pevent) LB.pevent = opts[0].value;
   sel.value = LB.pevent;
   sel.onchange = () => {
-    LB.pevent = sel.value; dash.draw('post-body');
+    LB.pevent = sel.value; dash.draw('post-body'); dash.draw('post-window');
     history.replaceState(null, '', sectionUrl('lb-posts', { post: LB.psig, date: LB.pevent }));
   };
+});
+
+dash.draw('post-window', (el) => {
+  const posts = dash.data('posts'), key = LB.pevent || 'latest';
+  const range = posts.windows?.[key];
+  el.hidden = !range;
+  if (!range) return;
+  const count = posts.data.filter((r) => r.signal === LB.psig && r.event === key).length;
+  el.textContent = '列出計入恐慌溫度的 ' + count + ' 篇。台灣時間 ' + displayDate(range.start) +
+    ' 09:00 至 ' + displayDate(range.end) + ' 09:00' + (range.end_estimated ? '（結束日暫按下一個平日估計）' : '') + '。';
 });
 
 dash.draw('post-body', (el) => {
@@ -1547,7 +1745,11 @@ dash.draw('post-body', (el) => {
   if (p.status !== 'ok') { if (p.status === 'error') { const td = el.insertRow().insertCell(); td.colSpan = 3; td.className = 'lb-err'; td.textContent = '文章資料載入失敗。'; } return; }
   const ev = LB.pevent || 'latest';
   const rows = p.data.filter((r) => r.signal === LB.psig && r.event === ev);
-  if (!rows.length) { const td = el.insertRow().insertCell(); td.colSpan = 3; td.className = 'lb-l'; td.textContent = '這段期間沒有符合的文章。'; return; }
+  if (!rows.length) {
+    const td = el.insertRow().insertCell(); td.colSpan = 3; td.className = 'lb-l';
+    td.textContent = isPostWindow(ev) && !p.windows?.[ev] ? '這個回測區間沒有留存文章明細。' : '這段期間沒有符合的文章。';
+    return;
+  }
   rows.slice().reverse().forEach((r) => {
     const tr = el.insertRow(); tr.dataset.key = r.url;
     const t0 = tr.insertCell(); t0.textContent = r.posted;
@@ -1563,10 +1765,13 @@ dash.draw('post-body', (el) => {
       }
       const s = document.createElement('span'); s.className = 'lb-pend'; s.textContent = '算 ' + day + '・那天的收盤資料更新後才計分'; t0.append(s);
     }
-    if (r.judge === 'title') { const s = document.createElement('span'); s.className = 'lb-pend'; s.textContent = '尚未由 AI 讀內文確認・暫依標題計算'; t0.append(s); }
+    if (r.judge) {
+      const s = document.createElement('span'); s.className = r.judge === 'title' ? 'lb-pend' : 'lb-cell-note';
+      s.textContent = { title: '待 AI 讀內文・暫依標題計入', ref: '歷史內文判定', ai: 'AI 已讀內文' }[r.judge] || '';
+      t0.append(s);
+    }
     const td = tr.insertCell(); td.className = 'lb-l';
-    if (/^https:\/\//.test(r.url)) { const a = document.createElement('a'); a.href = r.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = r.title; td.append(a); }
-    else td.textContent = r.title;
+    td.append(articleLink(r) || r.title);
     tr.insertCell().textContent = r.nrec || '—';
   });
 });
@@ -1621,7 +1826,7 @@ dash.draw('headline-backtest', (el) => {
   const h = document.createElement('b'); h.textContent = dual ? '雙重確認' : '溫度首次達 95';
   const count = (n) => n == null ? '' : '（' + n + ' 筆）';
   el.replaceChildren(h, ' 共 ' + r.n + ' 次。加權 20 日平均報酬 ' + LB.pct(r.ret20) + count(r.n20) +
-    (dual ? '，同期超額 ' + LB.pct(r.excess20) + count(r.n20) : '，20 日平均最大再跌 ' + LB.pct(r.further_mean) + count(r.further_n)) +
+    (dual ? '，同期超額 ' + LB.pct(r.excess20) + count(r.n20) : '，20 日平均最低收盤報酬 ' + LB.pct(r.further_mean) + count(r.further_n)) +
     '。低點在亮燈前後 5 個交易日內 ' + LB.within5(r) + '。');
 });
 

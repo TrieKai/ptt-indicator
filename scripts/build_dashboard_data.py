@@ -329,6 +329,9 @@ NOTES = [("2020-03-09", "2020-03-31", "新冠疫情全球股災"), ("2021-05-10"
 loss_idx, crea_idx = collections.defaultdict(list), collections.defaultdict(list)
 for p in loss_posts: loss_idx[bucket_idx(p["ts"])].append(p)
 for p in creative_posts: crea_idx[bucket_idx(p["ts"])].append(p)
+def post_url(post):
+    return "https://www.ptt.cc/bbs/Stock/" + post["id"] + ".html"
+
 def context(i):
     lp = sorted((p for j in range(i - 4, i + 1) for p in loss_idx.get(j, [])), key=lambda p: p["ts"])
     cp = [p for j in range(i - 4, i + 1) for p in crea_idx.get(j, [])]
@@ -339,7 +342,8 @@ def context(i):
     note = next((n for a, b, n in NOTES if a <= days[i].isoformat() <= b), "")
     strip = lambda t: re.sub(r"^[\[［][^\]］}]+[\]］}]\s*", "", t).strip()
     return {"note": note, "themes": "、".join(f"{n}×{c}" for n, c in cnt.most_common(3) if c >= 2),
-            "loss_titles": "｜".join(strip(p["title"])[:30] for p in lp[:4]), "creative_n5": len(cp)}
+            "loss_titles": "｜".join(strip(p["title"])[:30] for p in lp[:4]), "creative_n5": len(cp),
+            "loss_sources": [{"title": p["title"], "url": post_url(p)} for p in lp[:4]]}
 CTX = {"dual", "thermo95", "thermo90", "thermo85", "thermo80", "loss", "creative", "combo3", "combo4", "combo5_3"}
 
 ev_rows = []
@@ -430,9 +434,19 @@ for r in status:
 # ---------- PTT 文章連結 ----------
 def post_row(k, ev, p):
     return {"signal": k, "event": ev, "posted": dt.datetime.fromtimestamp(p["ts"], TZ).strftime("%Y-%m-%d %H:%M"),
-            "title": p["title"], "url": "https://www.ptt.cc/bbs/Stock/" + p["id"] + ".html", "nrec": p.get("nrec", ""),
+            "title": p["title"], "url": post_url(p), "nrec": p.get("nrec", ""),
             **({"judge": JUDGE.get(p["id"], "title")} if k == "loss" and JUDGE else {})}
 posts = []
+post_windows = {}
+def add_temperature_window(key, i):
+    first = max(0, i - 4)
+    end = days[i + 1] if i + 1 < N else _nd
+    post_windows[key] = {"start": days[first].isoformat(), "end": end.isoformat(), "end_estimated": i == N - 1}
+    for k, idx in [("creative", crea_idx), ("loss", loss_idx)]:
+        for j in range(first, i + 1):
+            for p in sorted(idx.get(j, []), key=lambda p: p["ts"]):
+                posts.append(post_row(k, key, p))
+
 for k, plist, win in [("creative", creative_posts, 1), ("loss", loss_posts, 5), ("hot_ptt", hot_posts, 5)]:
     idx = collections.defaultdict(list)
     for p in plist: idx[bucket_idx(p["ts"])].append(p)
@@ -442,6 +456,9 @@ for k, plist, win in [("creative", creative_posts, 1), ("loss", loss_posts, 5), 
     for j in range(N - win, N):                  # 最近一天往回 win 個交易日
         for p in sorted(idx.get(j, []), key=lambda p: p["ts"]): posts.append(post_row(k, "latest", p))
     for p in PENDING[k]: posts.append({**post_row(k, "latest", p), "pending": True})
+add_temperature_window("window-latest", N - 1)
+for i in sorted(set().union(*(events[k] for k in ("thermo80", "thermo85", "thermo90", "thermo95", "dual")))):
+    add_temperature_window("window-" + days[i].isoformat(), i)
 
 # ---------- 比較：外資、違約 正規化前後 ----------
 print("== 正規化前後比較（後 20 日超額 / 贏過配對）")
@@ -460,5 +477,9 @@ meta = [{"label": "build_dashboard_data.py", "value": SRC, "type": "code", "lang
         {"label": "產生時間", "value": dt.datetime.now(TZ).strftime("%Y-%m-%d %H:%M")}]
 os.makedirs(OUT, exist_ok=True)
 for name, rows in [("daily", daily), ("events", ev_rows), ("summary", summary), ("status", status), ("posts", posts)]:
-    json.dump({"rows": rows, "meta": meta}, open(f"{OUT}/{name}.json", "w"), ensure_ascii=False, separators=(",", ":"), allow_nan=False)
+    payload = {"rows": rows, "meta": meta}
+    if name == "posts":
+        payload["windows"] = post_windows
+    with open(f"{OUT}/{name}.json", "w") as f:
+        json.dump(payload, f, ensure_ascii=False, separators=(",", ":"), allow_nan=False)
     print(name, len(rows), "rows", os.path.getsize(f"{OUT}/{name}.json") // 1024, "KB")
