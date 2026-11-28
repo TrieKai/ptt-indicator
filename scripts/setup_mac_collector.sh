@@ -45,9 +45,18 @@ cd "$DIR"
 git config core.sshCommand "$SSH"
 git config user.name "ptt-indicator collector"
 git config user.email "21071329+TrieKai@users.noreply.github.com"
-if ! git push --dry-run -q origin HEAD >/dev/null 2>&1; then
-  echo "這把 deploy key 沒有寫入權限：請到 https://github.com/$REPO/settings/keys 刪掉它，重新加入並勾選「Allow write access」。"
-  exit 3
+# 先跟 GitHub 同步：別台機器推過 commit 時，本機落後會讓推送被拒（fetch first）
+git pull -q --rebase --autostash
+# 檢查寫入權限：試推到一個不存在的分支（dry-run 不會真的建立），不受本機落後影響；
+# 只有 GitHub 回「read only／denied」才算權限問題，其他失敗直接顯示 git 的訊息
+if ! push_out=$(git push --dry-run origin "HEAD:refs/heads/ptt-indicator-write-check" 2>&1); then
+  if grep -qiE 'read.only|denied' <<<"$push_out"; then
+    echo "這把 deploy key 沒有寫入權限：請到 https://github.com/$REPO/settings/keys 刪掉它，重新加入並勾選「Allow write access」。"
+    exit 3
+  fi
+  echo "測試推送失敗（不是權限問題），git 的訊息如下："
+  echo "$push_out"
+  exit 4
 fi
 
 # 3) 先跑一次
